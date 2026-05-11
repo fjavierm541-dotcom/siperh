@@ -14,7 +14,9 @@ public function up()
 {
     Schema::create('documentos_empleado', function (Blueprint $table) {
         $table->id();
-        $table->string('dni_empleado');
+        $table->string('dni_empleado', 255)
+            -> charset('utf8mb3') 
+            -> collation ('utf8mb3_general_ci');
         $table->string('tipo_documento');
         $table->string('ruta_archivo');
         $table->timestamps();

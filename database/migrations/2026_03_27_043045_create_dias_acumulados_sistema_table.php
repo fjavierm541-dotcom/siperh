@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('dias_acumulados_sistema', function (Blueprint $table) {
             $table->id();
 
-            $table->string('dni_empleado');
+            $table->string('dni_empleado', 255)
+            -> charset('utf8mb3') 
+            -> collation ('utf8mb3_general_ci');
 
             $table->integer('dias_vacacionales')->default(0);
             $table->integer('dias_compensatorios')->default(0);

@@ -11,7 +11,9 @@ return new class extends Migration
         Schema::create('horas_acumuladas_sistema', function (Blueprint $table) {
             $table->id();
 
-            $table->string('dni_empleado');
+            $table->string('dni_empleado', 255)
+            -> charset('utf8mb3') 
+            -> collation ('utf8mb3_general_ci');
 
             $table->decimal('horas_otorgadas', 8, 2)->default(0);
             $table->decimal('horas_usadas', 8, 2)->default(0);
