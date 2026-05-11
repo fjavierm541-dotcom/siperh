@@ -23,7 +23,7 @@ use App\Http\Controllers\SolicitudCompensatorioController;
 | be assigned to the "web" middleware group. Make something great! prueba
 |
 */
-
+//texto de prueba
 Route::get('/', function () {
     return view('welcome');
 });
