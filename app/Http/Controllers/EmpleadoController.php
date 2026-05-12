@@ -270,6 +270,28 @@ for ($i = 1; $i <= 7; $i++) {
     }
 }
 
+for ($i = 1; $i <= 7; $i++) {
+
+    $request->merge([
+        "nombre_beneficiario$i" => $request->input("nombre_beneficiario$i") ?: 'Vacío',
+        "porcentaje_beneficiario$i" => $request->input("porcentaje_beneficiario$i") ?: 0,
+        "parentezco_beneficiario$i" => $request->input("parentezco_beneficiario$i") ?: 'Vacío',
+        "DNI_beneficiario$i" => $request->input("DNI_beneficiario$i") ?: '0000-0000-00000'
+    ]);
+
+}
+
+// AQUÍ AGREGA ESTO
+$request->merge([
+    'nombre_contacto1' => $request->input('nombre_contacto1') ?: 'Ninguno',
+    'telefono_contacto1' => $request->input('telefono_contacto1') ?: '00000000',
+    'parentezco_contacto1' => $request->input('parentezco_contacto1') ?: 'Otro',
+
+    'nombre_contacto2' => $request->input('nombre_contacto2') ?: 'Ninguno',
+    'telefono_contacto2' => $request->input('telefono_contacto2') ?: '00000000',
+    'parentezco_contacto2' => $request->input('parentezco_contacto2') ?: 'Otro',
+]);
+
 if ($hayBeneficiarios) {
 
     if ($totalPorcentaje < 100) {

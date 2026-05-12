@@ -232,12 +232,12 @@
 
     <a href="{{ route('empleados.show', $empleado->DNI) }}"
        class="btn btn-outline-dark">
-        Historial Hrs
+        Historial Vac.
     </a>
 
     <a href="{{ route('empleados.verRegistro', $empleado->DNI) }}"
        class="btn btn-outline-secondary">
-        Registro
+        Perfil
     </a>
 
     <button type="button"

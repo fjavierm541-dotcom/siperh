@@ -479,9 +479,8 @@ En caso de emergencia se autoriza llamar a las personas en el siguiente orden:
 <input type="text"
        name="nombre_contacto1"
        placeholder="Nombre del primer contacto de emergencia"
-       minlength="3"
-       maxlength="20"
-       required
+       minlength="2"
+       maxlength="50"
        value="{{ old('nombre_contacto1') }}"
        class="form-control @error('nombre_contacto1') is-invalid @enderror">
 @error('nombre_contacto1')
@@ -497,7 +496,6 @@ En caso de emergencia se autoriza llamar a las personas en el siguiente orden:
        pattern="[0-9]{8}"
        inputmode="numeric"
        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-       required
        value="{{ old('telefono_contacto1') }}"
        class="form-control @error('telefono_contacto1') is-invalid @enderror">
 @error('telefono_contacto1')
@@ -507,7 +505,6 @@ En caso de emergencia se autoriza llamar a las personas en el siguiente orden:
 
 <div class="col-md-4">
 <select name="parentezco_contacto1"
-        required
         class="form-control @error('parentezco_contacto1') is-invalid @enderror">
     <option value="">Seleccione Parentesco</option>
     @foreach([
@@ -544,8 +541,8 @@ En caso de emergencia se autoriza llamar a las personas en el siguiente orden:
 <input type="text"
        name="nombre_contacto2"
        placeholder="Nombre del segundo contacto de emergencia"
-       minlength="3"
-       maxlength="20"
+       minlength="2"
+       maxlength="50"
        value="{{ old('nombre_contacto2') }}"
        class="form-control @error('nombre_contacto2') is-invalid @enderror">
 @error('nombre_contacto2')
