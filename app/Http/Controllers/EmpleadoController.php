@@ -975,53 +975,88 @@ public function verRegistroImprimir($dni)
 
     
 
-public function editarFuncion($dni)
-{
-    $empleado = Empleado::findOrFail($dni);
+    public function editarFuncion($dni)
+    {
+        $empleado = Empleado::findOrFail($dni);
 
-    $departamentos = DepartamentoMuni::where('activo',1)
-        ->orderBy('codigo')
-        ->get();
+        $departamentos = DepartamentoMuni::where('activo',1)
+            ->orderBy('codigo')
+            ->get();
 
-    return view('empleados.funcion', compact('empleado','departamentos'));
-}
+        return view('empleados.funcion', compact('empleado','departamentos'));
+    }
 
-public function guardarFuncion(Request $request, $dni)
-{
-    $empleado = Empleado::findOrFail($dni);
+    public function guardarFuncion(Request $request, $dni)
+    {
+        $empleado = Empleado::findOrFail($dni);
 
-    $empleado->departamento_funcional_id =
-        $request->departamento_funcional_id;
+        $empleado->departamento_funcional_id =
+            $request->departamento_funcional_id;
 
-    $empleado->save();
+        $empleado->save();
 
-    return redirect()
-        ->route('empleados.verRegistro',$dni)
-        ->with('success','Asignación funcional actualizada');
-}
+        return redirect()
+            ->route('empleados.verRegistro',$dni)
+            ->with('success','Asignación funcional actualizada');
+    }
 
 
 
-//estado de empleado para inactivar o activar
-public function cambiarEstado($dni)
-{
-    $empleado = Empleado::where('DNI', $dni)->firstOrFail();
+    //estado de empleado para inactivar o activar
+    public function cambiarEstado($dni)
+    {
+        $empleado = Empleado::where('DNI', $dni)->firstOrFail();
 
-    $estadoActual = strtolower(trim($empleado->estado_empleado ?? 'activo'));
+        $estadoActual = strtolower(trim($empleado->estado_empleado ?? 'activo'));
 
-    $empleado->estado_empleado = $estadoActual === 'inactivo'
-        ? 'activo'
-        : 'inactivo';
+        $empleado->estado_empleado = $estadoActual === 'inactivo'
+            ? 'activo'
+            : 'inactivo';
 
-    $empleado->usuario_modifica = auth()->user()->name ?? 'Sistema';
-    $empleado->save();
+        $empleado->usuario_modifica = auth()->user()->name ?? 'Sistema';
+        $empleado->save();
 
-    $mensaje = $empleado->estado_empleado === 'activo'
-        ? 'Empleado activado correctamente.'
-        : 'Empleado inactivado correctamente.';
+        $mensaje = $empleado->estado_empleado === 'activo'
+            ? 'Empleado activado correctamente.'
+            : 'Empleado inactivado correctamente.';
 
-    return redirect()
-        ->route('empleados.index')
-        ->with('success', $mensaje);
-}
+        return redirect()
+            ->route('empleados.index')
+            ->with('success', $mensaje);
+    }
+
+
+    public function imprimirListado(Request $request)
+    {
+        $estado = $request->get('estado', 'activo');
+
+        $query = Empleado::with(['departamento', 'departamentoFuncional'])
+            ->orderBy('primer_nombre')
+            ->orderBy('primer_apellido');
+
+        if ($estado === 'activo') {
+            $query->where(function ($q) {
+                $q->where('estado_empleado', 'activo')
+                ->orWhereNull('estado_empleado');
+            });
+        }
+
+        if ($estado === 'inactivo') {
+            $query->where('estado_empleado', 'inactivo');
+        }
+
+        $empleados = $query->get();
+
+        $titulo = match ($estado) {
+            'inactivo' => 'Listado de Empleados Inactivos',
+            'todos' => 'Listado General de Empleados',
+            default => 'Listado de Empleados Activos',
+        };
+
+        $pdf = Pdf::loadView('empleados.imprimirListado', compact('empleados', 'titulo', 'estado'));
+
+        $pdf->setPaper('letter', 'landscape');
+
+        return $pdf->stream('listado-empleados-'.$estado.'.pdf');
+    }
 }

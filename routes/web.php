@@ -95,6 +95,9 @@ Route::post('/periodos/reactivar', [PeriodoVacacionesController::class, 'reactiv
 
 // crear/registrar nuevos empleados en el sistema
 
+Route::get('/empleados/imprimir/listado', [EmpleadoController::class, 'imprimirListado'])
+    ->name('empleados.imprimirListado');
+
 //estado de empleado activo o inactivo
 Route::post('/empleados/{dni}/cambiar-estado', [EmpleadoController::class, 'cambiarEstado'])
     ->where('dni', '.*')
@@ -134,6 +137,8 @@ Route::get('/empleados/{dni}', [EmpleadoController::class, 'show'])
 //imprimir reprte individual de empleado  
 Route::get('/empleados/{dni}/reporte', [EmpleadoController::class, 'reporte'])
     ->name('empleados.reporte');
+
+    
 
     // editar departamento funcional
 Route::get('empleados/{dni}/funcion', [EmpleadoController::class, 'editarFuncion'])

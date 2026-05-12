@@ -25,6 +25,7 @@
             border-top-right-radius: 18px;
         }
 
+
         .badge-semaforo {
             width: 15px;
             height: 15px;
@@ -52,6 +53,37 @@
          <!-- HEADER -->
         <div class="card-header-custom p-4 d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Listado de Empleados</h4>
+
+            <div class="dropdown">
+    <button class="btn btn-primary-custom btn-sm dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown">
+        Imprimir empleados
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow">
+        <li>
+            <a class="dropdown-item" target="_blank"
+               href="{{ route('empleados.imprimirListado', ['estado' => 'activo']) }}">
+                Empleados activos
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" target="_blank"
+               href="{{ route('empleados.imprimirListado', ['estado' => 'inactivo']) }}">
+                Empleados inactivos
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" target="_blank"
+               href="{{ route('empleados.imprimirListado', ['estado' => 'todos']) }}">
+                Todos los empleados
+            </a>
+        </li>
+    </ul>
+</div>
 
             <div class="d-flex gap-2">
 
