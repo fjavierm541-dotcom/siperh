@@ -35,6 +35,29 @@
     }
 </style>
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 42px;
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        padding: 6px 10px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        color: #212529;
+        line-height: 28px;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px;
+    }
+    .select2-results__options {
+    max-height: 350px !important;
+}
+</style>
+
 @if(session('error'))
     <div class="alert alert-danger">
         {{ session('error') }}
@@ -46,7 +69,7 @@
     <div class="glass-card">
 
         <div class="card-header-custom p-4">
-            <h4 class="mb-0">Registro histórico de vacaciones</h4>
+            <h4 class="mb-0">Registro inicial de vacaciones</h4>
         </div>
 
         <div class="p-4">
@@ -61,17 +84,19 @@
                 @csrf
 
                 <!-- Empleado -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Empleado</label>
-                    <select name="dni_empleado" class="form-select" required>
-                        <option value="">Seleccione</option>
-                        @foreach($empleados as $empleado)
-                            <option value="{{ $empleado->DNI }}">
-                                {{ $empleado->primer_nombre }} {{ $empleado->primer_apellido }} - {{ $empleado->DNI }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <select name="dni_empleado" id="dni_empleado" class="form-select select-empleado" required>
+                    <option value="">Seleccione o busque un empleado</option>
+
+                    @foreach($empleados as $empleado)
+                        <option value="{{ $empleado->DNI }}">
+                            {{ $empleado->primer_nombre }}
+                            {{ $empleado->segundo_nombre }}
+                            {{ $empleado->primer_apellido }}
+                            {{ $empleado->segundo_apellido }}
+                            - {{ $empleado->DNI }}
+                        </option>
+                    @endforeach
+                </select>
 
                 <div id="contenedor-periodos">
 
@@ -101,16 +126,34 @@
 
                 </div>
 
-                <button type="button" class="btn btn-secondary mb-3" onclick="agregarPeriodo()">
-                    + Agregar otro año
-                </button>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4">
 
+    <div class="d-flex gap-2">
 
-                <div class="text-end">
-                    <button type="submit" class="btn btn-gold">
-                        Guardar historial
-                    </button>
-                </div>
+        <a href="{{ route('paginas.inicio') }}"
+           class="btn btn-outline-secondary">
+
+            Cancelar y volver
+
+        </a>
+
+        <button type="button"
+                class="btn btn-secondary"
+                onclick="agregarPeriodo()">
+
+            + Agregar otro año
+
+        </button>
+
+    </div>
+
+    <button type="submit" class="btn btn-gold px-4">
+
+        Guardar registro
+
+    </button>
+
+</div>
 
             </form>
 
@@ -191,6 +234,26 @@ document.querySelector('form').addEventListener('submit', function(e) {
     }
 
 });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.select-empleado').select2({
+            placeholder: 'Seleccione o busque un empleado',
+            width: '100%',
+            language: {
+                noResults: function() {
+                    return 'No se encontraron empleados';
+                },
+                searching: function() {
+                    return 'Buscando...';
+                }
+            }
+        });
+    });
 </script>
 
 @endsection

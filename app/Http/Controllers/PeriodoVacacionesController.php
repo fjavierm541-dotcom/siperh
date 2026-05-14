@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Empleado;
 use App\Models\PeriodoVacacionesSistema;
+use App\Models\MovimientoPermisoSistema;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -99,7 +100,7 @@ class PeriodoVacacionesController extends Controller
                     // 🔥 ESTADO AUTOMÁTICO (MEJOR UX)
                     $estado = $fechaVencimiento->isPast() ? 'vencido' : 'activo';
 
-                    PeriodoVacacionesSistema::create([
+                    $periodo = PeriodoVacacionesSistema::create([
                         'dni_empleado' => $request->dni_empleado,
                         'anio_laboral' => $anioLaboral,
                         'dias_otorgados' => $otorgados,
@@ -107,6 +108,22 @@ class PeriodoVacacionesController extends Controller
                         'fecha_inicio_periodo' => $fechaInicio,
                         'fecha_vencimiento' => $fechaVencimiento,
                         'estado' => $estado
+                    ]);
+
+                    $diasDisponibles = $otorgados - $usados;
+
+                    MovimientoPermisoSistema::create([
+                        'dni_empleado' => $request->dni_empleado,
+                        'periodo_id' => $periodo->id,
+                        'permiso_id' => null,
+                        'categoria' => 'vacaciones',
+                        'tipo_movimiento' => 'carga_inicial',
+                        'dias_afectados' => $diasDisponibles,
+                        'horas_afectadas' => 0,
+                        'descripcion' => 'Carga inicial de vacaciones del año laboral ' . $anioLaboral .
+                            ': ' . $otorgados . ' días otorgados, ' .
+                            $usados . ' días usados, ' .
+                            $diasDisponibles . ' días disponibles.',
                     ]);
                 }
 
