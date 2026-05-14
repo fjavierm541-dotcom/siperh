@@ -11,6 +11,9 @@ use App\Http\Controllers\DocumentoEmpleado;
 use App\Http\Controllers\CalendarioController;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\SolicitudCompensatorioController;
+use App\Http\Controllers\CorreccionSaldoController;
+
+
     
 
 /*
@@ -283,3 +286,11 @@ Route::get('/compensatorios/solicitudes', [SolicitudCompensatorioController::cla
 
 Route::post('/compensatorios/{id}/rechazar', [SolicitudCompensatorioController::class, 'rechazar'])
     ->name('compensatorios.solicitudes.rechazar');
+
+
+    //correccio de saldos 
+    Route::get('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'create'])
+    ->name('correcciones-saldos.create');
+
+    Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
+    ->name('correcciones-saldos.store');
