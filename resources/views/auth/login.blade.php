@@ -20,13 +20,24 @@
         Tienes <strong>5 intentos</strong> antes de bloqueo.
     </p>
 
-    <form id="loginForm" novalidate>
+   <form method="POST" action="{{ route('login.post') }}" id="loginForm" novalidate>
+    @csrf
 
-        <input type="text" id="usuario" class="form-control mb-1" placeholder="Usuario">
+        <input type="text"
+       id="usuario"
+       name="username"
+       class="form-control mb-1"
+       placeholder="Usuario">
+
         <div id="errorUsuario" class="error-text"></div>
 
         <div class="password-wrapper mb-1">
-            <input type="password" id="password" class="form-control" placeholder="Contraseña">
+           <input type="password"
+       id="password"
+       name="password"
+       class="form-control"
+       placeholder="Contraseña">
+       
             <span class="toggle-password" onclick="togglePassword()">👁</span>
         </div>
         <div id="errorPassword" class="error-text"></div>

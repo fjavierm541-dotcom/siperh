@@ -12,7 +12,7 @@ use App\Http\Controllers\CalendarioController;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\SolicitudCompensatorioController;
 use App\Http\Controllers\CorreccionSaldoController;
-
+use App\Http\Controllers\Auth\LoginController;
 
     
 
@@ -48,6 +48,21 @@ Route::get('/inicio', function () {
     return view('paginas.inicio');
 })->name('paginas.inicio');
 
+
+//LOGIN 
+// LOGIN
+Route::get('/', [LoginController::class, 'mostrarLogin'])
+    ->name('login');
+
+Route::post('/login', [LoginController::class, 'login'])
+    ->name('login.post');
+
+Route::post('/logout', [LoginController::class, 'logout'])
+    ->name('logout');
+
+    Route::get('/inicio', function () {
+    return 'LOGIN EXITOSO';
+})->middleware('auth')->name('inicio');
 
 //Ruta para menu de permisos 
 Route::get('/permisos/menu', function () {

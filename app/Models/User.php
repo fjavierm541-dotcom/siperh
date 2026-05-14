@@ -12,42 +12,32 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
+        'empleado_dni',
         'name',
+        'username',
         'email',
+        'telefono',
         'password',
-        'rol_id',
+        'rol',
+        'activo',
     ];
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'activo' => 'boolean',
     ];
 
     /* ======================
        RELACIONES
     ====================== */
 
-    public function role()
-{
-    return $this->belongsTo(Role::class);
-}
-
-public function empleado()
-{
-    return $this->hasOne(Empleado::class);
-}
-
-
-    public function permisos()
-{
-    return $this->hasMany(Permiso::class);
-}
-
-    public function diasAcumulados()
+    public function empleado()
     {
-        return $this->hasOne(DiasAcumulados::class);
+        return $this->belongsTo(Empleado::class, 'empleado_dni', 'dni');
     }
 }
