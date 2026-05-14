@@ -61,8 +61,8 @@ Route::post('/logout', [LoginController::class, 'logout'])
     ->name('logout');
 
     Route::get('/inicio', function () {
-    return 'LOGIN EXITOSO';
-})->middleware('auth')->name('inicio');
+    return 'LOGIN EXITOSO COMO SUPERADMIN';
+})->middleware(['auth', 'rol:superadmin'])->name('inicio');
 
 //Ruta para menu de permisos 
 Route::get('/permisos/menu', function () {
