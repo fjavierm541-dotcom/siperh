@@ -219,15 +219,44 @@
                                 </td>
                                 <td>
 
-                                    @if($permiso->estado->nombre == 'Pendiente')
-                                        <span class="badge bg-warning text-dark">Pendiente</span>
-                                    @elseif($permiso->estado->nombre == 'Aprobado')
-                                        <span class="badge bg-success">Aprobado</span>
-                                    @else
-                                        <span class="badge bg-danger">Rechazado</span>
-                                    @endif
-                                    
-                                </td>
+                            @if($permiso->estado->nombre == 'Pendiente')
+
+                                <span class="badge bg-warning text-dark">
+                                    Pendiente
+                                </span>
+
+                            @elseif($permiso->estado->nombre == 'Aprobado')
+
+                                <span class="badge bg-success">
+                                    Aprobado
+                                </span>
+
+                            @else
+
+                                <span class="badge bg-danger">
+                                    Rechazado
+                                </span>
+
+                               @if($permiso->motivo_rechazo)
+
+    <div class="mt-1">
+
+        <button
+            type="button"
+            class="btn btn-link btn-sm p-0 text-secondary "
+            onclick="verMotivoRechazo(`{{ addslashes($permiso->motivo_rechazo) }}`)">
+
+            Ver motivo
+
+        </button>
+
+    </div>
+
+@endif
+
+                            @endif
+
+                        </td>
 
                                 <td>
                                     @if($permiso->estado->nombre == 'Pendiente')
@@ -321,9 +350,59 @@
 </div>
 
 
+<!-- MODAL VER MOTIVO -->
+<div class="modal fade" id="modalMotivoRechazo" tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+
+                <h5 class="modal-title">
+                    Motivo del rechazo
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+               <p id="textoMotivoRechazo"
+   class="mb-0"
+   style="white-space: pre-wrap; word-break: break-word;">
+</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
 
 <!-- BOOTSTRAP JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function verMotivoRechazo(motivo)
+{
+    document.getElementById('textoMotivoRechazo').textContent = motivo;
+
+    const modal = new bootstrap.Modal(
+        document.getElementById('modalMotivoRechazo')
+    );
+
+    modal.show();
+}
+</script>
 
 <script>
     function abrirModal(accion, id) {
@@ -392,5 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 </script>
+
+
 
 @endsection

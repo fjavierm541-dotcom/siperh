@@ -15,6 +15,7 @@ class PermisoSistema extends Model
     'estado_permiso_id',
     'fecha_inicio',
     'fecha_fin',
+    'motivo_rechazo',
     'horas',
     'motivo',
     'hora_salida',
@@ -44,15 +45,6 @@ class PermisoSistema extends Model
     }
 
 
-    public function rechazar($id)
-{
-    $permiso = PermisoSistema::findOrFail($id);
 
-    // Estado 3 = Rechazado
-    $permiso->estado_permiso_id = 3;
-    $permiso->save();
-
-    return back()->with('success', 'Permiso rechazado correctamente');
-}
 
 }

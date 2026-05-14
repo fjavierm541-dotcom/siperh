@@ -599,7 +599,8 @@ private function formatearHoras($horas)
     $estadoRechazado = EstadoPermisoSistema::whereRaw('LOWER(nombre) = ?', ['rechazado'])->firstOrFail();
 
     $permiso->estado_permiso_id = $estadoRechazado->id;
-    $permiso->save();
+$permiso->motivo_rechazo = $request->motivo_rechazo;
+$permiso->save();
 
     MovimientoPermisoSistema::create([
         'dni_empleado' => $permiso->dni_empleado,
