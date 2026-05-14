@@ -4,6 +4,19 @@
 
 @section('content')
 
+<style>
+    .btn-flotante-asignar {
+        position: fixed;
+        right: 30px;
+        bottom: 30px;
+        z-index: 1050;
+        border-radius: 50px;
+        padding: 12px 22px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        font-weight: 600;
+    }
+</style>
+
 <div class="glass-card">
 
     <!-- HEADER -->
@@ -156,10 +169,8 @@
             </div>
 
 
-            <button class="btn btn-primary-custom mt-3">
-
-                Asignar empleados
-
+            <button class="btn btn-primary-custom btn-flotante-asignar">
+                Guardar asignación
             </button>
 
         </form>

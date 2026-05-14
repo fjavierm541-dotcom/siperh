@@ -187,6 +187,15 @@ Route::get('/departamentos/{id}/asignar',[DepartamentoMuniController::class,'asi
 
 Route::post('/departamentos/{id}/asignar',[DepartamentoMuniController::class,'guardarAsignacion'])
 ->name('departamentos.asignar.guardar');
+//imprimri listado de deptos por estado
+Route::get('/departamentos/imprimir/{estado}', [DepartamentoMuniController::class, 'imprimir'])
+    ->name('departamentos.imprimir');
+//elimiar o retirar empeleados de depto
+    Route::patch('/departamentos/{departamento}/retirar-empleado/{empleado}', [DepartamentoMuniController::class, 'retirarEmpleado'])
+    ->name('departamentos.retirarEmpleado');
+//imprimir listado de empleados por depto
+    Route::get('/departamentos/{id}/imprimir-empleados', [DepartamentoMuniController::class, 'imprimirEmpleados'])
+    ->name('departamentos.imprimirEmpleados');
 
 
 //RUTAS AGREGAR JEFES DE DEPTOS

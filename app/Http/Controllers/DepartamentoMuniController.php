@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DepartamentoMuni;
 use App\Models\Empleado;
+use Illuminate\Support\Facades\DB;
 
 class DepartamentoMuniController extends Controller
 {
 public function index(Request $request)
 {
     $buscar = $request->buscar;
+
+    // filtro estado
+    $estado = $request->estado ?? 'activos';
 
     $departamentos = DepartamentoMuni::query()
 
@@ -25,13 +29,33 @@ public function index(Request $request)
 
         })
 
+        // SOLO ACTIVOS
+        ->when($estado === 'activos', function ($query) {
+
+            $query->where('activo', true);
+
+        })
+
+        // SOLO INACTIVOS
+        ->when($estado === 'inactivos', function ($query) {
+
+            $query->where('activo', false);
+
+        })
+
+        // TODOS → no aplica filtro
+
         ->orderBy('codigo')
 
         ->paginate(15)
 
         ->withQueryString();
 
-    return view('departamentos.index', compact('departamentos', 'buscar'));
+    return view('departamentos.index', compact(
+        'departamentos',
+        'buscar',
+        'estado'
+    ));
 }
 
 
@@ -124,34 +148,77 @@ public function show($id)
         return view('departamentos.edit', compact('departamento','padres'));
     }
 
+
+
+
+
+
         public function update(Request $request, $id)
-    {
-        $departamento = DepartamentoMuni::findOrFail($id);
+{
+    $departamento = DepartamentoMuni::findOrFail($id);
 
-        $departamento->update([
+    $request->validate(
+        [
+            'codigo' => 'required|digits:3|unique:departamentos_muni,codigo,' . $departamento->id,
+            'nombre' => 'required|string|max:150',
+            'descripcion' => 'nullable|string|max:255',
+            'departamento_padre_id' => 'nullable|exists:departamentos_muni,id',
+        ],
+        [
+            'codigo.required' => 'Debe ingresar el código del departamento.',
+            'codigo.digits' => 'El código debe tener exactamente 3 dígitos.',
+            'codigo.unique' => 'Este código ya está registrado.',
 
-            'codigo'=>$request->codigo,
-            'nombre'=>$request->nombre,
-            'descripcion'=>$request->descripcion,
-            'departamento_padre_id'=>$request->departamento_padre_id,
-            'activo'=>$request->activo
+            'nombre.required' => 'Debe ingresar el nombre del departamento.',
+            'nombre.max' => 'El nombre no puede exceder 150 caracteres.',
 
-        ]);
+            'descripcion.max' => 'La descripción no puede exceder 255 caracteres.',
 
-        return redirect()->route('departamentos.index');
+            'departamento_padre_id.exists' => 'El departamento padre seleccionado no es válido.',
+        ]
+    );
+
+    $departamento->update([
+        'codigo' => $request->codigo,
+        'nombre' => $request->nombre,
+        'descripcion' => $request->descripcion,
+        'departamento_padre_id' => $request->departamento_padre_id,
+    ]);
+
+    return redirect()
+        ->route('departamentos.index')
+        ->with('success', 'Departamento actualizado correctamente.');
+}
+
+
+
+
+
+
+
+       public function toggle($id)
+{
+    $dep = DepartamentoMuni::findOrFail($id);
+
+    if ($dep->activo) {
+
+        $tieneEmpleados = Empleado::where('departamento_funcional_id', $dep->id)
+            ->exists();
+
+        if ($tieneEmpleados) {
+            return back()->with('error', 'No se puede inactivar este departamento porque tiene empleados asignados. Primero debe moverlos a otro departamento.');
+        }
     }
 
+    $dep->activo = !$dep->activo;
 
-        public function toggle($id)
-    {
-        $dep = DepartamentoMuni::findOrFail($id);
+    $dep->save();
 
-        $dep->activo = !$dep->activo;
-
-        $dep->save();
-
-        return back();
-    }
+    return back()->with('success', $dep->activo
+        ? 'Departamento activado correctamente.'
+        : 'Departamento inactivado correctamente.'
+    );
+}
 
 
 
@@ -236,6 +303,66 @@ public function guardarJefe(Request $request,$id)
     return redirect()
         ->route('departamentos.show',$id)
         ->with('success','Jefe de departamento actualizado');
+}
+
+public function imprimir($estado)
+{
+    $query = DepartamentoMuni::query();
+
+    if ($estado === 'activos') {
+        $query->where('activo', true);
+    }
+
+    if ($estado === 'inactivos') {
+        $query->where('activo', false);
+    }
+
+    if (!in_array($estado, ['activos', 'inactivos', 'todos'])) {
+        abort(404);
+    }
+
+    $departamentos = $query
+        ->orderBy('codigo')
+        ->get();
+
+    return view('departamentos.imprimir', compact('departamentos', 'estado'));
+}
+
+public function retirarEmpleado($departamentoId, $dniEmpleado)
+{
+    $departamento = DepartamentoMuni::findOrFail($departamentoId);
+
+    $empleado = Empleado::where('DNI', $dniEmpleado)->firstOrFail();
+
+    if ($empleado->departamento_funcional_id != $departamento->id) {
+        return back()->with('error', 'Este empleado ya no pertenece a este departamento funcional.');
+    }
+
+    DB::transaction(function () use ($departamento, $empleado) {
+
+        $empleado->departamento_funcional_id = null;
+        $empleado->save();
+
+        if ($departamento->jefe_dni === $empleado->DNI) {
+            $departamento->jefe_dni = null;
+            $departamento->save();
+        }
+
+        // Aquí luego podemos registrar bitácora:
+        // BitacoraSistema::create([...]);
+    });
+
+    return back()->with('success', 'Empleado retirado del departamento correctamente.');
+}
+
+public function imprimirEmpleados($id)
+{
+    $departamento = DepartamentoMuni::with([
+        'empleadosFuncionales',
+        'jefe'
+    ])->findOrFail($id);
+
+    return view('departamentos.imprimir-empleados', compact('departamento'));
 }
 
 }

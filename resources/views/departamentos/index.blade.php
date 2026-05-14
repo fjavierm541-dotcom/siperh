@@ -24,6 +24,8 @@
 
 @endif
 
+
+
 <style>
 
     .btn-group .btn {
@@ -44,7 +46,7 @@
         <div class="d-flex justify-content-between align-items-center">
 
             <h5 class="mb-0">
-                Listado de Departamentos Activos
+                Listado de Departamentos
             </h5>
 
             <div>
@@ -63,33 +65,110 @@
         </div>
 
     </div>
+    @if(session('error'))
+    <div class="alert alert-danger m-3">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if(session('success'))
+    <div class="alert alert-success m-3">
+        {{ session('success') }}
+    </div>
+@endif
 
 
-   <!-- BUSCADOR -->
+<!-- BUSCADOR Y FILTROS -->
 <div class="p-3">
 
     <form id="formBusqueda" method="GET" action="{{ route('departamentos.index') }}" class="mb-3">
 
-        <div class="row g-2">
+        <div class="row g-2 align-items-center">
 
-            <div class="col-md-10">
+            <div class="col-md-6">
 
                 <input
-                type="text"
-                id="buscarInput"
-                name="buscar"
-                class="form-control"
-                placeholder="Buscar por nombre de depto. o código"
-                value="{{ $buscar ?? '' }}">
+                    type="text"
+                    id="buscarInput"
+                    name="buscar"
+                    class="form-control"
+                    placeholder="Buscar por nombre de depto. o código"
+                    value="{{ request('buscar') }}">
+
+            </div>
+
+            <div class="col-md-2">
+
+                <select name="estado"
+                        class="form-select"
+                        onchange="this.form.submit()">
+
+                    <option value="activos" {{ request('estado', 'activos') == 'activos' ? 'selected' : '' }}>
+                        Activos
+                    </option>
+
+                    <option value="inactivos" {{ request('estado') == 'inactivos' ? 'selected' : '' }}>
+                        Inactivos
+                    </option>
+
+                    <option value="todos" {{ request('estado') == 'todos' ? 'selected' : '' }}>
+                        Todos
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <div class="dropdown w-100">
+
+                    <button class="btn btn-primary-custom w-100 dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown">
+
+                        Imprimir
+
+                    </button>
+
+                    <ul class="dropdown-menu w-100">
+
+                        <li>
+                            <a class="dropdown-item"
+                               href="{{ route('departamentos.imprimir', ['estado' => 'activos']) }}"
+                               target="_blank">
+                                Departamentos activos
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item"
+                               href="{{ route('departamentos.imprimir', ['estado' => 'inactivos']) }}"
+                               target="_blank">
+                                Departamentos inactivos
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item"
+                               href="{{ route('departamentos.imprimir', ['estado' => 'todos']) }}"
+                               target="_blank">
+                                Todos los departamentos
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
 
             </div>
 
             <div class="col-md-2">
 
                 <a href="{{ route('departamentos.index') }}"
-                class="btn btn-secondary w-100">
+                   class="btn btn-secondary w-100">
 
-                Limpiar
+                    Limpiar
 
                 </a>
 
@@ -155,7 +234,7 @@
                         @else
 
                         <span class="badge bg-secondary">
-                            Inactivo
+                            Inactiv
                         </span>
 
                         @endif
@@ -182,10 +261,11 @@
                             @csrf
                             @method('PATCH')
 
-                            <button type="submit"
-                            class="btn btn-outline-secondary btn-sm">
-                                {{ $dep->activo ? 'Desactivar' : 'Activar' }}
-                            </button>
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-sm"
+                                onclick="confirmarCambioEstado(this)">
+                            {{ $dep->activo ? 'Inactivar' : 'Activar' }}
+                        </button>
 
                         </form>
 
@@ -256,6 +336,63 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 
+</script>
+
+<div class="modal fade" id="modalEstadoDepto" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title">Confirmar acción</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <p id="mensajeModalEstado" class="mb-0"></p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+
+                <button type="button"
+                        class="btn btn-warning"
+                        id="btnConfirmarEstado">
+                    Sí, continuar
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let formEstadoSeleccionado = null;
+
+    function confirmarCambioEstado(boton) {
+
+        formEstadoSeleccionado = boton.closest('form');
+
+        const accion = boton.textContent.trim();
+
+        const mensaje = accion === 'Inactivar'
+            ? '¿Está seguro de inactivar este departamento? Solo podrá hacerlo si no tiene empleados asignados.'
+            : '¿Está seguro de activar nuevamente este departamento?';
+
+        document.getElementById('mensajeModalEstado').textContent = mensaje;
+
+        const modal = new bootstrap.Modal(document.getElementById('modalEstadoDepto'));
+        modal.show();
+    }
+
+    document.getElementById('btnConfirmarEstado').addEventListener('click', function () {
+        if (formEstadoSeleccionado) {
+            formEstadoSeleccionado.submit();
+        }
+    });
 </script>
 
 @endsection
