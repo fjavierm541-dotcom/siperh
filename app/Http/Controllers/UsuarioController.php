@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Empleado;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\DB;
 
 class UsuarioController extends Controller
 {
@@ -18,15 +19,44 @@ class UsuarioController extends Controller
         return view('usuarios.index', compact('usuarios'));
     }
 
-    public function create()
-    {
-        // Por ahora cargamos empleados activos.
-        // Luego afinamos el filtro: RRHH + jefes de departamento.
-        $empleados = Empleado::orderBy('primer_nombre')
-            ->get();
+   public function create()
+{
+    // Empleados que ya tienen usuario
+    $empleadosConUsuario = User::whereNotNull('empleado_dni')
+        ->pluck('empleado_dni')
+        ->toArray();
 
-        return view('usuarios.create', compact('empleados'));
-    }
+    // DNIs de jefes de departamento
+    $jefesDepartamento = DB::table('departamentos_muni')
+        ->whereNotNull('jefe_dni')
+        ->pluck('jefe_dni')
+        ->toArray();
+
+    $empleados = Empleado::with('departamentoFuncional')
+        ->whereNotIn('DNI', $empleadosConUsuario)
+        ->where(function ($query) use ($jefesDepartamento) {
+
+            // Jefes de departamento
+            $query->whereIn('DNI', $jefesDepartamento)
+
+            // Personal de Recursos Humanos
+            ->orWhereHas('departamentoFuncional', function ($q) {
+                $q->where('nombre', 'like', '%recursos humanos%')
+                  ->orWhere('nombre', 'like', '%rrhh%')
+                  ->orWhere('nombre', 'like', '%recursos%');
+            });
+
+        })
+        ->orderBy('primer_nombre')
+        ->get();
+
+    return view('usuarios.create', compact('empleados'));
+}
+
+
+
+
+
 
     public function store(Request $request)
     {
@@ -36,8 +66,6 @@ class UsuarioController extends Controller
 
         $request->validate([
             'empleado_dni' => 'required|string|max:255|exists:empleados,DNI|unique:users,empleado_dni',
-
-            'name' => 'required|string|max:150',
 
             'username' => [
                 'required',
@@ -101,9 +129,18 @@ class UsuarioController extends Controller
             abort(403, 'No tienes permiso para crear usuarios.');
         }
 
+        $empleado = Empleado::findOrFail($request->empleado_dni);
+
+        $nombreCompleto = trim(
+            $empleado->primer_nombre . ' ' .
+            $empleado->segundo_nombre . ' ' .
+            $empleado->primer_apellido . ' ' .
+            $empleado->segundo_apellido
+        );
+
         User::create([
             'empleado_dni' => $request->empleado_dni,
-            'name' => $request->name,
+            'name' => $nombreCompleto,
             'username' => $request->username,
             'email' => $request->email,
             'telefono' => $request->telefono,

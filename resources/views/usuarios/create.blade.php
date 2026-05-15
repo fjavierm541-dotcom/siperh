@@ -57,13 +57,20 @@
                         @foreach($empleados as $empleado)
 
                             <option value="{{ $empleado->DNI }}"
-                                    data-nombre="{{ $empleado->primer_nombre }} {{ $empleado->primer_apellido }}"
+                                    data-nombre="
+                                        {{ trim(
+                                            $empleado->primer_nombre . ' ' .
+                                            $empleado->segundo_nombre . ' ' .
+                                            $empleado->primer_apellido . ' ' .
+                                            $empleado->segundo_apellido
+                                        ) }}"
                                     {{ old('empleado_dni') == $empleado->DNI ? 'selected' : '' }}>
 
-                                {{ $empleado->DNI }}
-                                -
                                 {{ $empleado->primer_nombre }}
+                                {{ $empleado->segundo_nombre }}
                                 {{ $empleado->primer_apellido }}
+                                {{ $empleado->segundo_apellido }} 
+                                ({{ $empleado->DNI }})
 
                             </option>
 
@@ -78,28 +85,7 @@
                     @enderror
 
                 </div>
-
-                <!-- NOMBRE -->
-                <div class="col-md-6 mb-3">
-
-                    <label class="form-label fw-bold">
-                        Empleado seleccionado
-                    </label>
-
-                    <input type="text"
-                           name="name"
-                           id="nameInput"
-                           value="{{ old('name') }}" 
-                           class="form-control @error('name') is-invalid @enderror"
-                           placeholder="Nombre del usuario" readonly>
-
-                    @error('name')
-                        <div class="invalid-feedback">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
+ 
 
                 <!-- USERNAME -->
                 <div class="col-md-6 mb-3">
