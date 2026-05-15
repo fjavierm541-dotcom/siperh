@@ -14,6 +14,7 @@ use App\Models\DocumentoEmpleado;
 use Illuminate\Support\Facades\DB;
 use App\Models\PermisoSistema;
 use Illuminate\Validation\Rule;
+use App\Helpers\BitacoraHelper;
 
 class EmpleadoController extends Controller
 {

@@ -12,6 +12,7 @@ use App\Models\PeriodoVacacionesSistema;
 use App\Models\MovimientoPermisoSistema;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\BitacoraHelper;
 
 class PermisoController extends Controller
 {

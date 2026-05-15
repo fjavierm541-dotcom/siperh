@@ -9,6 +9,7 @@ use App\Models\PeriodoVacacionesSistema;
 use App\Models\MovimientoPermisoSistema;
 use App\Models\Compensatorio;
 use App\Models\HoraAcumuladaSistema;
+use App\Helpers\BitacoraHelper;
 
 class CorreccionSaldoController extends Controller
 {

@@ -341,3 +341,8 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
 
 
 });
+
+//falta agregar a ajustes
+// 1 usuarios
+// 2 correcciones de saldos
+// 3 bitacoras

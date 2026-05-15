@@ -8,6 +8,7 @@ use App\Models\PeriodoVacacionesSistema;
 use App\Models\MovimientoPermisoSistema;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Helpers\BitacoraHelper;
 
 class PeriodoVacacionesController extends Controller
 {

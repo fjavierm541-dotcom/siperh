@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\DepartamentoMuni;
 use App\Models\Empleado;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\BitacoraHelper;
 
 class DepartamentoMuniController extends Controller
 {
