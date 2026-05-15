@@ -20,6 +20,7 @@ class PermisoSistema extends Model
     'motivo',
     'hora_salida',
     'hora_entrada',
+    'usuario_nombre',
     'documento'
 ];
 

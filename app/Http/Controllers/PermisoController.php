@@ -199,11 +199,11 @@ public function create()
     ]);
 
     return redirect()
-    ->route(auth()->user()->rol === 'jefe_departamento' ? 'permisos.create' : 'permisos.index')
-        ->with([
-            'success' => 'Solicitud enviada correctamente.',
-            'permiso_imprimir' => $permiso->id
-        ]);
+    ->route(auth()->user()->rol === 'jefe_departamento' ? 'permisos.mis' : 'permisos.index')
+    ->with([
+        'success' => 'Solicitud enviada correctamente.',
+        'permiso_imprimir' => $permiso->id
+    ]);
 }
 
 
@@ -277,6 +277,7 @@ public function aprobar($id)
         'dni_empleado' => $permiso->dni_empleado,
         'periodo_id' => null,
         'permiso_id' => $permiso->id,
+        'usuario_nombre' => auth()->user()->name ?? 'Sistema',
         'categoria' => $tipoNombre,
         'tipo_movimiento' => 'aprobacion_permiso',
         'dias_afectados' => 0,
@@ -285,6 +286,8 @@ public function aprobar($id)
         'created_at' => now(),
         'updated_at' => now()
     ]);
+
+    
 
     return redirect()->route('permisos.index')
         ->with('success', 'Permiso aprobado sin afectar saldo.');
@@ -399,6 +402,7 @@ private function consumirHorasFIFO($dniEmpleado, $horasSolicitadas, $permisoId, 
             'dni_empleado' => $dniEmpleado,
             'permiso_id' => $permisoId,
             'periodo_id' => null,
+            'usuario_nombre' => auth()->user()->name ?? 'Sistema',
             'categoria' => 'horas',
             'tipo_movimiento' => 'consumo',
             'dias_afectados' => 0,
@@ -473,6 +477,7 @@ private function consumirHorasFIFO($dniEmpleado, $horasSolicitadas, $permisoId, 
             'dni_empleado' => $dniEmpleado,
             'permiso_id' => $permisoId,
             'periodo_id' => null,
+            'usuario_nombre' => auth()->user()->name ?? 'Sistema',
             'categoria' => 'compensatorio',
             'tipo_movimiento' => 'consumo_horas',
             'dias_afectados' => 1,
@@ -546,6 +551,7 @@ private function consumirHorasFIFO($dniEmpleado, $horasSolicitadas, $permisoId, 
             'dni_empleado' => $dniEmpleado,
             'permiso_id' => $permisoId,
             'periodo_id' => $periodo->id,
+            'usuario_nombre' => auth()->user()->name ?? 'Sistema',
             'categoria' => 'vacaciones',
             'tipo_movimiento' => 'consumo_horas',
             'dias_afectados' => 1,
@@ -628,6 +634,7 @@ $permiso->save();
         'dni_empleado' => $permiso->dni_empleado,
         'periodo_id' => null,
         'permiso_id' => $permiso->id,
+        'usuario_nombre' => auth()->user()->name ?? 'Sistema',
         'categoria' => strtolower($permiso->tipo->nombre ?? 'permiso'),
         'tipo_movimiento' => 'rechazo_permiso',
         'dias_afectados' => 0,
@@ -692,6 +699,7 @@ public function imprimir($id)
         DB::table('movimientos_permisos_sistema')->insert([
             'dni_empleado' => $dni,
             'permiso_id' => $permisoId,
+            'usuario_nombre' => auth()->user()->name ?? 'Sistema',
             'categoria' => $tipoNombre,
             'tipo_movimiento' => 'consumo',
             'dias_afectados' => $usar,
@@ -736,6 +744,7 @@ public function imprimir($id)
                 'dias_afectados' => $usar,
                 'horas_afectadas' => 0,
                 'descripcion' => 'Descuento de ' . $usar . ' día(s) por permiso (' . ucfirst($tipoNombre) . ')',
+                'usuario_nombre' => auth()->user()->name ?? 'Sistema',
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -747,12 +756,124 @@ public function imprimir($id)
     return $diasRestantes;
 }
 
-private function tipoRestaDias($tipoNombre)
-{
-    $tipo = strtolower($tipoNombre);
+    private function tipoRestaDias($tipoNombre)
+    {
+        $tipo = strtolower($tipoNombre);
 
-    return str_contains($tipo, 'vacacion') ||
-           str_contains($tipo, 'compensatorio') ||
-           str_contains($tipo, 'personal');
+        return str_contains($tipo, 'vacacion') ||
+            str_contains($tipo, 'compensatorio') ||
+            str_contains($tipo, 'personal');
+    }
+
+
+    public function misPermisos(Request $request)
+    {
+        $usuario = auth()->user();
+
+        $query = PermisoSistema::with(['empleado','tipo','estado']);
+
+        if ($usuario->rol === 'jefe_departamento') {
+
+            $empleadoUsuario = Empleado::findOrFail($usuario->empleado_dni);
+
+            $query->whereHas('empleado', function ($q) use ($empleadoUsuario) {
+                $q->where('departamento_funcional_id', $empleadoUsuario->departamento_funcional_id);
+            });
+
+        } else {
+
+            if (!$usuario->empleado_dni) {
+                return redirect()
+                    ->route('permisos.index')
+                    ->with('error', 'Tu usuario administrador no está enlazado a un empleado.');
+            }
+
+            $query->where('dni_empleado', $usuario->empleado_dni);
+        }
+
+        $permisos = $query
+            ->when($request->filled('buscar'), function ($query) use ($request) {
+
+                $buscar = $request->buscar;
+
+                $query->where(function ($q) use ($buscar) {
+                    $q->where('modalidad', 'LIKE', "%{$buscar}%")
+                        ->orWhereDate('fecha_inicio', $buscar)
+                        ->orWhereDate('fecha_fin', $buscar)
+                        ->orWhereHas('tipo', function ($tipo) use ($buscar) {
+                            $tipo->where('nombre', 'LIKE', "%{$buscar}%");
+                        })
+                        ->orWhereHas('empleado', function ($empleado) use ($buscar) {
+                            $empleado->where('primer_nombre', 'LIKE', "%{$buscar}%")
+                                ->orWhere('segundo_nombre', 'LIKE', "%{$buscar}%")
+                                ->orWhere('primer_apellido', 'LIKE', "%{$buscar}%")
+                                ->orWhere('segundo_apellido', 'LIKE', "%{$buscar}%")
+                                ->orWhere('DNI', 'LIKE', "%{$buscar}%");
+                        });
+                });
+            })
+            ->when($request->filled('fecha_desde'), function ($query) use ($request) {
+                $query->whereDate('fecha_inicio', '>=', $request->fecha_desde);
+            })
+            ->when($request->filled('fecha_hasta'), function ($query) use ($request) {
+                $query->whereDate('fecha_inicio', '<=', $request->fecha_hasta);
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('permisos.mis', compact('permisos'));
+    }
+
+
+
+
+    public function cancelar($id)
+{
+    $permiso = PermisoSistema::with(['estado', 'empleado'])->findOrFail($id);
+
+    if (strtolower($permiso->estado->nombre) !== 'pendiente') {
+        return back()->with('error', 'Solo se pueden cancelar permisos pendientes.');
+    }
+
+    $usuario = auth()->user();
+
+    if ($usuario->rol === 'jefe_departamento') {
+
+        $empleadoUsuario = Empleado::findOrFail($usuario->empleado_dni);
+
+        if (
+            (int) $permiso->empleado->departamento_funcional_id !==
+            (int) $empleadoUsuario->departamento_funcional_id
+        ) {
+            abort(403, 'No puedes cancelar permisos de otro departamento.');
+        }
+    }
+
+    $estadoCancelado = EstadoPermisoSistema::whereRaw('LOWER(nombre) = ?', ['cancelado'])->first();
+
+    if (!$estadoCancelado) {
+        return back()->with('error', 'No existe el estado Cancelado en la base de datos.');
+    }
+
+    $permiso->estado_permiso_id = $estadoCancelado->id;
+    $permiso->save();
+
+    MovimientoPermisoSistema::create([
+        'dni_empleado' => $permiso->dni_empleado,
+        'periodo_id' => null,
+        'permiso_id' => $permiso->id,
+        'usuario_nombre' => auth()->user()->name ?? 'Sistema',
+        'categoria' => strtolower($permiso->tipo->nombre ?? 'permiso'),
+        'tipo_movimiento' => 'cancelacion_permiso',
+        'dias_afectados' => 0,
+        'horas_afectadas' => 0,
+        'descripcion' => 'Permiso cancelado por el usuario solicitante.',
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+
+    return back()->with('success', 'Permiso cancelado correctamente.');
 }
+
 }

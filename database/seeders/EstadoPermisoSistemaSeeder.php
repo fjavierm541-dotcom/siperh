@@ -14,6 +14,7 @@ class EstadoPermisoSistemaSeeder extends Seeder
             'Aprobado',
             'Rechazado',
             'Vencido',
+            'Cancelado',
         ];
 
         foreach ($estados as $nombre) {

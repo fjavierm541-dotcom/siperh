@@ -366,7 +366,7 @@
 					<th>Rango</th>
 					<th>Días</th>
 					<th>Descripción</th>
-					<th>Aprobado por</th>
+					<th>Procesado por</th>
 				</tr>
 			</thead>
 
@@ -443,7 +443,7 @@
 
 			<td>{{ $movimiento->descripcion ?? '—' }}</td>
 
-			<td>—</td>
+			<td>{{ $movimiento->usuario_nombre ?? '—' }}</td>
 		</tr>
 
 	@empty

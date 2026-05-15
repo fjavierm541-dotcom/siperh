@@ -55,8 +55,8 @@
     <div class="d-flex gap-2">
 
             
-        <a href="{{ route('permisos.create') }}" class="btn btn-gold">
-            + Nuevo Permiso
+        <a href="{{ route('permisos.mis') }}" class="btn btn-gold">
+            Mis permisos
         </a>
 
         <a href="{{ route('permisos.imprimir.mes') }}" class="btn btn-outline-light">
@@ -219,44 +219,56 @@
                                 </td>
                                 <td>
 
-                            @if($permiso->estado->nombre == 'Pendiente')
+    @if($permiso->estado->nombre == 'Pendiente')
 
-                                <span class="badge bg-warning text-dark">
-                                    Pendiente
-                                </span>
+        <span class="badge bg-warning text-dark">
+            Pendiente
+        </span>
 
-                            @elseif($permiso->estado->nombre == 'Aprobado')
+    @elseif($permiso->estado->nombre == 'Aprobado')
 
-                                <span class="badge bg-success">
-                                    Aprobado
-                                </span>
+        <span class="badge bg-success">
+            Aprobado
+        </span>
 
-                            @else
+    @elseif($permiso->estado->nombre == 'Rechazado')
 
-                                <span class="badge bg-danger">
-                                    Rechazado
-                                </span>
+        <span class="badge bg-danger">
+            Rechazado
+        </span>
 
-                               @if($permiso->motivo_rechazo)
+        @if($permiso->motivo_rechazo)
 
-    <div class="mt-1">
+            <div class="mt-1">
 
-        <button
-            type="button"
-            class="btn btn-link btn-sm p-0 text-secondary "
-            onclick="verMotivoRechazo(`{{ addslashes($permiso->motivo_rechazo) }}`)">
+                <button
+                    type="button"
+                    class="btn btn-link btn-sm p-0 text-secondary"
+                    onclick="verMotivoRechazo(`{{ addslashes($permiso->motivo_rechazo) }}`)">
 
-            Ver motivo
+                    Ver motivo
 
-        </button>
+                </button>
 
-    </div>
+            </div>
 
-@endif
+        @endif
 
-                            @endif
+    @elseif($permiso->estado->nombre == 'Cancelado')
 
-                        </td>
+        <span class="badge bg-secondary">
+            Cancelado
+        </span>
+
+    @else
+
+        <span class="badge bg-dark">
+            {{ $permiso->estado->nombre }}
+        </span>
+
+    @endif
+
+</td>
 
                                 <td>
                                     @if($permiso->estado->nombre == 'Pendiente')

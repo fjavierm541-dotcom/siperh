@@ -78,6 +78,13 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
     Route::get('/permisos/{id}/imprimir', [PermisoController::class, 'imprimir'])
         ->name('permisos.imprimir');
 
+        //Mis permisos 
+    Route::get('/mis-permisos', [PermisoController::class, 'misPermisos'])
+        ->name('permisos.mis');
+
+    Route::patch('/permisos/{id}/cancelar', [PermisoController::class, 'cancelar'])
+        ->name('permisos.cancelar');
+
         /* ==========================
         COMPENSATORIOS - GENERAL
         ========================== */

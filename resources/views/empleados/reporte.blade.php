@@ -222,7 +222,7 @@
 				<th style="width: 13%;">Rango</th>
 				<th style="width: 6%;">Días</th>
 				<th style="width: 32%;">Descripción</th>
-				<th style="width: 10%;">Aprobado por</th>
+				<th style="width: 10%;">Gestionado por</th>
 			</tr>
 		</thead>
 

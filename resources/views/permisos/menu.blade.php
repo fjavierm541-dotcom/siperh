@@ -112,7 +112,7 @@
 
             <!-- PERMISOS LABORALES JEFE -->
             <div class="col-md-5">
-                <a href="{{ route('permisos.create') }}" class="card-option">
+                <a href="{{ route('permisos.mis') }}" class="card-option">
                     <div class="glass-card option-card text-center p-4 h-100">
 
                         <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
