@@ -263,7 +263,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <a href="#" class="dashboard-link">
+                    <a href="{{ route('departamentos.mi') }}" class="dashboard-link">
                         <div class="card dashboard-card text-center p-4">
                             <div class="dashboard-icon">
                                 <img src="{{ asset('icons/deptos.png') }}" class="icono-img">

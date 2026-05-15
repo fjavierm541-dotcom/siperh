@@ -365,6 +365,24 @@ public function imprimirEmpleados($id)
     return view('departamentos.imprimir-empleados', compact('departamento'));
 }
 
+public function miDepartamento()
+{
+    $usuario = auth()->user();
+
+    // Buscar empleado ligado al usuario
+    $empleado = Empleado::findOrFail($usuario->empleado_dni);
+
+    // Buscar departamento donde el empleado es jefe
+    $departamento = DepartamentoMuni::with([
+        'empleadosFuncionales',
+        'jefe'
+    ])
+    ->where('jefe_dni', $empleado->DNI)
+    ->firstOrFail();
+
+    return view('departamentos.show_jefe', compact('departamento'));
+}
+
 }
 
 

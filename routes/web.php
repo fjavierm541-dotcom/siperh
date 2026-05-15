@@ -46,6 +46,16 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
 
+          // CAMBIAR PASSWORD
+    Route::get('/cambiar-password', [LoginController::class, 'mostrarCambiarPassword'])
+    ->name('password.cambiar');
+            // RUTA PARA ACTUALIZAR PASSWORD
+    Route::post('/cambiar-password', [LoginController::class, 'actualizarPassword'])
+    ->name('password.actualizar');
+            //MI DEPARTAMENTO
+    Route::get('/mi-departamento', [DepartamentoMuniController::class, 'miDepartamento'])
+    ->name('departamentos.mi');
+
     /* ==========================
     USUARIOS
     ========================== */
@@ -74,11 +84,7 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
     [UsuarioController::class, 'resetPassword'])
     ->name('usuarios.resetPassword');
 
-    Route::get('/cambiar-password', [LoginController::class, 'mostrarCambiarPassword'])
-    ->name('password.cambiar');
 
-Route::post('/cambiar-password', [LoginController::class, 'actualizarPassword'])
-    ->name('password.actualizar');
 
     });
 
