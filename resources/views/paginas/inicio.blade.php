@@ -5,7 +5,6 @@
 @section('content')
 
 <style>
-/* CONTENEDOR PRINCIPAL (GLASS REAL) */
 .dashboard-container {
     background: rgba(255,255,255,0.75);
     backdrop-filter: blur(14px);
@@ -16,7 +15,6 @@
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-/* TÍTULOS */
 .dashboard-title {
     font-weight: 700;
     color: #1f3a56;
@@ -28,7 +26,6 @@
     font-size: 15px;
 }
 
-/* TARJETAS */
 .dashboard-card {
     background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(241,244,248,0.85));
     backdrop-filter: blur(6px);
@@ -41,7 +38,6 @@
     overflow: hidden;
 }
 
-/* EFECTO HOVER PRINCIPAL */
 .dashboard-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 
@@ -50,7 +46,6 @@
     border: 1px solid rgba(212,176,106,0.6);
 }
 
-/* BRILLO SUTIL (GLASS PREMIUM) */
 .dashboard-card::before {
     content: "";
     position: absolute;
@@ -71,7 +66,6 @@
     left: 100%;
 }
 
-/* LÍNEA DECORATIVA */
 .dashboard-card::after {
     content: "";
     position: absolute;
@@ -91,7 +85,6 @@
     width: 90px;
 }
 
-/* ICONOS */
 .icono-img {
     width: 90px;
     height: 90px;
@@ -101,13 +94,11 @@
     filter: drop-shadow(0 10px 12px rgba(0,0,0,0.15));
 }
 
-/* ICONO HOVER */
 .dashboard-card:hover .icono-img {
     transform: translateY(-6px) scale(1.07);
     filter: drop-shadow(0 20px 25px rgba(0,0,0,0.25));
 }
 
-/* CONTENEDOR ICONO */
 .dashboard-icon {
     display: flex;
     justify-content: center;
@@ -115,7 +106,6 @@
     margin-bottom: 10px;
 }
 
-/* LINKS */
 .dashboard-link {
     text-decoration: none;
     color: inherit;
@@ -127,7 +117,6 @@
     color: inherit;
 }
 
-/* TEXTO HOVER */
 .dashboard-card:hover h5 {
     color: #d4b06a;
     transition: 0.3s;
@@ -145,91 +134,87 @@
             </p>
         </div>
 
-         <div class="row g-4">
-
-            <!-- Empleados -->
-            <div class="col-md-4">
-    <a href="{{ route('empleados.index') }}" class="dashboard-link">
-        <div class="card dashboard-card text-center p-4">
-            <div class="dashboard-icon">
-                <img src="{{ asset('icons/empleado.png') }}" class="icono-img">
-            </div>
-            <h5>Empleados</h5>
-            <p class="text-muted small">
-                Administrar la información del personal.
-            </p>
-        </div>
-    </a>
-</div>
-
-            <!-- Permisos -->
-            <div class="col-md-4">
-    <a href="{{ route('permisos.menu') }}" class="dashboard-link">
-        <div class="card dashboard-card text-center p-4">
-            <div class="dashboard-icon">
-                <img src="{{ asset('icons/permisos.png') }}" class="icono-img">
-            </div>
-            <h5>Permisos</h5>
-            <p class="text-muted small">
-                Crear, revisar y aprobar solicitudes.
-            </p>
-        </div>
-    </a>
-</div>
-
-                <!-- Carga Histórica -->
-                <div class="col-md-4">
-        <a href="{{ route('periodos.create') }}" class="dashboard-link">
-            <div class="card dashboard-card text-center p-4">
-                <div class="dashboard-icon">
-                    <img src="{{ asset('icons/registro.png') }}" class="icono-img">
-                </div>
-                <h5>Registro histórico de vacaciones</h5>
-                <p class="text-muted small">
-                    Carga de historial de vacaciones de empleados.
-                </p>
-            </div>
-        </a>
-    </div>
-</div>
-
-
-<br>
+        @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
 
             <div class="row g-4">
 
-            <!-- DEPTOS -->
-            <div class="col-md-4">
-    <a href="{{ route('departamentos.index') }}" class="dashboard-link">
-        <div class="card dashboard-card text-center p-4">
-            <div class="dashboard-icon">
-                <img src="{{ asset('icons/deptos.png') }}" class="icono-img">
-            </div>
-            <h5>Departamentos</h5>
-            <p class="text-muted small">
-                Visualizar la información de los departamentos.
-            </p>
-        </div>
-    </a>
-</div>
+                <div class="col-md-4">
+                    <a href="{{ route('empleados.index') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/empleado.png') }}" class="icono-img">
+                            </div>
+                            <h5>Empleados</h5>
+                            <p class="text-muted small">
+                                Administrar la información del personal.
+                            </p>
+                        </div>
+                    </a>
+                </div>
 
-            <!-- CALENDARIO -->
-            <div class="col-md-4">
-    <a href="{{ route('calendario.index') }}" class="dashboard-link">
-        <div class="card dashboard-card text-center p-4">
-            <div class="dashboard-icon">
-                <img src="{{ asset('icons/calendario.png') }}" class="icono-img">
-            </div>
-            <h5>Calendario</h5>
-            <p class="text-muted small">
-                Ver y agregar feriados nacionales y locales.
-            </p>
-        </div>
-    </a>
-</div>
+                <div class="col-md-4">
+                    <a href="{{ route('permisos.menu') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/permisos.png') }}" class="icono-img">
+                            </div>
+                            <h5>Permisos</h5>
+                            <p class="text-muted small">
+                                Crear, revisar y aprobar solicitudes.
+                            </p>
+                        </div>
+                    </a>
+                </div>
 
-                            <!-- AJUSTES -->
-                            <div class="col-md-4">
+                <div class="col-md-4">
+                    <a href="{{ route('periodos.create') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/registro.png') }}" class="icono-img">
+                            </div>
+                            <h5>Registro histórico de vacaciones</h5>
+                            <p class="text-muted small">
+                                Carga de historial de vacaciones de empleados.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <a href="{{ route('departamentos.index') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/deptos.png') }}" class="icono-img">
+                            </div>
+                            <h5>Departamentos</h5>
+                            <p class="text-muted small">
+                                Visualizar la información de los departamentos.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="{{ route('calendario.index') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/calendario.png') }}" class="icono-img">
+                            </div>
+                            <h5>Calendario</h5>
+                            <p class="text-muted small">
+                                Ver y agregar feriados nacionales y locales.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
                     <a href="{{ route('periodos.create') }}" class="dashboard-link">
                         <div class="card dashboard-card text-center p-4">
                             <div class="dashboard-icon">
@@ -245,13 +230,58 @@
 
             </div>
 
-        </div>
+        @elseif(auth()->user()->rol === 'jefe_departamento')
+
+            <div class="row g-4 justify-content-center">
+
+                <div class="col-md-4">
+                    <a href="{{ route('permisos.menu') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/permisos.png') }}" class="icono-img">
+                            </div>
+                            <h5>Permisos</h5>
+                            <p class="text-muted small">
+                                Crear y consultar solicitudes.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="{{ route('calendario.index') }}" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/calendario.png') }}" class="icono-img">
+                            </div>
+                            <h5>Calendario</h5>
+                            <p class="text-muted small">
+                                Consultar días laborales y feriados.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="#" class="dashboard-link">
+                        <div class="card dashboard-card text-center p-4">
+                            <div class="dashboard-icon">
+                                <img src="{{ asset('icons/deptos.png') }}" class="icono-img">
+                            </div>
+                            <h5>Mi departamento</h5>
+                            <p class="text-muted small">
+                                Ver empleados de mi departamento.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        @endif
 
     </div>
 
 </div>
-
-
-
 
 @endsection

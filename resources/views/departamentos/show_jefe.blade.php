@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title','Departamento')
+@section('title','Mi Departamento')
 
 @section('content')
 
@@ -17,7 +17,7 @@
                 </h4>
 
                 <small class="text-white-50">
-                    Código: {{ $departamento->codigo }}
+                    Mi departamento
                 </small>
             </div>
 
@@ -29,17 +29,7 @@
                     Imprimir empleados
                 </a>
 
-                <a href="{{ route('departamentos.jefe',$departamento->id) }}"
-                   class="btn btn-primary-custom btn-sm">
-                    Cambiar jefe
-                </a>
-
-                <a href="{{ route('departamentos.asignar',$departamento->id) }}"
-                   class="btn btn-primary-custom btn-sm">
-                    Agregar empleados
-                </a>
-
-                <a href="{{ route('departamentos.index') }}"
+                <a href="{{ route('paginas.inicio') }}"
                    class="btn btn-secondary btn-sm">
                     Volver
                 </a>
@@ -49,18 +39,6 @@
         </div>
 
     </div>
-
-    @if(session('success'))
-        <div class="alert alert-success m-4 mb-0">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-danger m-4 mb-0">
-            {{ session('error') }}
-        </div>
-    @endif
 
     <!-- INFO -->
     <div class="p-4">
@@ -111,7 +89,6 @@
                         <th>DNI</th>
                         <th>Nombre</th>
                         <th>Puesto</th>
-                        <th width="140">Acción</th>
                     </tr>
                 </thead>
 
@@ -132,23 +109,12 @@
 
                             <td>{{ $emp->puesto }}</td>
 
-                            <td>
-                                <button type="button"
-                                        class="btn btn-outline-danger btn-sm"
-                                        onclick="abrirModalRetirar(
-                                            '{{ route('departamentos.retirarEmpleado', [$departamento->id, $emp->DNI]) }}',
-                                            '{{ $emp->primer_nombre }} {{ $emp->primer_apellido }}'
-                                        )">
-                                    Retirar
-                                </button>
-                            </td>
-
                         </tr>
 
                     @empty
 
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">
+                            <td colspan="3" class="text-center text-muted py-4">
                                 Este departamento aún no tiene empleados asignados.
                             </td>
                         </tr>
@@ -164,78 +130,5 @@
     </div>
 
 </div>
-
-<!-- MODAL -->
-<div class="modal fade" id="modalRetirarEmpleado" tabindex="-1">
-
-    <div class="modal-dialog modal-dialog-centered">
-
-        <div class="modal-content">
-
-            <div class="modal-header bg-warning">
-
-                <h5 class="modal-title">
-                    Confirmar retiro
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-            <div class="modal-body">
-
-                <p class="mb-0">
-                    ¿Está seguro de retirar a
-                    <strong id="nombreEmpleadoRetirar"></strong>
-                    de este departamento?
-                </p>
-
-                <small class="text-muted">
-                    El empleado quedará sin departamento funcional asignado.
-                </small>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Cancelar
-                </button>
-
-                <form id="formRetirarEmpleado" method="POST">
-                    @csrf
-                    @method('PATCH')
-
-                    <button type="submit" class="btn btn-warning">
-                        Sí, retirar
-                    </button>
-                </form>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<script>
-function abrirModalRetirar(url, nombre)
-{
-    document.getElementById('formRetirarEmpleado').action = url;
-    document.getElementById('nombreEmpleadoRetirar').textContent = nombre;
-
-    const modal = new bootstrap.Modal(
-        document.getElementById('modalRetirarEmpleado')
-    );
-
-    modal.show();
-}
-</script>
 
 @endsection
