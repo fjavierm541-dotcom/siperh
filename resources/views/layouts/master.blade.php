@@ -107,36 +107,55 @@ input, select, textarea {
 
         <div class="collapse navbar-collapse" id="navbarNav">
 
-            <!-- Links izquierda -->
-            <ul class="navbar-nav me-auto">
+            <!-- Links  -->
+            <ul class="navbar-nav mx-auto">
 
-                <li class="nav-item">
+            <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('paginas.inicio') ? 'active fw-bold text-warning' : '' }}"
                        href="{{ route('paginas.inicio') }}">
                         Inicio
                     </a>
                 </li>
 
+                @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('empleados.*') ? 'active fw-bold text-warning' : '' }}"
-                       href="{{ route('empleados.index') }}">
+                    href="{{ route('empleados.index') }}">
                         Empleados
                     </a>
                 </li>
 
+            @endif
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('permisos.*') ? 'active fw-bold text-warning' : '' }}"
-                       href="{{ route('permisos.index') }}">
+                       href="{{ route('permisos.menu') }}">
                         Permisos
                     </a>
                 </li>
 
+                @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
+
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('departamentos.*') ? 'active fw-bold text-warning' : '' }}"
-                       href="{{ route('departamentos.index') }}">
+                    <a class="nav-link {{ request()->routeIs('departamentos.index', 'departamentos.show', 'departamentos.create', 'departamentos.edit') ? 'active fw-bold text-warning' : '' }}"
+                    href="{{ route('departamentos.index') }}">
                         Departamentos
                     </a>
                 </li>
+
+            @endif
+
+            @if(auth()->user()->rol === 'jefe_departamento')
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('departamentos.mi') ? 'active fw-bold text-warning' : '' }}"
+                    href="{{ route('departamentos.mi') }}">
+                        Mi departamento
+                    </a>
+                </li>
+
+            @endif
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('calendario.*') ? 'active fw-bold text-warning' : '' }}"

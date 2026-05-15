@@ -32,12 +32,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 /* ==========================
    RUTAS PROTEGIDAS
 ========================== */
-
+//GRUPO GENERAL 
 Route::middleware(['auth', 'forzar.password'])->group(function () {
-
-    /* ==========================
-       INICIO / DASHBOARD
-    ========================== */
 
     Route::get('/inicio', function () {
         return view('paginas.inicio');
@@ -56,10 +52,62 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
     Route::get('/mi-departamento', [DepartamentoMuniController::class, 'miDepartamento'])
     ->name('departamentos.mi');
 
-    /* ==========================
-    USUARIOS
+    //RUTAS GENERALES PARA CALENDARIO
+    Route::get('/calendario', [CalendarioController::class, 'index'])
+    ->name('calendario.index');
+
+    Route::get('/calendario/eventos', [CalendarioController::class, 'eventos']);
+
+    Route::get('/calendario/dia', [CalendarioController::class, 'dia']); 
+
+
+        /* ==========================
+    PERMISOS - GENERAL
     ========================== */
 
+    Route::get('/permisos/menu', function () {
+        return view('permisos.menu');
+    })->name('permisos.menu');
+
+    Route::get('/permisos/crear', [PermisoController::class, 'create'])
+        ->name('permisos.create');
+
+    Route::post('/permisos', [PermisoController::class, 'store'])
+        ->name('permisos.store');
+
+    Route::get('/permisos/{id}/imprimir', [PermisoController::class, 'imprimir'])
+        ->name('permisos.imprimir');
+
+        /* ==========================
+        COMPENSATORIOS - GENERAL
+        ========================== */
+
+        Route::get('/compensatorios/solicitudes/create', [SolicitudCompensatorioController::class, 'create'])
+            ->name('compensatorios.solicitudes.create');
+
+        Route::post('/compensatorios/solicitudes', [SolicitudCompensatorioController::class, 'store'])
+            ->name('compensatorios.solicitudes.store');
+
+        Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController::class, 'show'])
+            ->name('compensatorios.solicitudes.show');
+
+        Route::get('/compensatorios/solicitudes/{id}/imprimir', [SolicitudCompensatorioController::class, 'imprimir'])
+            ->name('compensatorios.solicitudes.imprimir');
+
+        Route::get('/empleados/por-departamento/{id}', function ($id) {
+            return DB::table('empleados')
+                ->where('departamento_funcional_id', $id)
+                ->select(
+                    'DNI',
+                    DB::raw("CONCAT(primer_nombre, ' ', primer_apellido) as nombre")
+                )
+                ->get();
+        });
+
+        
+
+    
+// GRUPO 2 - SOLO SUPERADMIN Y RRHH
     Route::middleware(['rol:superadmin,rrhh'])->group(function () {
 
         Route::get('/usuarios', [UsuarioController::class, 'index'])
@@ -80,13 +128,176 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
         Route::put('/usuarios/{id}', [UsuarioController::class, 'update'])
             ->name('usuarios.update');
 
-            Route::patch('/usuarios/{id}/reset-password',
-    [UsuarioController::class, 'resetPassword'])
-    ->name('usuarios.resetPassword');
+        Route::patch('/usuarios/{id}/reset-password',
+            [UsuarioController::class, 'resetPassword'])
+            ->name('usuarios.resetPassword');
 
 
+        /* ==========================
+        EMPLEADOS
+        ========================== */
+
+        Route::get('/empleados/imprimir/listado', [EmpleadoController::class, 'imprimirListado'])
+            ->name('empleados.imprimirListado');
+
+        Route::post('/empleados/{dni}/cambiar-estado', [EmpleadoController::class, 'cambiarEstado'])
+            ->where('dni', '.*')
+            ->name('empleados.cambiarEstado');
+
+        Route::get('/empleados/create', [EmpleadoController::class, 'create'])
+            ->name('empleados.create');
+
+        Route::post('/empleados', [EmpleadoController::class, 'store'])
+            ->name('empleados.store');
+
+        Route::get('/empleados', [EmpleadoController::class, 'index'])
+            ->name('empleados.index');
+
+        Route::get('/empleados/{dni}/editar', [EmpleadoController::class, 'edit'])
+            ->where('dni', '.*')
+            ->name('empleados.edit');
+
+        Route::put('/empleados/{dni}', [EmpleadoController::class, 'update'])
+            ->where('dni', '.*')
+            ->name('empleados.update');
+
+        Route::get('/empleados/{dni}/expediente', [EmpleadoController::class, 'expediente'])
+            ->where('dni', '.*')
+            ->name('empleados.expediente');
+
+        Route::get('/empleados/{dni}/ver-registro', [EmpleadoController::class, 'verRegistro'])
+            ->where('dni', '.*')
+            ->name('empleados.verRegistro');
+
+        Route::get('/empleados/{dni}/imprimir', [EmpleadoController::class, 'verRegistroImprimir'])
+            ->where('dni', '.*')
+            ->name('empleados.verRegistro.imprimir');
+
+        Route::get('/empleados/{dni}/reporte', [EmpleadoController::class, 'reporte'])
+            ->where('dni', '.*')
+            ->name('empleados.reporte');
+
+        Route::get('/empleados/{dni}/funcion', [EmpleadoController::class, 'editarFuncion'])
+            ->where('dni', '.*')
+            ->name('empleados.funcion');
+
+        Route::post('/empleados/{dni}/funcion', [EmpleadoController::class, 'guardarFuncion'])
+            ->where('dni', '.*')
+            ->name('empleados.funcion.guardar');
+
+        Route::get('/empleados/{dni}', [EmpleadoController::class, 'show'])
+            ->where('dni', '.*')
+            ->name('empleados.show');
+
+
+        /* ==========================
+        DEPARTAMENTOS
+        ========================== */
+
+        Route::resource('departamentos', DepartamentoMuniController::class);
+
+        Route::patch('/departamentos/{id}/toggle', [DepartamentoMuniController::class, 'toggle'])
+            ->name('departamentos.toggle');
+
+        Route::get('/departamentos/buscar', [DepartamentoMuniController::class, 'buscar'])
+            ->name('departamentos.buscar');
+
+        Route::get('/departamentos/{id}/asignar', [DepartamentoMuniController::class, 'asignar'])
+            ->name('departamentos.asignar');
+
+        Route::post('/departamentos/{id}/asignar', [DepartamentoMuniController::class, 'guardarAsignacion'])
+            ->name('departamentos.asignar.guardar');
+
+        Route::get('/departamentos/imprimir/{estado}', [DepartamentoMuniController::class, 'imprimir'])
+            ->name('departamentos.imprimir');
+
+        Route::patch('/departamentos/{departamento}/retirar-empleado/{empleado}', [DepartamentoMuniController::class, 'retirarEmpleado'])
+            ->name('departamentos.retirarEmpleado');
+
+        Route::get('/departamentos/{id}/imprimir-empleados', [DepartamentoMuniController::class, 'imprimirEmpleados'])
+            ->name('departamentos.imprimirEmpleados');
+
+        Route::get('/departamentos/{id}/jefe', [DepartamentoMuniController::class, 'editarJefe'])
+            ->name('departamentos.jefe');
+
+        Route::post('/departamentos/{id}/jefe', [DepartamentoMuniController::class, 'guardarJefe'])
+            ->name('departamentos.jefe.guardar');
+
+
+            //CALENDARIO PARA ADMINISTRADORES 
+        Route::get('/calendario/create', [CalendarioController::class, 'create'])
+                ->name('calendario.create');
+
+        Route::post('/calendario/store', [CalendarioController::class, 'store'])
+                ->name('calendario.store');
+
+        Route::get('/calendario/{id}/edit', [CalendarioController::class, 'edit'])
+                ->name('calendario.edit');
+
+        Route::put('/calendario/{id}', [CalendarioController::class, 'update'])
+                ->name('calendario.update');
+
+        Route::delete('/calendario/{id}', [CalendarioController::class, 'destroy'])
+                ->name('calendario.destroy');
+
+        Route::get('/calendario/importar-feriados/{year}', [CalendarioController::class, 'importarFeriados'])
+                ->name('calendario.importar');
+
+
+            /* ==========================
+            PERIODOS / VACACIONES
+            ========================== */
+
+        Route::get('/periodos/create', [PeriodoVacacionesController::class, 'create'])
+            ->name('periodos.create');
+
+        Route::post('/periodos/store', [PeriodoVacacionesController::class, 'store'])
+            ->name('periodos.store');
+
+        Route::post('/periodos/reactivar', [PeriodoVacacionesController::class, 'reactivar'])
+            ->name('periodos.reactivar');
+
+        Route::post('/vacaciones/generar', [EmpleadoController::class, 'generarVacaciones'])
+            ->name('vacaciones.generar');
+
+            /* ==========================
+            PERMISOS 
+            ========================== */
+
+            Route::get('/permisos', [PermisoController::class, 'index'])
+                ->name('permisos.index');
+
+            Route::post('/permisos/{id}/aprobar', [PermisoController::class, 'aprobar'])
+                ->name('permisos.aprobar');
+
+            Route::post('/permisos/{id}/rechazar', [PermisoController::class, 'rechazar'])
+                ->name('permisos.rechazar');
+
+            Route::get('/permisos/imprimir-mes', [PermisoController::class, 'imprimirMes'])
+                ->name('permisos.imprimir.mes');
+
+
+                /* ==========================
+            COMPENSATORIOS 
+            ========================== */
+
+            Route::get('/compensatorios/solicitudes', [SolicitudCompensatorioController::class, 'index'])
+                ->name('compensatorios.solicitudes.index');
+
+            Route::get('/compensatorios/solicitudes/imprimir-mes', [SolicitudCompensatorioController::class, 'imprimirMes'])
+                ->name('compensatorios.solicitudes.imprimir.mes');
+
+            Route::post('/compensatorios/{id}/aprobar', [SolicitudCompensatorioController::class, 'aprobar'])
+                ->name('compensatorios.solicitudes.aprobar');
+
+            Route::post('/compensatorios/{id}/rechazar', [SolicitudCompensatorioController::class, 'rechazar'])
+                ->name('compensatorios.solicitudes.rechazar');
+
+                
 
     });
+
+
 
     
 
@@ -107,212 +318,6 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
         } catch (\Exception $e) {
             return "Error de conexión: " . $e->getMessage();
         }
-    });
-
-
-    /* ==========================
-       PERMISOS
-    ========================== */
-
-    Route::get('/permisos/menu', function () {
-        return view('permisos.menu');
-    })->name('permisos.menu');
-
-    Route::get('/permisos', [PermisoController::class, 'index'])
-        ->name('permisos.index');
-
-    Route::get('/permisos/crear', [PermisoController::class, 'create'])
-        ->name('permisos.create');
-
-    Route::post('/permisos', [PermisoController::class, 'store'])
-        ->name('permisos.store');
-
-    Route::post('/permisos/{id}/aprobar', [PermisoController::class, 'aprobar'])
-        ->name('permisos.aprobar');
-
-    Route::post('/permisos/{id}/rechazar', [PermisoController::class, 'rechazar'])
-        ->name('permisos.rechazar');
-
-    Route::get('/permisos/imprimir-mes', [PermisoController::class, 'imprimirMes'])
-        ->name('permisos.imprimir.mes');
-
-    Route::get('/permisos/{id}/imprimir', [PermisoController::class, 'imprimir'])
-        ->name('permisos.imprimir');
-
-
-    /* ==========================
-       PERIODOS / VACACIONES
-    ========================== */
-
-    Route::get('/periodos/create', [PeriodoVacacionesController::class, 'create'])
-        ->name('periodos.create');
-
-    Route::post('/periodos/store', [PeriodoVacacionesController::class, 'store'])
-        ->name('periodos.store');
-
-    Route::post('/periodos/reactivar', [PeriodoVacacionesController::class, 'reactivar'])
-        ->name('periodos.reactivar');
-
-    Route::post('/vacaciones/generar', [EmpleadoController::class, 'generarVacaciones'])
-        ->name('vacaciones.generar');
-
-
-    /* ==========================
-       EMPLEADOS
-    ========================== */
-
-    Route::get('/empleados/imprimir/listado', [EmpleadoController::class, 'imprimirListado'])
-        ->name('empleados.imprimirListado');
-
-    Route::post('/empleados/{dni}/cambiar-estado', [EmpleadoController::class, 'cambiarEstado'])
-        ->where('dni', '.*')
-        ->name('empleados.cambiarEstado');
-
-    Route::get('/empleados/create', [EmpleadoController::class, 'create'])
-        ->name('empleados.create');
-
-    Route::post('/empleados', [EmpleadoController::class, 'store'])
-        ->name('empleados.store');
-
-    Route::get('/empleados', [EmpleadoController::class, 'index'])
-        ->name('empleados.index');
-
-    Route::get('/empleados/{dni}/editar', [EmpleadoController::class, 'edit'])
-        ->where('dni', '.*')
-        ->name('empleados.edit');
-
-    Route::put('/empleados/{dni}', [EmpleadoController::class, 'update'])
-        ->where('dni', '.*')
-        ->name('empleados.update');
-
-    Route::get('/empleados/{dni}/expediente', [EmpleadoController::class, 'expediente'])
-        ->where('dni', '.*')
-        ->name('empleados.expediente');
-
-    Route::get('/empleados/{dni}/ver-registro', [EmpleadoController::class, 'verRegistro'])
-        ->where('dni', '.*')
-        ->name('empleados.verRegistro');
-
-    Route::get('/empleados/{dni}/imprimir', [EmpleadoController::class, 'verRegistroImprimir'])
-        ->where('dni', '.*')
-        ->name('empleados.verRegistro.imprimir');
-
-    Route::get('/empleados/{dni}/reporte', [EmpleadoController::class, 'reporte'])
-        ->where('dni', '.*')
-        ->name('empleados.reporte');
-
-    Route::get('/empleados/{dni}/funcion', [EmpleadoController::class, 'editarFuncion'])
-        ->where('dni', '.*')
-        ->name('empleados.funcion');
-
-    Route::post('/empleados/{dni}/funcion', [EmpleadoController::class, 'guardarFuncion'])
-        ->where('dni', '.*')
-        ->name('empleados.funcion.guardar');
-
-    Route::get('/empleados/{dni}', [EmpleadoController::class, 'show'])
-        ->where('dni', '.*')
-        ->name('empleados.show');
-
-
-    /* ==========================
-       DEPARTAMENTOS
-    ========================== */
-
-    Route::resource('departamentos', DepartamentoMuniController::class);
-
-    Route::patch('/departamentos/{id}/toggle', [DepartamentoMuniController::class, 'toggle'])
-        ->name('departamentos.toggle');
-
-    Route::get('/departamentos/buscar', [DepartamentoMuniController::class, 'buscar'])
-        ->name('departamentos.buscar');
-
-    Route::get('/departamentos/{id}/asignar', [DepartamentoMuniController::class, 'asignar'])
-        ->name('departamentos.asignar');
-
-    Route::post('/departamentos/{id}/asignar', [DepartamentoMuniController::class, 'guardarAsignacion'])
-        ->name('departamentos.asignar.guardar');
-
-    Route::get('/departamentos/imprimir/{estado}', [DepartamentoMuniController::class, 'imprimir'])
-        ->name('departamentos.imprimir');
-
-    Route::patch('/departamentos/{departamento}/retirar-empleado/{empleado}', [DepartamentoMuniController::class, 'retirarEmpleado'])
-        ->name('departamentos.retirarEmpleado');
-
-    Route::get('/departamentos/{id}/imprimir-empleados', [DepartamentoMuniController::class, 'imprimirEmpleados'])
-        ->name('departamentos.imprimirEmpleados');
-
-    Route::get('/departamentos/{id}/jefe', [DepartamentoMuniController::class, 'editarJefe'])
-        ->name('departamentos.jefe');
-
-    Route::post('/departamentos/{id}/jefe', [DepartamentoMuniController::class, 'guardarJefe'])
-        ->name('departamentos.jefe.guardar');
-
-
-    /* ==========================
-       CALENDARIO
-    ========================== */
-
-    Route::get('/calendario', [CalendarioController::class, 'index'])
-        ->name('calendario.index');
-
-    Route::get('/calendario/create', [CalendarioController::class, 'create'])
-        ->name('calendario.create');
-
-    Route::post('/calendario/store', [CalendarioController::class, 'store'])
-        ->name('calendario.store');
-
-    Route::get('/calendario/{id}/edit', [CalendarioController::class, 'edit'])
-        ->name('calendario.edit');
-
-    Route::put('/calendario/{id}', [CalendarioController::class, 'update'])
-        ->name('calendario.update');
-
-    Route::delete('/calendario/{id}', [CalendarioController::class, 'destroy'])
-        ->name('calendario.destroy');
-
-    Route::get('/calendario/eventos', [CalendarioController::class, 'eventos']);
-    Route::get('/calendario/dia', [CalendarioController::class, 'dia']);
-
-    Route::get('/calendario/importar-feriados/{year}', [CalendarioController::class, 'importarFeriados'])
-        ->name('calendario.importar');
-
-
-    /* ==========================
-       COMPENSATORIOS
-    ========================== */
-
-    Route::get('/compensatorios/solicitudes', [SolicitudCompensatorioController::class, 'index'])
-        ->name('compensatorios.solicitudes.index');
-
-    Route::get('/compensatorios/solicitudes/create', [SolicitudCompensatorioController::class, 'create'])
-        ->name('compensatorios.solicitudes.create');
-
-    Route::post('/compensatorios/solicitudes', [SolicitudCompensatorioController::class, 'store'])
-        ->name('compensatorios.solicitudes.store');
-
-    Route::get('/compensatorios/solicitudes/imprimir-mes', [SolicitudCompensatorioController::class, 'imprimirMes'])
-        ->name('compensatorios.solicitudes.imprimir.mes');
-
-    Route::get('/compensatorios/solicitudes/{id}/imprimir', [SolicitudCompensatorioController::class, 'imprimir'])
-        ->name('compensatorios.solicitudes.imprimir');
-
-    Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController::class, 'show'])
-        ->name('compensatorios.solicitudes.show');
-
-    Route::post('/compensatorios/{id}/aprobar', [SolicitudCompensatorioController::class, 'aprobar'])
-        ->name('compensatorios.solicitudes.aprobar');
-
-    Route::post('/compensatorios/{id}/rechazar', [SolicitudCompensatorioController::class, 'rechazar'])
-        ->name('compensatorios.solicitudes.rechazar');
-
-    Route::get('/empleados/por-departamento/{id}', function ($id) {
-        return DB::table('empleados')
-            ->where('departamento_funcional_id', $id)
-            ->select(
-                'DNI',
-                DB::raw("CONCAT(primer_nombre, ' ', primer_apellido) as nombre")
-            )
-            ->get();
     });
 
 

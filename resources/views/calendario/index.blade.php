@@ -45,27 +45,35 @@
                         Calendario Institucional
                     </h4>
 
-                    <div class="d-flex gap-2">
+                   <div class="d-flex gap-2">
 
-                    @php
-$yearActual = date('Y');
-@endphp
+                    @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
 
-<a href="{{ route('calendario.importar',$yearActual) }}" 
-   class="btn btn-outline-secondary">
-    + Feriados {{ $yearActual }}
-</a>
+                        @php
+                            $yearActual = date('Y');
+                        @endphp
 
-<a href="{{ route('calendario.importar',$yearActual + 1) }}" 
-   class="btn btn-outline-secondary">
-    + Feriados {{ $yearActual + 1 }}
-</a>
+                        <a href="{{ route('calendario.importar',$yearActual) }}" 
+                        class="btn btn-outline-secondary">
 
-                    <a href="{{ route('calendario.create') }}" class="btn btn-dorado">
-                        + Agregar feriado
-                    </a>
+                            + Feriados {{ $yearActual }}
 
-                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondar">
+                        </a>
+
+                        <a href="{{ route('calendario.importar',$yearActual + 1) }}" 
+                        class="btn btn-outline-secondary">
+
+                            + Feriados {{ $yearActual + 1 }}
+
+                        </a>
+
+                        <a href="{{ route('calendario.create') }}" class="btn btn-dorado">
+                            + Agregar feriado
+                        </a>
+
+                    @endif
+
+                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
                         Volver
                     </a>
 
@@ -263,7 +271,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // CLICK EVENTO → EDITAR
         eventClick: function(info){
-            window.location = '/calendario/' + info.event.id + '/edit';
+
+            @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
+
+                window.location = '/calendario/' + info.event.id + '/edit';
+
+            @endif
+
         }
 
     });
