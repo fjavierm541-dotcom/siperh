@@ -34,7 +34,7 @@ class PeriodoVacacionesController extends Controller
                 throw new \Exception("El empleado no tiene fecha de nombramiento registrada.");
             }
 
-            // 🔥 CARGA ÚNICA
+            // CARGA ÚNICA
             $yaTieneHistorial = PeriodoVacacionesSistema::where('dni_empleado', $request->dni_empleado)->exists();
 
            $anios = $request->anio_laboral ?? [];
@@ -65,12 +65,12 @@ class PeriodoVacacionesController extends Controller
                                 $anioActual = now()->year;
             $anioIngreso = \Carbon\Carbon::parse($empleado->fecha_nombramiento)->year;
 
-            // ❌ No años futuros
+            // No años futuros
             if ($anioLaboral > $anioActual) {
                 throw new \Exception("No puedes registrar años futuros.");
             }
 
-            // ❌ No antes del ingreso
+            // No antes del ingreso
             if ($anioLaboral < $anioIngreso) {
                 throw new \Exception("El año laboral no puede ser menor al año de ingreso del empleado.");
             }
@@ -81,7 +81,7 @@ class PeriodoVacacionesController extends Controller
                         throw new \Exception("Los días usados no pueden ser mayores que los otorgados.");
                     }
 
-                    // 🔥 BLOQUEAR DUPLICADOS
+                    // BLOQUEAR DUPLICADOS
                     $existe = PeriodoVacacionesSistema::where('dni_empleado', $request->dni_empleado)
                         ->where('anio_laboral', $anioLaboral)
                         ->exists();
@@ -90,14 +90,14 @@ class PeriodoVacacionesController extends Controller
                         throw new \Exception("El año laboral {$anioLaboral} ya está registrado para este empleado.");
                     }
 
-                    // 🔥 FECHA INICIO (ANIVERSARIO)
+                    // FECHA INICIO (ANIVERSARIO)
                     $fechaInicio = Carbon::parse($empleado->fecha_nombramiento)
                         ->setYear($anioLaboral);
 
-                    // 🔥 VENCIMIENTO (3 AÑOS)
+                    // VENCIMIENTO (3 AÑOS)
                     $fechaVencimiento = $fechaInicio->copy()->addYears(3);
 
-                    // 🔥 ESTADO AUTOMÁTICO (MEJOR UX)
+                    // ESTADO AUTOMÁTICO (MEJOR UX)
                     $estado = $fechaVencimiento->isPast() ? 'vencido' : 'activo';
 
                     $periodo = PeriodoVacacionesSistema::create([
@@ -116,6 +116,7 @@ class PeriodoVacacionesController extends Controller
                         'dni_empleado' => $request->dni_empleado,
                         'periodo_id' => $periodo->id,
                         'permiso_id' => null,
+                        'usuario_nombre' => auth()->user()->name ?? 'Sistema',
                         'categoria' => 'vacaciones',
                         'tipo_movimiento' => 'carga_inicial',
                         'dias_afectados' => $diasDisponibles,
@@ -157,12 +158,12 @@ public function reactivar(Request $request)
             throw new \Exception("Solo se pueden reactivar períodos vencidos.");
         }
 
-        // 🔥 FECHA NUEVA
+        // FECHA NUEVA
         $fechaNombramiento = Carbon::parse($periodo->empleado->fecha_nombramiento);
         $hoy = now();
-        // 🔥 construir fecha aniversario este año
+        // construir fecha aniversario este año
         $fechaAniversario = $fechaNombramiento->copy()->setYear($hoy->year);
-        // 🔥 si ya pasó → usar siguiente año
+        // si ya pasó → usar siguiente año
         if ($hoy->greaterThan($fechaAniversario)) {
             $fechaAniversario->addYear();
         }
@@ -170,14 +171,14 @@ public function reactivar(Request $request)
 
 
         
-        // 🔥 GUARDAR DOCUMENTO PRIMERO
+        // GUARDAR DOCUMENTO PRIMERO
         $path = null;
 
         if ($request->hasFile('documento')) {
             $path = $request->file('documento')->store('reactivaciones', 'public');
         }
 
-        // 🔥 AHORA SÍ ACTUALIZAR
+        // AHORA SÍ ACTUALIZAR
         $periodo->update([
             'estado' => 'extendido',
             'extension_hasta' => $nuevaFecha,

@@ -18,6 +18,7 @@ class MovimientoPermisoSistema extends Model
         'tipo_movimiento',
         'dias_afectados',
         'horas_afectadas',
+        'usuario_nombre',
         'descripcion'
     ];
 

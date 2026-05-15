@@ -300,6 +300,16 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
             Route::post('/compensatorios/{id}/rechazar', [SolicitudCompensatorioController::class, 'rechazar'])
                 ->name('compensatorios.solicitudes.rechazar');
 
+
+                    /* ==========================
+       AJUSTES / CORRECCIÓN DE SALDOS
+    ========================== */
+
+    Route::get('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'create'])
+        ->name('correcciones-saldos.create');
+
+    Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
+        ->name('correcciones-saldos.store');
                 
 
     });
@@ -328,14 +338,6 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
     });
 
 
-    /* ==========================
-       AJUSTES / CORRECCIÓN DE SALDOS
-    ========================== */
 
-    Route::get('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'create'])
-        ->name('correcciones-saldos.create');
-
-    Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
-        ->name('correcciones-saldos.store');
 
 });
