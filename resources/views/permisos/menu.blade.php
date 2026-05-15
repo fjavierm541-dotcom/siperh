@@ -19,7 +19,6 @@
         min-height: 260px;
     }
 
-    /* Línea dorada */
     .option-card::after {
         content: "";
         position: absolute;
@@ -43,24 +42,20 @@
         transition: color 0.28s ease;
     }
 
-    /* HOVER GENERAL */
     .card-option:hover .option-card {
         transform: translateY(-7px);
         box-shadow: 0 25px 50px rgba(0,0,0,0.28);
         border-color: rgba(212, 176, 106, 0.65);
     }
 
-    /* ICONO */
     .card-option:hover .option-card img {
         transform: scale(1.12) translateY(-6px);
     }
 
-    /* TEXTO */
     .card-option:hover .option-card h4 {
         color: #d4b06a;
     }
 
-    /* LINEA */
     .card-option:hover .option-card::after {
         width: 130px;
     }
@@ -77,39 +72,79 @@
 
     <div class="row justify-content-center g-4">
 
-        <!-- PERMISOS LABORALES -->
-        <div class="col-md-5">
-            <a href="{{ route('permisos.index') }}" class="card-option">
-                <div class="glass-card option-card text-center p-4 h-100">
+        @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
 
-                    <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+            <!-- PERMISOS LABORALES ADMIN -->
+            <div class="col-md-5">
+                <a href="{{ route('permisos.index') }}" class="card-option">
+                    <div class="glass-card option-card text-center p-4 h-100">
 
-                    <h4 class="fw-bold">Permisos laborales</h4>
+                        <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
 
-                    <p class="text-muted">
-                        Gestión de solicitudes para permisos de vacaciones, permisos personales, horas y otros.
-                    </p>
+                        <h4 class="fw-bold">Permisos laborales</h4>
 
-                </div>
-            </a>
-        </div>
+                        <p class="text-muted">
+                            Gestión de solicitudes para permisos de vacaciones, permisos personales, horas y otros.
+                        </p>
 
-        <!-- DÍA NO LABORAL -->
-        <div class="col-md-5">
-            <a href="{{ route('compensatorios.solicitudes.index') }}" class="card-option">
-                <div class="glass-card option-card text-center p-4 h-100">
+                    </div>
+                </a>
+            </div>
 
-                    <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+            <!-- DÍA NO LABORAL ADMIN -->
+            <div class="col-md-5">
+                <a href="{{ route('compensatorios.solicitudes.index') }}" class="card-option">
+                    <div class="glass-card option-card text-center p-4 h-100">
 
-                    <h4 class="fw-bold">Día no laboral</h4>
+                        <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
 
-                    <p class="text-muted">
-                        Solicitudes para trabajar en días inhábiles.
-                    </p>
+                        <h4 class="fw-bold">Día no laboral</h4>
 
-                </div>
-            </a>
-        </div>
+                        <p class="text-muted">
+                            Revisión y gestión de solicitudes para trabajar en días inhábiles.
+                        </p>
+
+                    </div>
+                </a>
+            </div>
+
+        @elseif(auth()->user()->rol === 'jefe_departamento')
+
+            <!-- PERMISOS LABORALES JEFE -->
+            <div class="col-md-5">
+                <a href="{{ route('permisos.create') }}" class="card-option">
+                    <div class="glass-card option-card text-center p-4 h-100">
+
+                        <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+
+                        <h4 class="fw-bold">Permisos laborales</h4>
+
+                        <p class="text-muted">
+                            Registrar solicitudes de permisos laborales para los empleados de tu departamento.
+                        </p>
+
+                    </div>
+                </a>
+            </div>
+
+            <!-- DÍA NO LABORAL JEFE -->
+            <div class="col-md-5">
+                <a href="{{ route('compensatorios.solicitudes.create') }}" class="card-option">
+                    <div class="glass-card option-card text-center p-4 h-100">
+
+                        <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+
+                        <h4 class="fw-bold">Día no laboral</h4>
+
+                        <p class="text-muted">
+                            Registrar solicitudes por trabajo realizado en días inhábiles.
+                        </p>
+
+                    </div>
+                </a>
+            </div>
+
+        @endif
 
     </div>
 

@@ -287,11 +287,11 @@
 
                 <div class="d-flex justify-content-end mt-4">
 
-    <a href="{{ route('permisos.index') }}"
-        class="btn btn-outline-secondary me-2">
-
-        Cancelar
-
+    <a href="{{ auth()->user()->rol === 'jefe_departamento'
+            ? route('permisos.menu')
+            : route('compensatorios.solicitudes.index') }}"
+    class="btn btn-outline-secondary me-2">
+    Cancelar
     </a>
 
     <button class="btn btn-gold px-4">

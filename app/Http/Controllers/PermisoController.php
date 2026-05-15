@@ -74,20 +74,28 @@ class PermisoController extends Controller
 
 
 
+public function create()
+{
+    $usuario = auth()->user();
 
-    /* ==========================
-       FORMULARIO CREAR
-    ========================== */
-    public function create()
-    {
-        $empleados = Empleado::all();
-        $tipos = TipoPermisoSistema::where('activo', 1)->get();
+    if ($usuario->rol === 'jefe_departamento') {
 
-        return view('permisos.create', compact('empleados', 'tipos'));
+        $empleadoUsuario = Empleado::findOrFail($usuario->empleado_dni);
+
+        $empleados = Empleado::where('departamento_funcional_id', $empleadoUsuario->departamento_funcional_id)
+            ->orderBy('primer_nombre')
+            ->get();
+
+    } else {
+
+        $empleados = Empleado::orderBy('primer_nombre')->get();
+
     }
 
+    $tipos = TipoPermisoSistema::where('activo', 1)->get();
 
-
+    return view('permisos.create', compact('empleados', 'tipos'));
+}
 
 
 
@@ -109,6 +117,21 @@ class PermisoController extends Controller
         'hora_salida' => 'nullable|date_format:H:i',
         'hora_entrada' => 'nullable|date_format:H:i',
     ]);
+
+    $usuario = auth()->user();
+
+    if ($usuario->rol === 'jefe_departamento') {
+
+        $empleadoUsuario = Empleado::findOrFail($usuario->empleado_dni);
+
+        $empleadoSolicitado = Empleado::where('DNI', $request->dni_empleado)
+            ->where('departamento_funcional_id', $empleadoUsuario->departamento_funcional_id)
+            ->first();
+
+        if (!$empleadoSolicitado) {
+            abort(403, 'No puedes crear permisos para empleados de otro departamento.');
+        }
+    }
 
     $rutaDocumento = null;
 
@@ -176,13 +199,12 @@ class PermisoController extends Controller
     ]);
 
     return redirect()
-        ->route('permisos.index')
+    ->route(auth()->user()->rol === 'jefe_departamento' ? 'permisos.create' : 'permisos.index')
         ->with([
             'success' => 'Solicitud enviada correctamente.',
             'permiso_imprimir' => $permiso->id
         ]);
 }
-
 
 
 

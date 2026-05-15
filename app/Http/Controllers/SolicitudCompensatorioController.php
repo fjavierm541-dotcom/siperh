@@ -6,6 +6,7 @@ use App\Models\Compensatorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Empleado;
 
 
 
@@ -15,14 +16,28 @@ class SolicitudCompensatorioController extends Controller
      * 🟢 Mostrar formulario de creación
      */
     public function create()
-    {
+{
+    $usuario = auth()->user();
+
+    if ($usuario->rol === 'jefe_departamento') {
+
+        $empleadoUsuario = Empleado::findOrFail($usuario->empleado_dni);
+
+        $departamentos = DB::table('departamentos_muni')
+            ->where('id', $empleadoUsuario->departamento_funcional_id)
+            ->where('activo', 1)
+            ->get();
+
+    } else {
+
         $departamentos = DB::table('departamentos_muni')
             ->where('activo', 1)
             ->get();
 
-        return view('compensatorios.create', compact('departamentos'));
     }
 
+    return view('compensatorios.create', compact('departamentos'));
+}
 
 
 
@@ -46,6 +61,25 @@ public function store(Request $request)
         // PDF opcional
         'documento' => 'nullable|file|mimes:pdf|max:5120',
     ]);
+
+    $usuario = auth()->user();
+
+    if ($usuario->rol === 'jefe_departamento') {
+
+        $empleadoUsuario = Empleado::findOrFail($usuario->empleado_dni);
+
+        if ((int) $request->departamento_id !== (int) $empleadoUsuario->departamento_funcional_id) {
+            abort(403, 'No puedes enviar solicitudes para otro departamento.');
+        }
+
+        $empleadosValidos = Empleado::where('departamento_funcional_id', $empleadoUsuario->departamento_funcional_id)
+            ->whereIn('DNI', $request->empleados)
+            ->count();
+
+        if ($empleadosValidos !== count($request->empleados)) {
+            abort(403, 'No puedes seleccionar empleados de otro departamento.');
+        }
+    }
 
     $hoy = Carbon::today();
     $fecha = Carbon::parse($request->fecha_trabajada);
@@ -86,7 +120,9 @@ public function store(Request $request)
     }
 
     return redirect()
-    ->route('compensatorios.solicitudes.index')
+    ->route(auth()->user()->rol === 'jefe_departamento'
+        ? 'compensatorios.solicitudes.create'
+        : 'compensatorios.solicitudes.index')
     ->with([
         'success' => 'Solicitud creada correctamente.',
         'imprimir_solicitud' => $solicitud->id

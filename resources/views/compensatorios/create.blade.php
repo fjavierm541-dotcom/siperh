@@ -104,9 +104,12 @@
 
         <!-- BOTÓN -->
         <div class="text-end">
-        <a href="{{ route('compensatorios.solicitudes.index') }}"
+        <a href="{{ auth()->user()->rol === 'jefe_departamento'
+                    ? route('permisos.menu')
+                    : route('permisos.index') }}"
         class="btn btn-outline-secondary me-2">
-        Cancelar</a>
+            Cancelar
+        </a>
 
             <button type="submit" class="btn btn-primary-custom">
                 Guardar solicitud
