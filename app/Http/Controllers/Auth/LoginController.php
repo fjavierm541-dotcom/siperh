@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 
 class LoginController extends Controller
 {
@@ -32,7 +33,8 @@ class LoginController extends Controller
         if (Auth::attempt($credenciales)) {
             $request->session()->regenerate();
 
-            return redirect()->route('inicio');
+            //return redirect()->route('inicio');
+            return redirect()->route('paginas.inicio');
         }
 
         return back()
@@ -51,4 +53,36 @@ class LoginController extends Controller
 
         return redirect()->route('login');
     }
+
+    public function mostrarCambiarPassword()
+{
+    return view('auth.cambiar-password');
+}
+
+public function actualizarPassword(Request $request)
+{
+    $request->validate([
+        'password' => [
+            'required',
+            'confirmed',
+            Password::min(8)
+                ->mixedCase()
+                ->numbers()
+                ->symbols(),
+        ],
+    ], [
+        'password.required' => 'La nueva contraseña es obligatoria.',
+        'password.confirmed' => 'Las contraseñas no coinciden.',
+    ]);
+
+    $user = auth()->user();
+
+    $user->password = $request->password;
+    $user->debe_cambiar_password = false;
+    $user->save();
+
+    return redirect()
+        ->route('paginas.inicio')
+        ->with('success', 'Contraseña actualizada correctamente.');
+}
 }

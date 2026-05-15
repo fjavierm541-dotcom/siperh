@@ -92,8 +92,11 @@ input, select, textarea {
     <div class="container-fluid px-4">
 
         <!-- Nombre del sistema -->
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            Sistema de Permisos RRHH
+        <a class="navbar-brand d-flex flex-column lh-sm" href="{{ route('paginas.inicio') }}">
+            <span class="fw-bold">SIPERH</span>
+            <small style="font-size: 11px; color: #dbeafe;">
+                Sistema de Personal de Recursos Humanos
+            </small>
         </a>
 
         <!-- Botón responsive -->
@@ -106,66 +109,83 @@ input, select, textarea {
 
             <!-- Links izquierda -->
             <ul class="navbar-nav me-auto">
+
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('paginas.inicio') ? 'active fw-bold text-warning' : '' }}"
-   href="{{ route('paginas.inicio') }}">
-   Inicio
-</a>
-
+                       href="{{ route('paginas.inicio') }}">
+                        Inicio
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('empleados.*') ? 'active fw-bold text-warning' : '' }}"
-   href="{{ route('empleados.index') }}">
-   Empleados
-</a>
-
+                       href="{{ route('empleados.index') }}">
+                        Empleados
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('permisos.*') ? 'active fw-bold text-warning' : '' }}"
-   href="{{ route('permisos.index') }}">
-   Permisos
-</a>
-
+                       href="{{ route('permisos.index') }}">
+                        Permisos
+                    </a>
                 </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('departamentos.*') ? 'active fw-bold text-warning' : '' }}"
+                       href="{{ route('departamentos.index') }}">
+                        Departamentos
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('calendario.*') ? 'active fw-bold text-warning' : '' }}"
+                       href="{{ route('calendario.index') }}">
+                        Calendario
+                    </a>
+                </li>
+
             </ul>
 
             <!-- Usuario logueado -->
             <ul class="navbar-nav">
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                        {{ auth()->user()->name ?? 'Usuario' }}
+                    <a class="nav-link dropdown-toggle d-flex flex-column text-end" href="#" data-bs-toggle="dropdown">
+                        <span>{{ auth()->user()->name ?? 'Usuario' }}</span>
+                        <small style="font-size: 11px; color: #dbeafe;">
+                            @if(auth()->user()?->rol === 'superadmin')
+                                Super administrador
+                            @elseif(auth()->user()?->rol === 'rrhh')
+                                Administrador RRHH
+                            @elseif(auth()->user()?->rol === 'jefe_departamento')
+                                Jefe de departamento
+                            @else
+                                Usuario
+                            @endif
+                        </small>
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-end">
 
-    <li>
-        <a class="dropdown-item" href="{{ route('dashboard') }}">
-            Monitoreo de Días Disponibles
-        </a>
-    </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                ⚙️ Ajustes
+                            </a>
+                        </li>
 
-    <li>
-        <a class="dropdown-item" href="#">
-            Ajustes
-        </a>
-    </li>
+                        <li><hr class="dropdown-divider"></li>
 
-    <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger">
+                                    Cerrar sesión
+                                </button>
+                            </form>
+                        </li>
 
-    <li>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="dropdown-item text-danger">
-                Cerrar sesión
-            </button>
-        </form>
-    </li>
-
-</ul>
-
+                    </ul>
                 </li>
 
             </ul>
