@@ -34,19 +34,22 @@
    <form method="POST" action="{{ route('compensatorios.solicitudes.store') }}" enctype="multipart/form-data">
         @csrf
 
-        <!-- DEPARTAMENTO -->
-        <div class="mb-3">
-            <label class="form-label">Departamento</label>
-            <select name="departamento_id" class="form-control" required>
-                <option value="">Seleccione</option>
-                @foreach($departamentos as $dep)
-                    <option value="{{ $dep->id }}">
-                        {{ $dep->nombre }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
 
+<div class="mb-3">
+
+    <label class="form-label">Departamento</label>
+
+    <input type="text"
+           class="form-control"
+           value="{{ $departamento->nombre ?? 'Sin departamento asignado' }}"
+           readonly>
+
+    <input type="hidden"
+           name="departamento_id"
+           id="departamento_id"
+           value="{{ $departamento->id ?? '' }}">
+
+</div>
         <!-- FECHA -->
         <div class="mb-3">
             <label class="form-label">Fecha trabajada</label>
@@ -105,8 +108,8 @@
         <!-- BOTÓN -->
         <div class="text-end">
         <a href="{{ auth()->user()->rol === 'jefe_departamento'
-                    ? route('permisos.menu')
-                    : route('permisos.index') }}"
+            ? route('compensatorios.solicitudes.mis')
+            : route('compensatorios.solicitudes.index') }}"
         class="btn btn-outline-secondary me-2">
             Cancelar
         </a>
@@ -119,42 +122,57 @@
     </form>
 </div>
 
-<script>
-document.querySelector('[name="departamento_id"]').addEventListener('change', function(){
 
-    let deptoId = this.value;
+
+<script>
+function cargarEmpleados(deptoId) {
+
     let select = document.getElementById('empleados-select');
 
     select.innerHTML = '<option>Cargando...</option>';
 
-    if(deptoId){
+    if (deptoId) {
 
         fetch(`/empleados/por-departamento/${deptoId}`)
-        .then(res => res.json())
-        .then(data => {
+            .then(res => res.json())
+            .then(data => {
 
-            select.innerHTML = '';
+                select.innerHTML = '';
 
-            data.forEach(emp => {
+                data.forEach(emp => {
 
-                let option = document.createElement('option');
+                    let option = document.createElement('option');
 
-                option.value = emp.DNI; // ✔ correcto
-                option.text = emp.nombre; // ✔ ya concatenado
+                    option.value = emp.DNI;
+                    option.text = emp.nombre;
 
-                select.appendChild(option);
+                    select.appendChild(option);
+
+                });
 
             });
 
-        });
-
-    }else{
+    } else {
         select.innerHTML = '';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const departamento = document.getElementById('departamento_id');
+
+    if (departamento && departamento.value) {
+        cargarEmpleados(departamento.value);
+    }
+
+    if (departamento && departamento.tagName === 'SELECT') {
+        departamento.addEventListener('change', function () {
+            cargarEmpleados(this.value);
+        });
     }
 
 });
 </script>
-
 
 
 

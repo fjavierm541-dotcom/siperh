@@ -44,9 +44,11 @@
 
         <div class="d-flex gap-2">
             
-            <a href="{{ route('compensatorios.solicitudes.create') }}" class="btn btn-gold btn-sm">
-                + Nueva Solicitud
-            </a>
+            <a href="{{ route('compensatorios.solicitudes.mis') }}"
+   class="btn btn-gold btn-sm"
+   onclick="window.location.href=this.href; return false;">
+   Mis solicitudes
+</a>
 
             <a href="{{ route('compensatorios.solicitudes.imprimir.mes') }}" class="btn btn-outline-light btn-sm">
                 Imprimir por mes
@@ -65,6 +67,12 @@
                 {{ session('success') }}
             </div>
         @endif
+
+        @if(session('error'))
+    <div class="alert alert-warning">
+        {{ session('error') }}
+    </div>
+@endif
 
         @if(session('imprimir_solicitud'))
         <script>
@@ -137,6 +145,7 @@
                         <th>Empleados incluidos</th>
                         <th>Estado</th>
                         <th class="text-end">Acciones</th>
+                        <th></th>
                     </tr>
                 </thead>
 
@@ -149,13 +158,31 @@
                             <td>{{ $sol->empleados->count() }}</td>
 
                             <td>
-                                @if($sol->estado == 'pendiente')
-                                    <span class="badge bg-warning text-dark">Pendiente</span>
-                                @elseif($sol->estado == 'aprobado')
-                                    <span class="badge bg-success">Aprobado</span>
-                                @else
-                                    <span class="badge bg-danger">Rechazado</span>
-                                @endif
+                               @if($sol->estado == 'pendiente')
+
+    <span class="badge bg-warning text-dark">
+        Pendiente
+    </span>
+
+@elseif($sol->estado == 'aprobado')
+
+    <span class="badge bg-success">
+        Aprobado
+    </span>
+
+@elseif($sol->estado == 'cancelado')
+
+    <span class="badge bg-secondary">
+        Cancelado
+    </span>
+
+@else
+
+    <span class="badge bg-danger">
+        Rechazado
+    </span>
+
+@endif
                             </td>
 
                             <td class="text-end">
@@ -164,10 +191,31 @@
                                     Ver
                                 </a>
                             </td>
+
+                            <td>
+
+    @if($sol->documento_path)
+
+        <a href="{{ asset('storage/' . $sol->documento_path) }}"
+           target="_blank"
+           class="btn btn-outline-primary btn-sm"
+           title="Ver documento">
+
+            🖨️
+
+        </a>
+
+    @else
+
+        <span class="text-muted">—</span>
+
+    @endif
+
+</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted">
+                            <td colspan="7" class="text-center text-muted">
                                 No hay solicitudes registradas.
                             </td>
                         </tr>

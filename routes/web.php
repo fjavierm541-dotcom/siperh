@@ -110,6 +110,16 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
                 )
                 ->get();
         });
+        //mis compensatorios
+
+    Route::get('/compensatorios/mis-compensatorios', [SolicitudCompensatorioController::class, 'misSolicitudes'])
+    ->name('compensatorios.solicitudes.mis');
+
+Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController::class, 'show'])
+    ->name('compensatorios.solicitudes.show');
+
+    Route::patch('/compensatorios/{id}/cancelar', [SolicitudCompensatorioController::class, 'cancelar'])
+    ->name('compensatorios.solicitudes.cancelar');
 
         
 
@@ -314,6 +324,21 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
 
     });
 
+
+
+/*
+//superadmin 
+
+Route::middleware(['rol:superadmin'])->group(function () {
+
+    Route::get('/bitacora', [BitacoraSistemaController::class, 'index'])
+        ->name('bitacora.index');
+
+    Route::get('/bitacora/imprimir', [BitacoraSistemaController::class, 'imprimir'])
+        ->name('bitacora.imprimir');
+
+});
+*/
 
 
     
