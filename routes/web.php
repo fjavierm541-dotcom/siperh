@@ -393,3 +393,16 @@ Route::middleware(['rol:superadmin'])->group(function () {
 // 1 usuarios
 // 2 correcciones de saldos
 // 3 bitacoras
+/*
+\App\Models\User::create([
+'empleado_dni' => '0703-1948-00285',
+'name' => 'Javier Medina',
+'username' => 'javier',
+'email' => 'javier@gmail.com',
+'telefono' => '98765432',
+'password' => 'Admin2026*',
+'debe_cambiar_password' => false,
+'rol' => 'superadmin',
+'activo' => true,
+]);
+*/
