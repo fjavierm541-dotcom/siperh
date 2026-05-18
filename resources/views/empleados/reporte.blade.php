@@ -279,7 +279,7 @@
 						{{ $movimiento->descripcion ?? '—' }}
 					</td>
 
-					<td>—</td>
+					<td>{{ $movimiento->usuario_nombre ?? '—' }}</td>
 				</tr>
 
 			@endforeach
