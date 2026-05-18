@@ -8,12 +8,10 @@
 
     <img src="/images/logosiperh.png" class="logo" alt="Logo SIPER">
 
-    <div class="login-title">
-        SIPER
-    </div>
+    
 
     <div class="login-subtitle">
-        Sistema de Personal y Recursos Humanos
+        Sistema de Personal de Recursos Humanos
     </div>
 
     <p class="login-text">
@@ -129,7 +127,7 @@
                     <strong>Información del sistema</strong><br>
                     Versión 1.0<br>
                     Mayo 2026<br>
-                    Desarrollado para la Municipalidad de Danlí.<br><br>
+                    Desarrollado para la Alcaldía Municipal de Danlí.<br><br>
                     Desarrollo y soporte técnico:<br>
                     <strong>F. Javier Medina</strong>
                 </div>
