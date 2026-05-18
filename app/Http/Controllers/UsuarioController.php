@@ -139,7 +139,7 @@ class UsuarioController extends Controller
             $empleado->segundo_apellido
         );
 
-        User::create([
+        $usuarioNuevo = User::create([
             'empleado_dni' => $request->empleado_dni,
             'name' => $nombreCompleto,
             'username' => $request->username,
@@ -149,6 +149,16 @@ class UsuarioController extends Controller
             'rol' => $request->rol,
             'activo' => true,
         ]);
+
+        BitacoraHelper::registrar(
+            'crear_usuario',
+            'usuarios',
+            'Se creó un nuevo usuario: ' . $usuarioNuevo->username,
+            $usuarioNuevo->id,
+            'usuario',
+            null,
+            $usuarioNuevo->toArray()
+        );
 
         return redirect()
             ->route('usuarios.index')
@@ -173,9 +183,28 @@ public function toggle($id)
 
     }
 
+   
+    $estadoAnterior = $usuario->activo;
+
     $usuario->activo = !$usuario->activo;
 
     $usuario->save();
+
+    BitacoraHelper::registrar(
+        $usuario->activo ? 'activar_usuario' : 'desactivar_usuario',
+        'usuarios',
+        $usuario->activo
+            ? 'Se activó el usuario: ' . $usuario->username
+            : 'Se desactivó el usuario: ' . $usuario->username,
+        $usuario->id,
+        'usuario',
+        [
+            'activo' => $estadoAnterior
+        ],
+        [
+            'activo' => $usuario->activo
+        ]
+    );
 
     return back()->with(
         'success',
@@ -241,6 +270,8 @@ public function update(Request $request, $id)
 
     ]);
 
+    $datosAnteriores = $usuario->toArray();
+
     $usuario->update([
 
         'empleado_dni' => $request->empleado_dni,
@@ -251,6 +282,16 @@ public function update(Request $request, $id)
         'rol' => $request->rol,
 
     ]);
+
+    BitacoraHelper::registrar(
+    'editar_usuario',
+    'usuarios',
+    'Se actualizó el usuario: ' . $usuario->username,
+    $usuario->id,
+    'usuario',
+    $datosAnteriores,
+    $usuario->fresh()->toArray()
+);
 
     return redirect()
         ->route('usuarios.index')
@@ -302,6 +343,14 @@ public function resetPassword($id)
     $usuario->debe_cambiar_password = true;
 
     $usuario->save();
+
+    BitacoraHelper::registrar(
+    'reset_password_usuario',
+    'usuarios',
+    'Se restableció la contraseña del usuario: ' . $usuario->username,
+    $usuario->id,
+    'usuario'
+);
 
     return back()->with(
         'success',

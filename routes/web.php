@@ -13,6 +13,7 @@ use App\Http\Controllers\CalendarioController;
 use App\Http\Controllers\SolicitudCompensatorioController;
 use App\Http\Controllers\CorreccionSaldoController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\BitacoraSistemaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -322,10 +323,15 @@ Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController
         ->name('correcciones-saldos.store');
                 
 
+        
+
+        
+
     });
 
 
 
+<<<<<<< Updated upstream
 /*
 //superadmin 
 
@@ -342,7 +348,26 @@ Route::middleware(['rol:superadmin'])->group(function () {
 
 
     
+=======
+        // GRUPO 3 - SUPERADMIN
+Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
+    ->name('correcciones-saldos.store');
+>>>>>>> Stashed changes
 
+
+/* ==========================
+BITÁCORA DEL SISTEMA
+========================== */
+
+Route::middleware(['rol:superadmin'])->group(function () {
+
+    Route::get('/bitacora', [BitacoraSistemaController::class, 'index'])
+        ->name('bitacora.index');
+
+    Route::get('/bitacora/imprimir', [BitacoraSistemaController::class, 'imprimir'])
+        ->name('bitacora.imprimir');
+
+});
     
 
     /* ==========================

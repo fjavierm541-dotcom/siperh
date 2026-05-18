@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('metodo', 10)->nullable();
             $table->string('ruta', 255)->nullable();
 
-            $table->unsignedBigInteger('referencia_id')->nullable();
+            $table->string('referencia_id', 100)->nullable();
             $table->string('referencia_tipo', 100)->nullable();
 
             $table->json('valores_anteriores')->nullable();

@@ -549,8 +549,20 @@ $request->validate([
     $data = $request->all();
     $data['usuario_crea'] = auth()->user()->name ?? 'Sistema';;
 
-    // Crear empleado primero
+    // Crear empleado primero y registrar bitacora
     $empleado = Empleado::create($data);
+        BitacoraHelper::registrar(
+        'crear_empleado',
+        'empleados',
+        'Se registró un nuevo empleado: ' .
+        $empleado->primer_nombre . ' ' .
+        $empleado->primer_apellido,
+
+        $empleado->DNI,
+        'empleado',
+        null,
+        $empleado->toArray()
+    );
 
     // ================================
     // Guardar documentos en tabla aparte
@@ -718,8 +730,24 @@ public function update(Request $request, $dni)
     ]);
 
     $data['usuario_modifica'] = auth()->user()->name ?? 'Sistema';
+    $datosAnteriores = $empleado->toArray();
 
     $empleado->update($data);
+
+        BitacoraHelper::registrar(
+        'editar_empleado',
+        'empleados',
+        'Se actualizó el empleado: ' .
+        $empleado->primer_nombre . ' ' .
+        $empleado->primer_apellido,
+
+        $empleado->DNI,
+        'empleado',
+
+        $datosAnteriores,
+
+        $empleado->fresh()->toArray()
+    );
 
     $documentos = [
         'copia_dni' => 'Copia DNI',
@@ -1012,11 +1040,32 @@ public function verRegistroImprimir($dni)
     public function guardarFuncion(Request $request, $dni)
     {
         $empleado = Empleado::findOrFail($dni);
+        $departamentoAnterior = $empleado->departamento_funcional_id;
 
         $empleado->departamento_funcional_id =
             $request->departamento_funcional_id;
 
         $empleado->save();
+
+                BitacoraHelper::registrar(
+            'cambiar_funcion_empleado',
+            'empleados',
+            'Se actualizó el departamento funcional del empleado: ' .
+            $empleado->primer_nombre . ' ' .
+            $empleado->primer_apellido,
+
+            $empleado->DNI,
+
+            'empleado',
+
+            [
+                'departamento_funcional_id' => $departamentoAnterior
+            ],
+
+            [
+                'departamento_funcional_id' => $empleado->departamento_funcional_id
+            ]
+        );
 
         return redirect()
             ->route('empleados.verRegistro',$dni)
@@ -1031,6 +1080,7 @@ public function verRegistroImprimir($dni)
         $empleado = Empleado::where('DNI', $dni)->firstOrFail();
 
         $estadoActual = strtolower(trim($empleado->estado_empleado ?? 'activo'));
+        $estadoAnterior = $empleado->estado_empleado;
 
         $empleado->estado_empleado = $estadoActual === 'inactivo'
             ? 'activo'
@@ -1038,6 +1088,33 @@ public function verRegistroImprimir($dni)
 
         $empleado->usuario_modifica = auth()->user()->name ?? 'Sistema';
         $empleado->save();
+
+        BitacoraHelper::registrar(
+            $empleado->estado_empleado === 'activo'
+                ? 'activar_empleado'
+                : 'inactivar_empleado',
+
+            'empleados',
+
+            $empleado->estado_empleado === 'activo'
+                ? 'Se activó el empleado: '
+                : 'Se inactivó el empleado: ' .
+
+            $empleado->primer_nombre . ' ' .
+            $empleado->primer_apellido,
+
+            $empleado->DNI,
+
+            'empleado',
+
+            [
+                'estado_empleado' => $estadoAnterior
+            ],
+
+            [
+                'estado_empleado' => $empleado->estado_empleado
+            ]
+        );
 
         $mensaje = $empleado->estado_empleado === 'activo'
             ? 'Empleado activado correctamente.'
