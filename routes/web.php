@@ -116,7 +116,7 @@ Route::middleware(['auth', 'forzar.password'])->group(function () {
     Route::get('/compensatorios/mis-compensatorios', [SolicitudCompensatorioController::class, 'misSolicitudes'])
     ->name('compensatorios.solicitudes.mis');
 
-Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController::class, 'show'])
+    Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController::class, 'show'])
     ->name('compensatorios.solicitudes.show');
 
     Route::patch('/compensatorios/{id}/cancelar', [SolicitudCompensatorioController::class, 'cancelar'])
@@ -331,7 +331,6 @@ Route::get('/compensatorios/solicitudes/{id}', [SolicitudCompensatorioController
 
 
 
-<<<<<<< Updated upstream
 /*
 //superadmin 
 
@@ -348,11 +347,9 @@ Route::middleware(['rol:superadmin'])->group(function () {
 
 
     
-=======
         // GRUPO 3 - SUPERADMIN
 Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
     ->name('correcciones-saldos.store');
->>>>>>> Stashed changes
 
 
 /* ==========================

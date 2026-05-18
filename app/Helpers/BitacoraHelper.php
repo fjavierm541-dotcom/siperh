@@ -37,19 +37,23 @@ class BitacoraHelper
 
             'ip_equipo' => request()->ip(),
 
-            'user_agent' => request()->userAgent(),
+            'user_agent' => substr(request()->userAgent() ?? '', 0, 1000),
 
             'metodo' => request()->method(),
 
             'ruta' => request()->path(),
 
-            'referencia_id' => $referenciaId,
+            'referencia_id' => (string) $referenciaId,
 
             'referencia_tipo' => $referenciaTipo,
 
-            'valores_anteriores' => $valoresAnteriores,
+            'valores_anteriores' => $valoresAnteriores
+                ? json_encode($valoresAnteriores, JSON_UNESCAPED_UNICODE)
+                : null,
 
-            'valores_nuevos' => $valoresNuevos,
+            'valores_nuevos' => $valoresNuevos
+                ? json_encode($valoresNuevos, JSON_UNESCAPED_UNICODE)
+                : null,
 
             'estado' => $estado,
 

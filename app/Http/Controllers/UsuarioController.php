@@ -151,14 +151,19 @@ class UsuarioController extends Controller
         ]);
 
         BitacoraHelper::registrar(
-            'crear_usuario',
-            'usuarios',
-            'Se creó un nuevo usuario: ' . $usuarioNuevo->username,
-            $usuarioNuevo->id,
-            'usuario',
-            null,
-            $usuarioNuevo->toArray()
-        );
+        'crear_usuario',
+        'usuarios',
+        'Se creó un nuevo usuario: ' . $usuarioNuevo->username,
+        $usuarioNuevo->id,
+        'usuario',
+        null,
+        [
+            'id' => $usuarioNuevo->id,
+            'username' => $usuarioNuevo->username,
+            'rol' => $usuarioNuevo->rol,
+            'activo' => $usuarioNuevo->activo,
+        ]
+    );
 
         return redirect()
             ->route('usuarios.index')
