@@ -34,7 +34,11 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
    RUTAS PROTEGIDAS
 ========================== */
 //GRUPO GENERAL 
-Route::middleware(['auth', 'forzar.password'])->group(function () {
+Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
+
+    //MANTENER SESION INICIADA
+    Route::post('/mantener-sesion', [LoginController::class, 'mantenerSesion'])
+        ->name('session.keepalive');
 
     Route::get('/inicio', function () {
         return view('paginas.inicio');

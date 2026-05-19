@@ -18,6 +18,12 @@
         Plataforma institucional para el control y gestión integral del personal y procesos de recursos humanos.
     </p>
 
+    @if (session('error'))
+    <div class="alert alert-warning alert-login">
+        {{ session('error') }}
+    </div>
+@endif
+
     @if ($errors->any())
         <div class="alert alert-danger alert-login">
             Las credenciales ingresadas no son válidas.

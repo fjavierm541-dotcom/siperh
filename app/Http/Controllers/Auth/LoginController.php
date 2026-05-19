@@ -85,4 +85,12 @@ public function actualizarPassword(Request $request)
         ->route('paginas.inicio')
         ->with('success', 'Contraseña actualizada correctamente.');
 }
+
+public function mantenerSesion(Request $request)
+{
+    return response()->json([
+        'ok' => true,
+        'message' => 'Sesión actualizada correctamente.',
+    ]);
+}
 }

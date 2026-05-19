@@ -69,6 +69,43 @@ input, select, textarea {
     animation: pageFade 0.25s ease;
 }
 
+/* ---------- MODAL SESIÓN ---------- */
+
+.session-modal .modal-content{
+    border: none;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,.25);
+}
+
+.session-modal .modal-header{
+    background: linear-gradient(135deg, #1f3a56, #2d4f73);
+    color: white;
+    border: none;
+}
+
+.session-modal .modal-body{
+    padding: 24px;
+}
+
+.session-modal .modal-footer{
+    border: none;
+    padding: 0 24px 24px;
+}
+
+.btn-session{
+    background: #1f3a56;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+}
+
+.btn-session:hover{
+    background: #162a40;
+    color: white;
+}
+
 @keyframes pageFade {
     from {
         opacity: 0;
@@ -217,6 +254,55 @@ input, select, textarea {
     @yield('content')
 </div>
 
+<!-- MODAL SESIÓN -->
+<div class="modal fade session-modal"
+     id="sessionModal"
+     tabindex="-1"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Sesión próxima a expirar
+                </h5>
+            </div>
+
+            <div class="modal-body">
+
+                <p class="mb-2">
+                    Tu sesión se cerrará en 2 minutos por inactividad.
+                </p>
+
+                <small class="text-muted">
+                    Guarda los cambios pendientes para evitar pérdida de información.
+                </small>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        onclick="cerrarSesionManual()">
+                    Cerrar sesión
+                </button>
+
+                <button type="button"
+                        class="btn btn-session"
+                        onclick="continuarSesion()">
+                    Continuar sesión
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <!-- Bootstrap JS -->
 <script>
 
@@ -261,6 +347,155 @@ window.addEventListener("load", function(){
 })
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+
+/* ==========================
+   CONTROL DE SESIÓN
+========================== */
+
+let tiempoInactividad = 0
+//tiempo de actividad y tiempo en el que aparecera el modal 
+const LIMITE = 30 * 60 // 30 minutos
+const AVISO = 28 * 60 // 28 minutos
+
+let modalSesion = null
+let modalMostrado = false
+
+function reiniciarActividad(){
+
+    // Si el modal ya está mostrado, NO lo cerramos automáticamente.
+    // Así el usuario puede escoger "Continuar sesión" o "Cerrar sesión".
+    if(modalMostrado){
+        return
+    }
+
+    tiempoInactividad = 0
+
+}
+
+const eventosActividad = [
+    "mousemove",
+    "mousedown",
+    "keypress",
+    "scroll",
+    "touchstart",
+    "input",
+    "click"
+]
+
+eventosActividad.forEach(evento => {
+
+    document.addEventListener(evento, reiniciarActividad)
+
+})
+
+window.addEventListener("load", function(){
+
+    const modalElement = document.getElementById("sessionModal")
+
+    modalSesion = new bootstrap.Modal(modalElement)
+
+})
+
+setInterval(() => {
+
+    tiempoInactividad++
+
+    /* AVISO 2 MINUTOS ANTES */
+
+    if(tiempoInactividad >= AVISO && !modalMostrado){
+
+        modalSesion.show()
+        modalMostrado = true
+
+    }
+
+    /* KEEP ALIVE */
+
+    if(tiempoInactividad < AVISO){
+
+        fetch("{{ route('session.keepalive') }}", {
+
+            method: "POST",
+
+            headers: {
+                "X-CSRF-TOKEN":
+                    document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+
+        })
+
+    }
+
+    /* CERRAR SESIÓN */
+
+    if(tiempoInactividad >= LIMITE){
+
+    cerrarSesionManual()
+
+}
+
+}, 1000)
+
+/* ==========================
+   CONTINUAR SESIÓN
+========================== */
+
+function continuarSesion(){
+
+    fetch("{{ route('session.keepalive') }}", {
+
+        method: "POST",
+
+        headers: {
+            "X-CSRF-TOKEN":
+                document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        }
+
+    })
+    .then(() => {
+
+        tiempoInactividad = 0
+        modalSesion.hide()
+        modalMostrado = false
+
+    })
+
+}
+
+/* ==========================
+   LOGOUT MANUAL
+========================== */
+
+function cerrarSesionManual(){
+
+    const form = document.createElement("form")
+
+    form.method = "POST"
+    form.action = "{{ route('logout') }}"
+
+    const token = document.createElement("input")
+
+    token.type = "hidden"
+    token.name = "_token"
+    token.value =
+        document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+
+    form.appendChild(token)
+
+    document.body.appendChild(form)
+
+    form.submit()
+
+}
+
+</script>
 
 </body>
 </html>
