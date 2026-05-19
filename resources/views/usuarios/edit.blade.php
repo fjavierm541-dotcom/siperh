@@ -1,8 +1,8 @@
-@extends('layouts.master')
+@extends('layouts.configuracion')
 
 @section('title', 'Editar Usuario')
 
-@section('content')
+@section('config-content')
 
 <div class="glass-card overflow-hidden">
 

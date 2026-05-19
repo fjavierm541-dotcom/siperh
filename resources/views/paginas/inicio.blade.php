@@ -215,7 +215,7 @@
                 </div>
 
                 <div class="col-md-4">
-                    <a href="{{ route('periodos.create') }}" class="dashboard-link">
+                    <a href="{{ route('configuracion.inicio') }}" class="dashboard-link">
                         <div class="card dashboard-card text-center p-4">
                             <div class="dashboard-icon">
                                 <img src="{{ asset('icons/ajustes.png') }}" class="icono-img">

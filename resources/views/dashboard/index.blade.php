@@ -1,99 +1,144 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Dashboard RRHH</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.configuracion')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+@section('title', 'Control de vencimientos')
 
-    <style>
-        body {
-            background: linear-gradient(135deg, #1f3a56, #2d4f73);
-            min-height: 100vh;
-        }
+@section('config-content')
 
-        .glass-card {
-            background: rgba(255,255,255,0.95);
-            border-radius: 18px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-        }
+<style>
 
-        .card-header-custom {
-            background-color: #274769;
-            color: white;
-            border-top-left-radius: 18px;
-            border-top-right-radius: 18px;
-        }
+    .big-number {
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1;
+    }
 
-        .big-number {
-            font-size: 3rem;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
+    .riesgo-card {
+        border-radius: 14px;
+        transition: all .25s ease;
+        background: white;
+    }
 
-<div class="container py-5">
+    .riesgo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,.12);
+    }
 
-    <div class="glass-card">
+</style>
 
-        <div class="card-header-custom p-4">
-            <h4 class="mb-0">Panel General de Vacaciones</h4>
+<div class="glass-card overflow-hidden">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center px-4 py-3"
+         style="background: #27496d;">
+
+        <div>
+            <h4 class="text-white fw-bold mb-0">
+                Control de vencimientos
+            </h4>
+
+            <small class="text-white-50">
+                Resumen general del estado de vacaciones del personal.
+            </small>
         </div>
 
-        <div class="p-5">
+    </div>
 
-            <div class="row text-center">
+    <!-- CONTENIDO -->
+    <div class="p-4">
 
-                <div class="col-md-4 mb-4">
-                    <div class="card border-danger shadow-sm">
-                        <div class="card-body">
-                            <h5 class="text-danger">🔴 Riesgo Alto</h5>
-                            <div class="big-number text-danger">
-                                {{ $rojos }}
-                            </div>
-                            <p>Vacaciones por vencer</p>
+        <div class="row g-4 text-center">
+
+            <!-- ROJO -->
+            <div class="col-md-4">
+
+                <div class="card border-danger riesgo-card h-100 shadow-sm">
+
+                    <div class="card-body py-4">
+
+                        <h5 class="text-danger fw-bold mb-4">
+                            🔴 Riesgo Alto
+                        </h5>
+
+                        <div class="big-number text-danger mb-3">
+                            {{ $rojos }}
                         </div>
-                    </div>
-                </div>
 
-                <div class="col-md-4 mb-4">
-                    <div class="card border-warning shadow-sm">
-                        <div class="card-body">
-                            <h5 class="text-warning">🟡 Riesgo Medio</h5>
-                            <div class="big-number text-warning">
-                                {{ $amarillos }}
-                            </div>
-                            <p>Próximas a vencer</p>
-                        </div>
-                    </div>
-                </div>
+                        <p class="text-muted mb-0">
+                            Vacaciones por vencer
+                        </p>
 
-                <div class="col-md-4 mb-4">
-                    <div class="card border-success shadow-sm">
-                        <div class="card-body">
-                            <h5 class="text-success">🟢 Bajo Riesgo</h5>
-                            <div class="big-number text-success">
-                                {{ $verdes }}
-                            </div>
-                            <p>Sin riesgo inmediato</p>
-                        </div>
                     </div>
+
                 </div>
 
             </div>
 
-            <div class="text-center mt-4">
-                <a href="{{ route('empleados.index') }}" class="btn btn-dark">
-                    Ver listado completo de empleados
-                </a>
+            <!-- AMARILLO -->
+            <div class="col-md-4">
+
+                <div class="card border-warning riesgo-card h-100 shadow-sm">
+
+                    <div class="card-body py-4">
+
+                        <h5 class="text-warning fw-bold mb-4">
+                            🟡 Riesgo Medio
+                        </h5>
+
+                        <div class="big-number text-warning mb-3">
+                            {{ $amarillos }}
+                        </div>
+
+                        <p class="text-muted mb-0">
+                            Próximas a vencer
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- VERDE -->
+            <div class="col-md-4">
+
+                <div class="card border-success riesgo-card h-100 shadow-sm">
+
+                    <div class="card-body py-4">
+
+                        <h5 class="text-success fw-bold mb-4">
+                            🟢 Bajo Riesgo
+                        </h5>
+
+                        <div class="big-number text-success mb-3">
+                            {{ $verdes }}
+                        </div>
+
+                        <p class="text-muted mb-0">
+                            Sin riesgo inmediato
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
+
+        <!-- BOTÓN -->
+        <div class="text-center mt-5">
+
+            <a href="{{ route('empleados.index') }}"
+               class="btn btn-primary-custom px-4">
+
+                Ver listado completo de empleados
+
+            </a>
+
+        </div>
+
     </div>
 
 </div>
 
-</body>
-</html>
+@endsection

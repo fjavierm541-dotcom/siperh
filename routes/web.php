@@ -327,11 +327,20 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
         ->name('correcciones-saldos.store');
                 
 
-        
+        Route::get('/configuracion', function () {
+            return view('configuracion.inicio');
+        })->name('configuracion.inicio');
 
-        
+        Route::get('/ajustes', function () {
+            return view('ajustes.inicio');
+        })->name('configuracion.inicio');
+                
 
     });
+
+    Route::get('/ajustes/acerca-de', function () {
+    return view('ajustes.acerca');
+})->name('configuracion.acerca');
 
 
 

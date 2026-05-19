@@ -1,8 +1,8 @@
-@extends('layouts.master')
+@extends('layouts.configuracion')
 
 @section('title','Corrección de saldos')
 
-@section('content')
+@section('config-content')
 
 <div class="glass-card">
 
@@ -20,9 +20,7 @@
                 </small>
             </div>
 
-            <a href="{{ route('paginas.inicio') }}" class="btn btn-secondary btn-sm">
-                Volver
-            </a>
+            
 
         </div>
 
@@ -207,7 +205,7 @@
             {{-- BOTONES --}}
             <div class="d-flex justify-content-between">
 
-                <a href="{{ route('paginas.inicio') }}" class="btn btn-secondary">
+                <a href="{{ route('configuracion.inicio') }}" class="btn btn-secondary">
                     Cancelar
                 </a>
 

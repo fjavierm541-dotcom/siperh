@@ -1,8 +1,8 @@
-@extends('layouts.master')
+@extends('layouts.configuracion')
 
 @section('title', 'Usuarios')
 
-@section('content')
+@section('config-content')
 
 <style>
     .usuarios-table {
