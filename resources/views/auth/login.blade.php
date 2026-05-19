@@ -6,7 +6,7 @@
 
 <div class="login-card">
 
-    <img src="/images/logosiperh.png" class="logo" alt="Logo SIPER">
+    <img src="/images/logosiperh1.png" class="logo" alt="Logo SIPER">
 
     
 
