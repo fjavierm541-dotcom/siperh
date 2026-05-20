@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PermisoSistema;
 use App\Models\Empleado;
+use App\Models\User;
 use App\Models\TipoPermisoSistema;
 use App\Models\EstadoPermisoSistema;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use App\Models\MovimientoPermisoSistema;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\BitacoraHelper;
+use App\Helpers\NotificacionHelper;
 
 class PermisoController extends Controller
 {
@@ -199,6 +201,28 @@ public function create()
         'documento' => $rutaDocumento,
     ]);
 
+    $empleado = Empleado::where('DNI', $request->dni_empleado)->first();
+
+    $nombreEmpleado = $empleado
+        ? trim(
+            $empleado->primer_nombre . ' ' .
+            $empleado->segundo_nombre . ' ' .
+            $empleado->primer_apellido . ' ' .
+            $empleado->segundo_apellido
+        )
+        : $request->dni_empleado;
+
+    NotificacionHelper::crear(
+        null,
+        'rrhh',
+        'Nueva solicitud de permiso',
+        'Se registró una nueva solicitud de permiso para ' . $nombreEmpleado . '.',
+        'info',
+        'permisos',
+        route('permisos.index')
+    );
+
+
     return redirect()
     ->route(auth()->user()->rol === 'jefe_departamento' ? 'permisos.mis' : 'permisos.index')
     ->with([
@@ -273,6 +297,8 @@ public function aprobar($id)
 
     $permiso->estado_permiso_id = $estadoAprobado->id;
     $permiso->save();
+
+    $this->notificarResultadoPermiso($permiso, 'aprobado');
 
     MovimientoPermisoSistema::create([
         'dni_empleado' => $permiso->dni_empleado,
@@ -349,6 +375,8 @@ if ($horasSolicitadas > $totalDisponibleHoras) {
      */
     $permiso->estado_permiso_id = $estadoAprobado->id;
     $permiso->save();
+
+    $this->notificarResultadoPermiso($permiso, 'aprobado');
 
     return redirect()->route('permisos.index')
         ->with('success', 'Permiso aprobado correctamente.');
@@ -628,8 +656,9 @@ private function formatearHoras($horas)
     $estadoRechazado = EstadoPermisoSistema::whereRaw('LOWER(nombre) = ?', ['rechazado'])->firstOrFail();
 
     $permiso->estado_permiso_id = $estadoRechazado->id;
-$permiso->motivo_rechazo = $request->motivo_rechazo;
-$permiso->save();
+    $permiso->motivo_rechazo = $request->motivo_rechazo;
+    $permiso->save(); 
+    $this->notificarResultadoPermiso($permiso, 'rechazado');
 
     MovimientoPermisoSistema::create([
         'dni_empleado' => $permiso->dni_empleado,
@@ -875,6 +904,62 @@ public function imprimir($id)
     ]);
 
     return back()->with('success', 'Permiso cancelado correctamente.');
+}
+
+private function notificarResultadoPermiso($permiso, string $estado): void
+{
+    $empleado = Empleado::where('DNI', $permiso->dni_empleado)->first();
+
+    $nombreEmpleado = $empleado
+        ? trim(
+            $empleado->primer_nombre . ' ' .
+            $empleado->segundo_nombre . ' ' .
+            $empleado->primer_apellido . ' ' .
+            $empleado->segundo_apellido
+        )
+        : $permiso->dni_empleado;
+
+    $tipo = $estado === 'aprobado' ? 'success' : 'danger';
+
+    $titulo = $estado === 'aprobado'
+        ? 'Permiso aprobado'
+        : 'Permiso rechazado';
+
+    $mensaje = 'El permiso de ' . $nombreEmpleado . ' fue ' . $estado . '.';
+
+    // Notificar al superadmin
+    NotificacionHelper::crear(
+        null,
+        'superadmin',
+        $titulo,
+        $mensaje,
+        $tipo,
+        'permisos',
+        route('permisos.index')
+    );
+
+    // Notificar al jefe del departamento funcional del empleado
+    if ($empleado && $empleado->departamento_funcional_id) {
+
+        $dnisDepartamento = Empleado::where('departamento_funcional_id', $empleado->departamento_funcional_id)
+            ->pluck('DNI');
+
+        $jefes = User::where('rol', 'jefe_departamento')
+            ->whereIn('empleado_dni', $dnisDepartamento)
+            ->get();
+
+        foreach ($jefes as $jefe) {
+            NotificacionHelper::crear(
+                $jefe->id,
+                null,
+                $titulo,
+                $mensaje,
+                $tipo,
+                'permisos',
+                route('permisos.mis')
+            );
+        }
+    }
 }
 
 }

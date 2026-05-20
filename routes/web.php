@@ -14,6 +14,7 @@ use App\Http\Controllers\SolicitudCompensatorioController;
 use App\Http\Controllers\CorreccionSaldoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\BitacoraSistemaController;
+use App\Http\Controllers\NotificacionSistemaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -338,29 +339,8 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
 
     });
 
-    Route::get('/ajustes/acerca-de', function () {
-    return view('ajustes.acerca');
-})->name('configuracion.acerca');
 
 
-
-/*
-//superadmin 
-
-Route::middleware(['rol:superadmin'])->group(function () {
-
-    Route::get('/bitacora', [BitacoraSistemaController::class, 'index'])
-        ->name('bitacora.index');
-
-    Route::get('/bitacora/imprimir', [BitacoraSistemaController::class, 'imprimir'])
-        ->name('bitacora.imprimir');
-
-});
-*/
-
-
-    
-        // GRUPO 3 - SUPERADMIN
 Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
     ->name('correcciones-saldos.store');
 
@@ -379,6 +359,26 @@ Route::middleware(['rol:superadmin'])->group(function () {
 
 });
     
+
+
+  Route::get('/ajustes/acerca-de', function () {
+        return view('ajustes.acerca');
+    })->name('configuracion.acerca');
+
+         //notificaciones
+
+    Route::get('/notificaciones', [NotificacionSistemaController::class, 'index'])
+        ->name('notificaciones.index');
+
+    Route::get('/notificaciones/recientes', [NotificacionSistemaController::class, 'recientes'])
+        ->name('notificaciones.recientes');
+
+
+        Route::get('/notificaciones/{id}/abrir', [NotificacionSistemaController::class, 'abrir'])
+    ->name('notificaciones.abrir');
+
+
+
 
     /* ==========================
        PRUEBAS / UTILIDADES

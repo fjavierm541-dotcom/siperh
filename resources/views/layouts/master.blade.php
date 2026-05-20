@@ -46,6 +46,44 @@
             background-color: #162a40;
         }
 
+        .navbar-logo-siperh {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 8px rgba(0,0,0,.25));
+}
+
+.notificacion-btn {
+    position: relative;
+    color: white;
+    font-size: 20px;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 50%;
+    transition: all .25s ease;
+}
+
+.notificacion-btn:hover {
+    color: #d4b06a;
+    background: rgba(255,255,255,.08);
+}
+
+.notificacion-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #dc3545;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%;
+    min-width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 
 
         /* ---------- MICRO FEEDBACK INPUTS ---------- */
@@ -106,6 +144,38 @@ input, select, textarea {
     color: white;
 }
 
+.dropdown-notificacion-texto {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.35;
+    max-width: 260px;
+}
+
+.dropdown-notificacion-item {
+    transition: background .2s ease;
+}
+
+.dropdown-notificacion-item:hover {
+    background: #f5f7fa;
+}
+
+.notificacion-tipo-info {
+    border-left: 4px solid #0d6efd;
+}
+
+.notificacion-tipo-success {
+    border-left: 4px solid #198754;
+}
+
+.notificacion-tipo-warning {
+    border-left: 4px solid #ffc107;
+}
+
+.notificacion-tipo-danger {
+    border-left: 4px solid #dc3545;
+}
+
 @keyframes pageFade {
     from {
         opacity: 0;
@@ -129,12 +199,20 @@ input, select, textarea {
     <div class="container-fluid px-4">
 
         <!-- Nombre del sistema -->
-        <a class="navbar-brand d-flex flex-column lh-sm" href="{{ route('paginas.inicio') }}">
-            <span class="fw-bold">SIPERH</span>
-            <small style="font-size: 11px; color: #dbeafe;">
-                Sistema de Personal de Recursos Humanos
-            </small>
-        </a>
+        <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('paginas.inicio') }}">
+
+    <img src="{{ asset('images/isologosiperh.png') }}"
+         alt="SIPERH"
+         class="navbar-logo-siperh">
+
+    <div class="d-flex flex-column lh-sm">
+        <span class="fw-bold">SIPERH</span>
+        <small style="font-size: 11px; color: #dbeafe;">
+            Sistema de Personal de Recursos Humanos
+        </small>
+    </div>
+
+</a>
 
         <!-- Botón responsive -->
         <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse"
@@ -202,6 +280,57 @@ input, select, textarea {
                 </li>
 
             </ul>
+
+
+                <!-- Notificaciones -->
+    <ul class="navbar-nav me-3">
+
+        <li class="nav-item dropdown">
+
+            <a class="notificacion-btn"
+            href="#"
+            data-bs-toggle="dropdown"
+            title="Notificaciones">
+
+                🔔
+
+                <span class="notificacion-badge d-none" id="notificacionBadge">
+                    0
+                </span>
+
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow"
+                style="width: 340px;"
+                id="notificacionDropdown">
+
+                <li>
+                    <h6 class="dropdown-header">
+                        Notificaciones
+                    </h6>
+                </li>
+
+                <li>
+                    <span class="dropdown-item text-muted">
+                        Cargando...
+                    </span>
+                </li>
+
+                <li><hr class="dropdown-divider"></li>
+
+                <li>
+                    <a href="{{ route('notificaciones.index') }}"
+                    class="dropdown-item text-center fw-bold">
+                        Ver todas
+                    </a>
+                </li>
+
+            </ul>
+
+        </li>
+
+    </ul>
+
 
           <!-- Usuario logueado -->
 <ul class="navbar-nav">
@@ -401,8 +530,98 @@ window.addEventListener("load", function(){
 
 })
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    cargarNotificaciones();
+
+    setInterval(cargarNotificaciones, 60000);
+
+});
+
+function cargarNotificaciones() {
+
+    fetch("{{ route('notificaciones.recientes') }}")
+        .then(response => response.json())
+        .then(data => {
+
+            const badge = document.getElementById('notificacionBadge');
+            const dropdown = document.getElementById('notificacionDropdown');
+
+            if (data.no_leidas > 0) {
+                badge.textContent = data.no_leidas;
+                badge.classList.remove('d-none');
+            } else {
+                badge.classList.add('d-none');
+            }
+
+            let html = `
+                <li>
+                    <h6 class="dropdown-header">
+                        Notificaciones
+                    </h6>
+                </li>
+            `;
+
+            if (data.notificaciones.length === 0) {
+
+                html += `
+                    <li>
+                        <span class="dropdown-item text-muted">
+                            No hay notificaciones.
+                        </span>
+                    </li>
+                `;
+
+            } else {
+
+                data.notificaciones.forEach(item => {
+
+                    html += `
+                        <li>
+
+                            <a href="/notificaciones/${item.id}/abrir"
+                            class="dropdown-item dropdown-notificacion-item py-3 notificacion-tipo-${item.tipo}"
+
+                                <div class="fw-bold small mb-1 dropdown-notificacion-texto">
+                                    ${item.titulo}
+                                </div>
+
+                                <div class="text-muted small dropdown-notificacion-texto">
+                                    ${item.mensaje}
+                                </div>
+
+                            </a>
+
+                        </li>
+                    `;
+
+                });
+
+            }
+
+            html += `
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a href="{{ route('notificaciones.index') }}"
+                       class="dropdown-item text-center fw-bold">
+                        Ver todas
+                    </a>
+                </li>
+            `;
+
+            dropdown.innerHTML = html;
+
+        })
+        .catch(() => {
+            // No interrumpimos el sistema si falla.
+        });
+
+}
+</script>
 
 <script>
 
