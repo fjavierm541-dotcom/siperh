@@ -10,6 +10,7 @@ use App\Models\Empleado;
 use App\Helpers\BitacoraHelper;
 use App\Helpers\NotificacionHelper;
 use App\Models\User;
+use App\Models\DepartamentoMuni;
 
 
 
@@ -111,7 +112,7 @@ public function create()
             }
         }
 
-        $departamento = DepartamentoFuncional::find($request->departamento_id);
+       $departamento = DepartamentoMuni::find($request->departamento_id);
 
         $nombreDepartamento = $departamento->nombre ?? 'Departamento';
 
