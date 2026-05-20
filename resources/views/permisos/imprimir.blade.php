@@ -254,12 +254,16 @@
        FIRMAS Y PIE
     ========================= */
     .signatures {
-        margin-top: 52px;
+        margin-top: 100px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         column-gap: 82px;
         row-gap: 42px;
     }
+
+    .firma-abajo {
+    margin-top: 40px;
+}    
 
     .firma-box {
         text-align: center;
@@ -638,19 +642,19 @@
             <strong>V.B. JEFE DE DEPARTAMENTO</strong>
         </div>
 
-        <div class="firma-box">
+        <div class="firma-box firma-abajo">
             <div class="firma-line"></div>
             <strong>JEFE DE RECURSOS HUMANOS</strong>
         </div>
 
-        <div class="firma-box">
+        <div class="firma-box firma-abajo">
             <div class="firma-line"></div>
             <strong>V.B. GERENCIA ADMINISTRATIVA FINANCIERA</strong>
         </div>
 
     </div>
 
-    <div class="footer">
+    <div class="footer firma-abaj"> 
 
         <div>
             <strong>FECHA DE TRÁMITE:</strong>

@@ -127,6 +127,33 @@ class PeriodoVacacionesController extends Controller
                             $usados . ' días usados, ' .
                             $diasDisponibles . ' días disponibles.',
                     ]);
+
+                    BitacoraHelper::registrar(
+                        'crear_periodo_vacaciones',
+                        'vacaciones',
+
+                        'Se registró un período de vacaciones del año laboral ' .
+                        $anioLaboral .
+                        ' para el empleado ' .
+                        $empleado->primer_nombre . ' ' .
+                        $empleado->primer_apellido,
+
+                        $periodo->id,
+
+                        'periodo_vacaciones',
+
+                        null,
+
+                        [
+                            'dni_empleado' => $periodo->dni_empleado,
+                            'anio_laboral' => $periodo->anio_laboral,
+                            'dias_otorgados' => $periodo->dias_otorgados,
+                            'dias_usados' => $periodo->dias_usados,
+                            'estado' => $periodo->estado,
+                        ]
+                    );
+
+
                 }
 
             });
@@ -179,13 +206,30 @@ public function reactivar(Request $request)
             $path = $request->file('documento')->store('reactivaciones', 'public');
         }
 
-        // AHORA SÍ ACTUALIZAR
+        $datosAnteriores = $periodo->toArray();
+
+        // ACTUALIZAR
         $periodo->update([
             'estado' => 'extendido',
             'extension_hasta' => $nuevaFecha,
             'motivo_extension' => $request->motivo,
             'documento_extension' => $path
         ]);
+
+        BitacoraHelper::registrar(
+            'reactivar_periodo_vacaciones',
+            'vacaciones',
+
+            'Se reactivó/extiendió un período de vacaciones vencido.',
+
+            $periodo->id,
+
+            'periodo_vacaciones',
+
+            $datosAnteriores,
+
+            $periodo->fresh()->toArray()
+        );
 
     } catch (\Exception $e) {
         return back()->with('error', $e->getMessage());

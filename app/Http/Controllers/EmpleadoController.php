@@ -285,11 +285,11 @@ for ($i = 1; $i <= 7; $i++) {
 // AQUÍ AGREGA ESTO
 $request->merge([
     'nombre_contacto1' => $request->input('nombre_contacto1') ?: 'Ninguno',
-    'telefono_contacto1' => $request->input('telefono_contacto1') ?: '00000000',
+    'telefono_contacto1' => $request->input('telefono_contacto1') ?: '99999999',
     'parentezco_contacto1' => $request->input('parentezco_contacto1') ?: 'Otro',
 
     'nombre_contacto2' => $request->input('nombre_contacto2') ?: 'Ninguno',
-    'telefono_contacto2' => $request->input('telefono_contacto2') ?: '00000000',
+    'telefono_contacto2' => $request->input('telefono_contacto2') ?: '99999999',
     'parentezco_contacto2' => $request->input('parentezco_contacto2') ?: 'Otro',
 ]);
 
