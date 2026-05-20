@@ -79,7 +79,7 @@
                 <a href="{{ route('permisos.index') }}" class="card-option">
                     <div class="glass-card option-card text-center p-4 h-100">
 
-                        <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+                        <img src="{{ asset('icons/permiso01.png') }}" class="mb-3">
 
                         <h4 class="fw-bold">Permisos laborales</h4>
 
@@ -96,7 +96,7 @@
                 <a href="{{ route('compensatorios.solicitudes.index') }}" class="card-option">
                     <div class="glass-card option-card text-center p-4 h-100">
 
-                        <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+                        <img src="{{ asset('icons/permiso02.webp') }}" class="mb-3">
 
                         <h4 class="fw-bold">Día no laboral</h4>
 

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\Empleado;
 use App\Helpers\BitacoraHelper;
+use App\Helpers\NotificacionHelper;
+use App\Models\User;
 
 
 
@@ -109,6 +111,36 @@ public function create()
             }
         }
 
+        $departamento = DepartamentoFuncional::find($request->departamento_id);
+
+        $nombreDepartamento = $departamento->nombre ?? 'Departamento';
+
+        $totalEmpleados = count($request->empleados);
+
+        $mensaje = 'Se registró una nueva solicitud de trabajo en día no laboral para '
+            . $totalEmpleados . ' empleado(s) del departamento '
+            . $nombreDepartamento . '.';
+
+        NotificacionHelper::crear(
+            null,
+            'rrhh',
+            'Nueva solicitud de compensatorio',
+            $mensaje,
+            'info',
+            'compensatorios',
+            route('compensatorios.solicitudes.index')
+        );
+
+        NotificacionHelper::crear(
+            null,
+            'superadmin',
+            'Nueva solicitud de compensatorio',
+            $mensaje,
+            'info',
+            'compensatorios',
+            route('compensatorios.solicitudes.index')
+        );
+
         return redirect()
             ->route(auth()->user()->rol === 'jefe_departamento'
     ? 'compensatorios.solicitudes.mis'
@@ -184,7 +216,6 @@ public function create()
 
 
 
-
     public function imprimirMes(Request $request)
     {
         $mes = $request->get('mes', now()->format('m'));
@@ -247,6 +278,8 @@ public function create()
             'aprobado_por' => auth()->id() ?? 1
         ]);
 
+        $this->notificarResultadoCompensatorio($solicitud, 'aprobado');
+
         foreach ($solicitud->empleados as $emp) {
 
             Compensatorio::create([
@@ -296,6 +329,8 @@ public function create()
             'motivo_rechazo' => $request->motivo_rechazo,
             'aprobado_por' => auth()->id() ?? 1
         ]);
+
+        $this->notificarResultadoCompensatorio($solicitud, 'rechazado');
 
         foreach ($solicitud->empleados as $emp) {
             DB::table('movimientos_permisos_sistema')->insert([
@@ -392,6 +427,66 @@ public function create()
 
         return view('compensatorios.mis', compact('solicitudes'));
     }
+
+
+
+
+    
+    private function notificarResultadoCompensatorio($solicitud, string $estado): void
+    {
+        $tipo = $estado === 'aprobado'
+            ? 'success'
+            : 'danger';
+
+        $titulo = $estado === 'aprobado'
+            ? 'Solicitud aprobada'
+            : 'Solicitud rechazada';
+
+        $mensaje = 'La solicitud de compensatorio #' . $solicitud->id .
+            ' fue ' . $estado . '.';
+
+        // Superadmin
+        NotificacionHelper::crear(
+            null,
+            'superadmin',
+            $titulo,
+            $mensaje,
+            $tipo,
+            'compensatorios',
+            route('compensatorios.solicitudes.index')
+        );
+
+        // Jefes de departamento involucrados
+        $dnis = $solicitud->empleados
+            ->pluck('dni_empleado');
+
+        $departamentos = Empleado::whereIn('DNI', $dnis)
+            ->pluck('departamento_funcional_id')
+            ->unique();
+
+        $empleadosDeptos = Empleado::whereIn('departamento_funcional_id', $departamentos)
+            ->pluck('DNI');
+
+        $jefes = User::where('rol', 'jefe_departamento')
+            ->whereIn('empleado_dni', $empleadosDeptos)
+            ->get();
+
+        foreach ($jefes as $jefe) {
+
+            NotificacionHelper::crear(
+                $jefe->id,
+                null,
+                $titulo,
+                $mensaje,
+                $tipo,
+                'compensatorios',
+                route('compensatorios.solicitudes.mis')
+            );
+        }
+    }
+
+
+
 
 
         public function cancelar($id)

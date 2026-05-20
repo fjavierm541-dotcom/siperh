@@ -165,6 +165,26 @@ class UsuarioController extends Controller
         ]
     );
 
+        NotificacionHelper::crear(
+        null,
+        'rrhh',
+        'Nuevo usuario creado',
+        'Se creó el usuario ' . $usuarioNuevo->username . ' con rol ' . $usuarioNuevo->rol . '.',
+        'success',
+        'usuarios',
+        route('usuarios.index')
+        );
+
+        NotificacionHelper::crear(
+            null,
+            'superadmin',
+            'Nuevo usuario creado',
+            'Se creó el usuario ' . $usuarioNuevo->username . ' con rol ' . $usuarioNuevo->rol . '.',
+            'success',
+            'usuarios',
+            route('usuarios.index')
+        );
+
         return redirect()
             ->route('usuarios.index')
             ->with('success', 'Usuario creado correctamente.');
@@ -209,6 +229,34 @@ public function toggle($id)
         [
             'activo' => $usuario->activo
         ]
+    );
+
+        $titulo = $usuario->activo
+        ? 'Usuario activado'
+        : 'Usuario desactivado';
+
+    $mensaje = $usuario->activo
+        ? 'Se activó el usuario ' . $usuario->username . '.'
+        : 'Se desactivó el usuario ' . $usuario->username . '.';
+
+    NotificacionHelper::crear(
+        null,
+        'rrhh',
+        $titulo,
+        $mensaje,
+        $usuario->activo ? 'success' : 'warning',
+        'usuarios',
+        route('usuarios.index')
+    );
+
+    NotificacionHelper::crear(
+        null,
+        'superadmin',
+        $titulo,
+        $mensaje,
+        $usuario->activo ? 'success' : 'warning',
+        'usuarios',
+        route('usuarios.index')
     );
 
     return back()->with(
