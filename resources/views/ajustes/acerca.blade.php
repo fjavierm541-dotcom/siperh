@@ -136,7 +136,7 @@
 
         <div class="text-center mb-4">
 
-            <img src="{{ asset('images/logosiperh.png') }}"
+            <img src="{{ asset('images/logosiperh1.png') }}"
                  alt="Logo SIPERH"
                  class="about-logo">
 

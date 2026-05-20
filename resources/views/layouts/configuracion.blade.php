@@ -75,39 +75,45 @@
 
         <div class="config-menu">
 
-            <a href="{{ route('configuracion.inicio') }}"
-               class="{{ request()->routeIs('configuracion.inicio') ? 'active' : '' }}">
-                🏠 Panel general
-            </a>
+    @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
 
-            <a href="{{ route('usuarios.index') }}"
-               class="{{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
-                👥 Usuarios y roles
-            </a>
+        <a href="{{ route('configuracion.inicio') }}"
+           class="{{ request()->routeIs('configuracion.inicio') ? 'active' : '' }}">
+            🏠 Panel general
+        </a>
 
-            <a href="{{ route('correcciones-saldos.create') }}"
-               class="{{ request()->routeIs('correcciones-saldos.*') ? 'active' : '' }}">
-                🛠 Corrección de saldos
-            </a>
+        <a href="{{ route('usuarios.index') }}"
+           class="{{ request()->routeIs('usuarios.*') ? 'active' : '' }}">
+            👥 Usuarios y roles
+        </a>
 
-            <a href="{{ route('dashboard') }}"
-               class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                🚦 Control de vencimientos
-            </a>
+        <a href="{{ route('correcciones-saldos.create') }}"
+           class="{{ request()->routeIs('correcciones-saldos.*') ? 'active' : '' }}">
+            🛠 Corrección de saldos
+        </a>
 
-            @if(auth()->user()->rol === 'superadmin')
-                <a href="{{ route('bitacora.index') }}"
-                   class="{{ request()->routeIs('bitacora.*') ? 'active' : '' }}">
-                    📘 Bitácora del sistema
-                </a>
-            @endif
+        <a href="{{ route('dashboard') }}"
+           class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
+            🚦 Control de vencimientos
+        </a>
 
-            <a href="{{ route('configuracion.acerca') }}"
-            class="{{ request()->routeIs('configuracion.acerca') ? 'active' : '' }}">
-                ℹ️ Acerca de SIPERH
-            </a>
+    @endif
 
-        </div>
+    @if(auth()->user()->rol === 'superadmin')
+
+        <a href="{{ route('bitacora.index') }}"
+           class="{{ request()->routeIs('bitacora.*') ? 'active' : '' }}">
+            📘 Bitácora del sistema
+        </a>
+
+    @endif
+
+    <a href="{{ route('configuracion.acerca') }}"
+       class="{{ request()->routeIs('configuracion.acerca') ? 'active' : '' }}">
+        ℹ️ Acerca de SIPERH
+    </a>
+
+</div>
 
     </aside>
 

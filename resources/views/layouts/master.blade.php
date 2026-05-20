@@ -203,48 +203,103 @@ input, select, textarea {
 
             </ul>
 
-            <!-- Usuario logueado -->
-            <ul class="navbar-nav">
+          <!-- Usuario logueado -->
+<ul class="navbar-nav">
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex flex-column text-end" href="#" data-bs-toggle="dropdown">
-                        <span>{{ auth()->user()->name ?? 'Usuario' }}</span>
-                        <small style="font-size: 11px; color: #dbeafe;">
-                            @if(auth()->user()?->rol === 'superadmin')
-                                Super administrador
-                            @elseif(auth()->user()?->rol === 'rrhh')
-                                Administrador RRHH
-                            @elseif(auth()->user()?->rol === 'jefe_departamento')
-                                Jefe de departamento
-                            @else
-                                Usuario
-                            @endif
-                        </small>
+    <li class="nav-item dropdown">
+
+        <a class="nav-link dropdown-toggle d-flex flex-column text-end"
+           href="#"
+           data-bs-toggle="dropdown">
+
+            <span>{{ auth()->user()->name ?? 'Usuario' }}</span>
+
+            <small style="font-size: 11px; color: #dbeafe;">
+                @if(auth()->user()?->rol === 'superadmin')
+                    Super administrador
+                @elseif(auth()->user()?->rol === 'rrhh')
+                    Administrador RRHH
+                @elseif(auth()->user()?->rol === 'jefe_departamento')
+                    Jefe de departamento
+                @else
+                    Usuario
+                @endif
+            </small>
+
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-end">
+
+            @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
+
+                <li>
+                    <a class="dropdown-item" href="{{ route('usuarios.index') }}">
+                        Usuarios y roles
                     </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-
-                        <li>
-                            <a class="dropdown-item" href="{{ route('configuracion.inicio') }}">
-                                ⚙️ Ajustes
-                            </a>
-                        </li>
-
-                        <li><hr class="dropdown-divider"></li>
-
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item text-danger">
-                                    Cerrar sesión
-                                </button>
-                            </form>
-                        </li>
-
-                    </ul>
                 </li>
 
-            </ul>
+                <li>
+                    <a class="dropdown-item" href="{{ route('correcciones-saldos.create') }}">
+                        Corrección de saldos
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item" href="{{ route('dashboard') }}">
+                        Control de vencimientos
+                    </a>
+                </li>
+
+            @endif
+
+            @if(auth()->user()->rol === 'superadmin')
+
+                <li>
+                    <a class="dropdown-item" href="{{ route('bitacora.index') }}">
+                        Bitácora del sistema
+                    </a>
+                </li>
+
+            @endif
+
+            <li>
+                <a class="dropdown-item" href="{{ route('configuracion.acerca') }}">
+                    Acerca de SIPERH
+                </a>
+            </li>
+
+            @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
+
+                <li><hr class="dropdown-divider"></li>
+
+                <li>
+                    <a class="dropdown-item" href="{{ route('configuracion.inicio') }}">
+                        Panel de ajustes
+                    </a>
+                </li>
+
+            @endif
+
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+
+                    <button type="submit" class="dropdown-item text-danger">
+                        Cerrar sesión
+                    </button>
+
+                </form>
+            </li>
+
+        </ul>
+
+    </li>
+
+</ul>
+
+
         </div>
     </div>
 </nav>
