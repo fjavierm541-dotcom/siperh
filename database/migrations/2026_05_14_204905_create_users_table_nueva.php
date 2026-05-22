@@ -12,7 +12,10 @@ return new class extends Migration
             $table->id();
 
             // Relación opcional con empleados
-            $table->string('empleado_dni', 255)->nullable();
+            $table->string('empleado_dni', 255)
+            ->charset('utf8mb3')
+            ->collation('utf8mb3_general_ci')
+            ->nullable();
 
             // Datos del usuario
             $table->string('name', 150);
