@@ -428,3 +428,8 @@ Route::middleware(['rol:superadmin'])->group(function () {
 'activo' => true,
 ]);
 */
+
+
+/*contraseña de Nega
+Nega0703*
+*/
