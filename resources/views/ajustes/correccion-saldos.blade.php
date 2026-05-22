@@ -7,6 +7,9 @@
 <div class="glass-card">
 
     <!-- HEADER -->
+
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
     <div class="p-3 text-white"
         style="background:#2f4f6f;border-top-left-radius:18px;border-top-right-radius:18px;">
 
@@ -64,9 +67,9 @@
                 <label class="form-label">Empleado</label>
 
                 <select name="dni_empleado"
-                        id="dniEmpleado"
-                        class="form-select"
-                        required>
+                    id="dniEmpleado"
+                    class="form-select tom-select"
+                    required>
 
                     <option value="">Seleccione un empleado</option>
 
@@ -278,6 +281,9 @@
 
     </div>
 
+     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+
 </div>
 
 <script>
@@ -339,6 +345,15 @@ document.addEventListener('DOMContentLoaded', function(){
             textoCantidad.innerText = 'Cantidad';
 
         }
+
+        new TomSelect('#dniEmpleado', {
+    create: false,
+    sortField: {
+        field: "text",
+        direction: "asc"
+    },
+    placeholder: 'Seleccione o busque un empleado'
+});
     }
 
     empleadoSelect.addEventListener('change', filtrarPeriodos);

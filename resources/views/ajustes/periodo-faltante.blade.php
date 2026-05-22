@@ -6,6 +6,8 @@
 
 <div class="glass-card">
 
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
+
     {{-- HEADER --}}
     <div class="p-3 text-white"
          style="background:#2f4f6f;border-top-left-radius:18px;border-top-right-radius:18px;">
@@ -67,8 +69,9 @@
                 </label>
 
                 <select name="dni_empleado"
-                        class="form-select"
-                        required>
+                    id="dniEmpleadoPeriodo"
+                    class="form-select tom-select"
+                    required>
 
                     <option value="">
                         Seleccione un empleado
@@ -172,10 +175,33 @@
 
             </div>
 
+           
         </form>
 
     </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    new TomSelect('#dniEmpleadoPeriodo', {
+
+        create: false,
+
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+
+        placeholder: 'Seleccione o busque un empleado'
+
+    });
+
+});
+
+</script>
 
 @endsection
