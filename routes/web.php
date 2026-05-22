@@ -335,6 +335,12 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
         Route::get('/ajustes', function () {
             return view('ajustes.inicio');
         })->name('configuracion.inicio');
+
+        Route::get('/periodos/faltante', [CorreccionSaldoController::class, 'createPeriodoFaltante'])
+    ->name('periodos.faltante.create');
+
+Route::post('/periodos/faltante', [CorreccionSaldoController::class, 'storePeriodoFaltante'])
+    ->name('periodos.faltante.store');
                 
 
     });

@@ -10,6 +10,9 @@ use App\Models\MovimientoPermisoSistema;
 use App\Models\Compensatorio;
 use App\Models\HoraAcumuladaSistema;
 use App\Helpers\BitacoraHelper;
+use Carbon\Carbon;
+use App\Helpers\NotificacionHelper;
+use App\Models\User;
 
 class CorreccionSaldoController extends Controller
 {
@@ -335,4 +338,212 @@ class CorreccionSaldoController extends Controller
             ]);
         }
     }
+
+
+
+    public function createPeriodoFaltante()
+{
+    $empleados = Empleado::orderBy('primer_nombre')
+        ->orderBy('primer_apellido')
+        ->get();
+
+    return view('ajustes.periodo-faltante', compact('empleados'));
+}
+
+
+public function storePeriodoFaltante(Request $request)
+{
+    $request->validate([
+        'dni_empleado' => 'required|exists:empleados,DNI',
+        'anio_laboral' => 'required|integer|min:1900',
+        'dias_otorgados' => 'required|integer|min:1',
+        'motivo' => 'required|string|max:500',
+    ]);
+
+    try {
+
+        $empleado = Empleado::where('DNI', $request->dni_empleado)
+            ->firstOrFail();
+
+        if (!$empleado->fecha_nombramiento) {
+            throw new \Exception(
+                'El empleado no tiene fecha de nombramiento.'
+            );
+        }
+
+        $anioActual = now()->year;
+
+        $anioIngreso = Carbon::parse(
+            $empleado->fecha_nombramiento
+        )->year;
+
+        // No antes del ingreso
+        if ($request->anio_laboral < $anioIngreso) {
+
+            throw new \Exception(
+                'El año laboral no puede ser menor al año de ingreso.'
+            );
+        }
+
+        // No futuro
+        if ($request->anio_laboral > $anioActual) {
+
+            throw new \Exception(
+                'No puede registrar períodos futuros.'
+            );
+        }
+
+        // Evitar duplicados
+        $existe = PeriodoVacacionesSistema::where(
+                'dni_empleado',
+                $request->dni_empleado
+            )
+            ->where(
+                'anio_laboral',
+                $request->anio_laboral
+            )
+            ->exists();
+
+        if ($existe) {
+
+            throw new \Exception(
+                'Este período ya existe para el empleado.'
+            );
+        }
+
+        // Fecha aniversario
+        $fechaInicio = Carbon::parse(
+            $empleado->fecha_nombramiento
+        )->setYear($request->anio_laboral);
+
+        // Vence 3 años después
+        $fechaVencimiento = $fechaInicio
+            ->copy()
+            ->addYears(3);
+
+        $estado = $fechaVencimiento->isPast()
+            ? 'vencido'
+            : 'activo';
+
+        DB::transaction(function () use (
+            $request,
+            $empleado,
+            $fechaInicio,
+            $fechaVencimiento,
+            $estado
+        ) {
+
+            $periodo = PeriodoVacacionesSistema::create([
+
+                'dni_empleado' => $request->dni_empleado,
+
+                'anio_laboral' => $request->anio_laboral,
+
+                'dias_otorgados' => $request->dias_otorgados,
+
+                'dias_usados' => 0,
+
+                'fecha_inicio_periodo' => $fechaInicio,
+
+                'fecha_vencimiento' => $fechaVencimiento,
+
+                'estado' => $estado,
+
+                'tipo_periodo' => 'correccion_manual',
+
+            ]);
+
+            MovimientoPermisoSistema::create([
+
+                'dni_empleado' => $request->dni_empleado,
+
+                'periodo_id' => $periodo->id,
+
+                'permiso_id' => null,
+
+                'usuario_nombre' => auth()->user()->name ?? 'Sistema',
+
+                'categoria' => 'vacaciones',
+
+                'tipo_movimiento' => 'periodo_faltante',
+
+                'dias_afectados' => $request->dias_otorgados,
+
+                'horas_afectadas' => 0,
+
+                'descripcion' =>
+                    'Se agregó manualmente el período laboral ' .
+                    $request->anio_laboral .
+                    ' con ' .
+                    $request->dias_otorgados .
+                    ' día(s). Motivo: ' .
+                    $request->motivo,
+            ]);
+
+            BitacoraHelper::registrar(
+
+                'crear_periodo_faltante',
+
+                'vacaciones',
+
+                'Se agregó manualmente el período laboral ' .
+                $request->anio_laboral .
+                ' para el empleado ' .
+                $empleado->primer_nombre .
+                ' ' .
+                $empleado->primer_apellido,
+
+                $periodo->id,
+
+                'periodo_vacaciones',
+
+                null,
+
+                [
+                    'anio_laboral' => $periodo->anio_laboral,
+                    'dias_otorgados' => $periodo->dias_otorgados,
+                    'estado' => $periodo->estado,
+                    'tipo_periodo' => $periodo->tipo_periodo,
+                ]
+            );
+
+            // Notificación superadmin
+            NotificacionHelper::crear(
+
+                null,
+
+                'superadmin',
+
+                'Período faltante agregado',
+
+                'Se agregó manualmente el período laboral ' .
+                $request->anio_laboral .
+                ' al empleado ' .
+                $empleado->primer_nombre .
+                ' ' .
+                $empleado->primer_apellido . '.',
+
+                'warning',
+
+                'vacaciones',
+
+                route('correcciones-saldos.create')
+            );
+
+        });
+
+    } catch (\Exception $e) {
+
+        return back()
+            ->withInput()
+            ->with('error', $e->getMessage());
+    }
+
+    return redirect()
+        ->route('correcciones-saldos.create')
+        ->with(
+            'success',
+            'Período faltante agregado correctamente.'
+        );
+}
 }

@@ -20,7 +20,10 @@
                 </small>
             </div>
 
-            
+            <a href="{{ route('periodos.faltante.create') }}"
+            class="btn btn-light btn-sm fw-semibold">
+                Agregar período faltante
+            </a>
 
         </div>
 
