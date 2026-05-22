@@ -17,7 +17,7 @@ public function index(Request $request)
     // filtro estado
     $estado = $request->estado ?? 'activos';
 
-    $departamentos = DepartamentoMuni::query()
+    $departamentos = DepartamentoMuni::withCount('empleadosFuncionales')
 
         ->when($buscar, function ($query) use ($buscar) {
 
@@ -308,7 +308,7 @@ public function guardarJefe(Request $request,$id)
 
 public function imprimir($estado)
 {
-    $query = DepartamentoMuni::query();
+    $query = DepartamentoMuni::withCount('empleadosFuncionales');
 
     if ($estado === 'activos') {
         $query->where('activo', true);

@@ -4,11 +4,11 @@
 
 @section('content')
 
-<div class="glass-card">
+<div class="glass-card overflow-hidden">
 
 @if($errors->any())
 
-    <div class="alert alert-danger">
+    <div class="alert alert-danger m-3">
 
         <ul class="mb-0">
 
@@ -24,64 +24,139 @@
 
 @endif
 
-
-
 <style>
 
+    .table thead th {
+
+        background: linear-gradient(90deg,#24476b,#31597f) !important;
+        color: white;
+        border: none;
+        padding: 14px 12px;
+        font-size: 13px;
+        letter-spacing: .3px;
+    }
+
+    .table tbody tr {
+
+        transition: all .18s ease;
+    }
+
+    .table tbody tr:hover {
+
+        background: #f3f7fb;
+    }
+
+    .table td {
+
+        vertical-align: middle;
+        padding: 14px 12px;
+    }
+
+    .badge-estado {
+
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .badge-activo {
+
+        background: #198754;
+        color: white;
+    }
+
+    .badge-inactivo {
+
+        background: #6c757d;
+        color: white;
+    }
+
+    .codigo-depto {
+
+        font-weight: bold;
+        color: #1f3a56;
+        font-size: 14px;
+    }
+
+    .cantidad-empleados {
+
+        background: #e8f1fb;
+        color: #1f3a56;
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-weight: bold;
+        display: inline-block;
+        min-width: 40px;
+        text-align: center;
+    }
+
     .btn-group .btn {
-    border-color: #2d4f73;
-    color: #2d4f73;
-}
-.btn-group .btn:hover {
-    background: #2d4f73;
-    color: white;
-}
 
-    </Style>
+        border-color: #2d4f73;
+        color: #2d4f73;
+    }
 
-    <!-- HEADER -->
-    <div class="p-3 text-white"
-    style="background:#2f4f6f;border-top-left-radius:18px;border-top-right-radius:18px;">
+    .btn-group .btn:hover {
 
-        <div class="d-flex justify-content-between align-items-center">
+        background: #2d4f73;
+        color: white;
+    }
 
-            <h5 class="mb-0">
-                Listado de Departamentos
-            </h5>
+</style>
 
-            <div>
+<!-- HEADER -->
+<div class="p-4 text-white"
+     style="background:linear-gradient(90deg,#1f3a56,#2d4f73);">
 
-                <a href="{{ route('departamentos.create') }}"
-                    class="btn btn-primary-custom btn-sm">
-                    Registrar Departamento
-                </a>
-                <a href="{{ route('paginas.inicio') }}"
-                class="btn btn-secondary btn-sm">
-                    Volver
-                </a>
+    <div class="d-flex justify-content-between align-items-center">
 
-            </div>
+        <h4 class="mb-0 fw-bold">
+            Listado de Departamentos
+        </h4>
+
+        <div>
+
+            <a href="{{ route('departamentos.create') }}"
+               class="btn btn-primary-custom btn-sm">
+                Registrar Departamento
+            </a>
+
+            <a href="{{ route('paginas.inicio') }}"
+               class="btn btn-secondary btn-sm">
+                Volver
+            </a>
 
         </div>
 
     </div>
-    @if(session('error'))
+
+</div>
+
+@if(session('error'))
+
     <div class="alert alert-danger m-3">
         {{ session('error') }}
     </div>
+
 @endif
 
 @if(session('success'))
+
     <div class="alert alert-success m-3">
         {{ session('success') }}
     </div>
+
 @endif
 
+<!-- FILTROS -->
+<div class="p-3 border-bottom"
+     style="background:#f8fafc;">
 
-<!-- BUSCADOR Y FILTROS -->
-<div class="p-3">
-
-    <form id="formBusqueda" method="GET" action="{{ route('departamentos.index') }}" class="mb-3">
+    <form id="formBusqueda"
+          method="GET"
+          action="{{ route('departamentos.index') }}"
+          class="mb-0">
 
         <div class="row g-2 align-items-center">
 
@@ -103,15 +178,18 @@
                         class="form-select"
                         onchange="this.form.submit()">
 
-                    <option value="activos" {{ request('estado', 'activos') == 'activos' ? 'selected' : '' }}>
+                    <option value="activos"
+                        {{ request('estado','activos') == 'activos' ? 'selected' : '' }}>
                         Activos
                     </option>
 
-                    <option value="inactivos" {{ request('estado') == 'inactivos' ? 'selected' : '' }}>
+                    <option value="inactivos"
+                        {{ request('estado') == 'inactivos' ? 'selected' : '' }}>
                         Inactivos
                     </option>
 
-                    <option value="todos" {{ request('estado') == 'todos' ? 'selected' : '' }}>
+                    <option value="todos"
+                        {{ request('estado') == 'todos' ? 'selected' : '' }}>
                         Todos
                     </option>
 
@@ -135,7 +213,7 @@
 
                         <li>
                             <a class="dropdown-item"
-                               href="{{ route('departamentos.imprimir', ['estado' => 'activos']) }}"
+                               href="{{ route('departamentos.imprimir',['estado'=>'activos']) }}"
                                target="_blank">
                                 Departamentos activos
                             </a>
@@ -143,7 +221,7 @@
 
                         <li>
                             <a class="dropdown-item"
-                               href="{{ route('departamentos.imprimir', ['estado' => 'inactivos']) }}"
+                               href="{{ route('departamentos.imprimir',['estado'=>'inactivos']) }}"
                                target="_blank">
                                 Departamentos inactivos
                             </a>
@@ -151,7 +229,7 @@
 
                         <li>
                             <a class="dropdown-item"
-                               href="{{ route('departamentos.imprimir', ['estado' => 'todos']) }}"
+                               href="{{ route('departamentos.imprimir',['estado'=>'todos']) }}"
                                target="_blank">
                                 Todos los departamentos
                             </a>
@@ -180,137 +258,151 @@
 
 </div>
 
+<!-- TABLA -->
+<div class="table-responsive">
 
-    <!-- TABLA -->
+    <table class="table align-middle mb-0">
 
-    <div class="table-responsive">
+        <thead>
 
-        <table class="table align-middle mb-0">
+            <tr>
 
-            <thead style="background:#3a5a7c;color:white">
+                <th width="60">#</th>
 
-                <tr>
+                <th width="120">Código</th>
 
-                    <th width="60">#</th>
+                <th>Departamento</th>
 
-                    <th width="120">Código</th>
+                <th width="140" class="text-center">
+                    Empleados
+                </th>
 
-                    <th>Departamento</th>
+                <th width="140">
+                    Estado
+                </th>
 
-                    <th width="120">Estado</th>
+                <th width="260">
+                    Acciones
+                </th>
 
-                    <th width="260">Acciones</th>
+            </tr>
 
-                </tr>
+        </thead>
 
-            </thead>
+        <tbody id="tablaDepartamentos">
 
-            <tbody id="tablaDepartamentos">
+            @forelse($departamentos as $i => $dep)
 
-                @forelse($departamentos as $i => $dep)
+            <tr>
 
-                <tr>
+                <td>
+                    {{ $departamentos->firstItem() + $i }}
+                </td>
 
-                    <td>
-                        {{ $departamentos->firstItem() + $i }}
-                    </td>
+                <td>
 
-                    <td>
-                        <strong>{{ $dep->codigo }}</strong>
-                    </td>
+                    <span class="codigo-depto">
+                        {{ $dep->codigo }}
+                    </span>
 
-                    <td>
-                        {{ $dep->nombre }}
-                    </td>
+                </td>
 
-                    <td>
+                <td>
+                    {{ $dep->nombre }}
+                </td>
 
-                        @if($dep->activo)
+                <td class="text-center">
 
-                        <span class="badge bg-success">
+                    <span class="cantidad-empleados">
+                        {{ $dep->empleados_funcionales_count ?? 0 }}
+                    </span>
+
+                </td>
+
+                <td>
+
+                    @if($dep->activo)
+
+                        <span class="badge-estado badge-activo">
                             Activo
                         </span>
 
-                        @else
+                    @else
 
-                        <span class="badge bg-secondary">
-                            Inactiv
+                        <span class="badge-estado badge-inactivo">
+                            Inactivo
                         </span>
 
-                        @endif
+                    @endif
 
-                    </td>
+                </td>
 
-                    <td>
+                <td>
+
                     <div class="btn-group" role="group">
 
                         <a href="{{ route('departamentos.show',$dep->id) }}"
-                        class="btn btn-outline-dark btn-sm">
+                           class="btn btn-outline-dark btn-sm">
                             Ver
                         </a>
 
                         <a href="{{ route('departamentos.edit',$dep->id) }}"
-                        class="btn btn-outline-warning btn-sm">
+                           class="btn btn-outline-warning btn-sm">
                             Editar
                         </a>
 
                         <form method="POST"
-                        action="{{ route('departamentos.toggle',$dep->id) }}"
-                        class="d-inline">
+                              action="{{ route('departamentos.toggle',$dep->id) }}"
+                              class="d-inline">
 
                             @csrf
                             @method('PATCH')
 
-                            <button type="button"
-                                class="btn btn-outline-secondary btn-sm"
-                                onclick="confirmarCambioEstado(this)">
-                            {{ $dep->activo ? 'Inactivar' : 'Activar' }}
-                        </button>
+                            <button type="submit"
+                                    class="btn btn-outline-secondary btn-sm"
+                                    onclick="confirmarCambioEstado(this)">
+
+                                {{ $dep->activo ? 'Inactivar' : 'Activar' }}
+
+                            </button>
 
                         </form>
 
                     </div>
+
                 </td>
 
-                </tr>
+            </tr>
 
-                @empty
+            @empty
 
-                <tr>
+            <tr>
 
-                    <td colspan="5"
-                    class="text-center text-muted">
+                <td colspan="6"
+                    class="text-center text-muted py-4">
 
-                        No hay departamentos registrados
+                    No hay departamentos registrados
 
-                    </td>
+                </td>
 
-                </tr>
+            </tr>
 
-                @endforelse
+            @endforelse
 
-            </tbody>
+        </tbody>
 
-        </table>
+    </table>
 
-    </div>
+</div>
 
-
-    <!-- PAGINACIÓN -->
-
-    <div class="mt-3 d-flex justify-content-center">
+<!-- PAGINACIÓN -->
+<div class="mt-3 d-flex justify-content-center p-3">
 
     {{ $departamentos->links() }}
 
 </div>
 
 </div>
-
-
-
-
-
-<!-- TABLA -->
 
 <script>
 
@@ -335,64 +427,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 })
 
-
-</script>
-
-<div class="modal fade" id="modalEstadoDepto" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <div class="modal-header bg-warning">
-                <h5 class="modal-title">Confirmar acción</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p id="mensajeModalEstado" class="mb-0"></p>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
-                    Cancelar
-                </button>
-
-                <button type="button"
-                        class="btn btn-warning"
-                        id="btnConfirmarEstado">
-                    Sí, continuar
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<script>
-    let formEstadoSeleccionado = null;
-
-    function confirmarCambioEstado(boton) {
-
-        formEstadoSeleccionado = boton.closest('form');
-
-        const accion = boton.textContent.trim();
-
-        const mensaje = accion === 'Inactivar'
-            ? '¿Está seguro de inactivar este departamento? Solo podrá hacerlo si no tiene empleados asignados.'
-            : '¿Está seguro de activar nuevamente este departamento?';
-
-        document.getElementById('mensajeModalEstado').textContent = mensaje;
-
-        const modal = new bootstrap.Modal(document.getElementById('modalEstadoDepto'));
-        modal.show();
-    }
-
-    document.getElementById('btnConfirmarEstado').addEventListener('click', function () {
-        if (formEstadoSeleccionado) {
-            formEstadoSeleccionado.submit();
-        }
-    });
 </script>
 
 @endsection
