@@ -496,7 +496,7 @@
             </span>
 
             <span class="permiso-item">
-                <span class="check-line">{{ $tipo == 'personal' ? 'X' : '' }}</span>
+                <span class="check-line">{{ $tipo == 'permiso personal' ? 'X' : '' }}</span>
                 PERSONAL
             </span>
 

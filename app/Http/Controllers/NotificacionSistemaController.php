@@ -66,4 +66,26 @@ class NotificacionSistemaController extends Controller
 
         return redirect($notificacion->url ?? route('notificaciones.index'));
     }
+
+
+        public function marcarTodasLeidas()
+    {
+        $usuario = auth()->user();
+
+        NotificacionSistema::where(function ($query) use ($usuario) {
+                $query->where('usuario_id', $usuario->id)
+                    ->orWhere('rol_destino', $usuario->rol);
+            })
+            ->where('leida', false)
+            ->update([
+                'leida' => true,
+                'leida_en' => now(),
+            ]);
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
+
+
 }

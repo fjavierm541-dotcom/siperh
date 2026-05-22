@@ -97,18 +97,14 @@ class CorreccionSaldoController extends Controller
             $ajusteTexto = '-' . $cantidad;
             $diasMovimiento = -$cantidad;
         }
-
+//parea permitir permtir sumar dias o restar
         if ($request->operacion === 'sumar') {
 
-            if ($cantidad > $periodo->dias_usados) {
-                throw new \Exception('No puede sumar más días de los que ya fueron usados en este período.');
-            }
+        $periodo->dias_otorgados += $cantidad;
 
-            $periodo->dias_usados -= $cantidad;
-
-            $ajusteTexto = '+' . $cantidad;
-            $diasMovimiento = $cantidad;
-        }
+        $ajusteTexto = '+' . $cantidad;
+        $diasMovimiento = $cantidad;
+    }
 
         $periodo->save();
 

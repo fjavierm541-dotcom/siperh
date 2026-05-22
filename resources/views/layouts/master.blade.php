@@ -542,6 +542,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+const dropdownNotificaciones = document.querySelector(
+    '[data-bs-toggle="dropdown"][title="Notificaciones"]'
+);
+
+dropdownNotificaciones.addEventListener('shown.bs.dropdown', function () {
+
+    fetch("{{ route('notificaciones.marcarLeidas') }}", {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(() => {
+
+        const badge = document.getElementById('notificacionBadge');
+
+        badge.textContent = '0';
+        badge.classList.add('d-none');
+
+    });
+
+});
+
 function cargarNotificaciones() {
 
     fetch("{{ route('notificaciones.recientes') }}")

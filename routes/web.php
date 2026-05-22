@@ -377,6 +377,9 @@ Route::middleware(['rol:superadmin'])->group(function () {
         Route::get('/notificaciones/{id}/abrir', [NotificacionSistemaController::class, 'abrir'])
     ->name('notificaciones.abrir');
 
+    Route::post('/notificaciones/marcar-leidas', [NotificacionSistemaController::class, 'marcarTodasLeidas'])
+    ->name('notificaciones.marcarLeidas');
+
 
 
 
