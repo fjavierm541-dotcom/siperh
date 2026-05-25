@@ -407,7 +407,25 @@ Route::middleware(['rol:superadmin'])->group(function () {
     });
 
 
+Route::get('/test-419', function () {
+    abort(419);
+});
 
+Route::get('/test-404', function () {
+    abort(404);
+});
+
+Route::get('/test-500', function () {
+    abort(500);
+});
+
+Route::get('/test-503', function () {
+    abort(503);
+});
+
+Route::get('/test-504', function () {
+    abort(504);
+});
 
 });
 

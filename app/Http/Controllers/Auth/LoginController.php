@@ -16,6 +16,9 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        // REGENERA TOKEN PARA EVITAR 419
+        $request->session()->regenerateToken();
+
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
@@ -31,9 +34,9 @@ class LoginController extends Controller
         ];
 
         if (Auth::attempt($credenciales)) {
+
             $request->session()->regenerate();
 
-            //return redirect()->route('inicio');
             return redirect()->route('paginas.inicio');
         }
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\BitacoraHelper;
+use App\Helpers\NotificacionHelper;
 
 class UsuarioController extends Controller
 {

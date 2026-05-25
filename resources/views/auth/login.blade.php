@@ -6,6 +6,16 @@
 
 <div class="login-card">
 
+    @if (session('error'))
+
+    <div class="alert alert-warning alert-login">
+
+        {{ session('error') }}
+
+    </div>
+
+@endif
+
     <img src="/images/logosiperh1.png" class="logo" alt="Logo SIPER">
 
     

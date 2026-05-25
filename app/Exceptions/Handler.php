@@ -4,7 +4,9 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Auth;
 
 class Handler extends ExceptionHandler
 {
@@ -28,10 +30,34 @@ class Handler extends ExceptionHandler
             //
         });
 
+        /*
+        |--------------------------------------------------------------------------
+        | ERROR 419 - SESIÓN EXPIRADA
+        |--------------------------------------------------------------------------
+        |
+        | Cuando expire el token CSRF:
+        | - cerrar sesión completamente
+        | - invalidar sesión
+        | - regenerar token
+        | - redirigir al login
+        |
+        */
+
         $this->renderable(function (TokenMismatchException $e, $request) {
-    return redirect()
-        ->route('login')
-        ->with('error', 'Tu sesión ha expirado por inactividad. Inicia sesión nuevamente.');
-});
+
+            Auth::logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return redirect()
+                ->route('login')
+                ->with(
+                    'error',
+                    'Tu sesión expiró por inactividad. Inicia sesión nuevamente.'
+                );
+
+        });
     }
 }
