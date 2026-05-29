@@ -6,9 +6,8 @@
     
      <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('isologosiperh.ico') }}">
-    <link rel="shortcut icon" href="{{ asset('isologosiperh.ico') }}">
-    
+    <link rel="icon" type="image/x-icon" href="{{ asset('isologosiperh.ico') }}?v={{ config('app.version', '1') }}">
+    <link rel="shortcut icon" href="{{ asset('isologosiperh.ico') }}?v={{ config('app.version', '1') }}">
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
