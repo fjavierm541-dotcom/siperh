@@ -20,7 +20,7 @@
                     Código: {{ $departamento->codigo }}
                 </small>
             </div>
-
+ 
             <div class="d-flex flex-wrap gap-2">
 
                 <a href="{{ route('departamentos.imprimirEmpleados', $departamento->id) }}"
@@ -110,7 +110,7 @@
                     <tr>
                         <th>DNI</th>
                         <th>Nombre</th>
-                        <th>Puesto</th>
+                        <th>Puesto Actual</th>
                         <th width="140">Acción</th>
                     </tr>
                 </thead>
@@ -130,7 +130,7 @@
                                 {{ $emp->segundo_apellido }}
                             </td>
 
-                            <td>{{ $emp->puesto }}</td>
+                            <td>{{ $emp->puesto_funcional ?: $emp->puesto }}</td>
 
                             <td>
                                 <button type="button"

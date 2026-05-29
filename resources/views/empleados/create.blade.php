@@ -786,25 +786,43 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
 
                         <div class="col-md-4 mb-3">
+    <label>Puesto Funcional</label>
+
+    <input type="text"
+           name="puesto_funcional"
+           class="form-control @error('puesto_funcional') is-invalid @enderror"
+           placeholder="Ingrese el puesto funcional"
+           minlength="3"
+           maxlength="100"
+           value="{{ old('puesto_funcional') }}">
+
+    @error('puesto_funcional')
+        <div class="invalid-feedback d-block">
+            {{ $message }}
+        </div>
+    @enderror
+</div>
+
+                        <div class="col-md-4 mb-3">
                                 <label>Departamento</label>
                                 <select name="departamento_id"
-class="form-control @error('departamento_id') is-invalid @enderror"
-required>
+                            class="form-control @error('departamento_id') is-invalid @enderror"
+                            required>
 
-<option value="">Seleccione un departamento</option>
+                            <option value="">Seleccione un departamento</option>
 
-@foreach($departamentos as $departamento)
+                            @foreach($departamentos as $departamento)
 
-<option value="{{ $departamento->id }}"
-{{ old('departamento_id') == $departamento->id ? 'selected' : '' }}>
+                            <option value="{{ $departamento->id }}"
+                            {{ old('departamento_id') == $departamento->id ? 'selected' : '' }}>
 
-{{ $departamento->codigo }} - {{ $departamento->nombre }}
+                            {{ $departamento->codigo }} - {{ $departamento->nombre }}
 
-</option>
+                            </option>
 
-@endforeach
+                            @endforeach
 
-</select>
+                            </select>
 
                                 @error('departamento_id')
                                 <div class="invalid-feedback d-block">

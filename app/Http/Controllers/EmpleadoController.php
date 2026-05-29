@@ -392,6 +392,12 @@ $request->validate([
 
     // INFORMACIÓN LABORAL
     'puesto' => ['required','regex:/^[\pL\s]+$/u','min:3','max:100'],
+    'puesto_funcional' => [
+            'nullable',
+            'regex:/^[\pL\s]+$/u',
+            'min:3',
+            'max:100'
+        ],
     'fecha_nombramiento' => ['required','date','before_or_equal:today'],
     'tipo' => ['required','in:Acuerdo,Contrato'],
     'salario_inicial' => ['required','regex:/^L\.?\s?[0-9]{1,3}(,[0-9]{3})*(\.[0-9]{2})?$/'],
@@ -483,6 +489,10 @@ $request->validate([
         'puesto.regex' => 'El puesto solo debe contener letras.',
         'puesto.min' => 'El puesto debe tener al menos 3 caracteres.',
         'puesto.max' => 'El puesto no debe superar 20 caracteres.',
+    // PUESTO FUNCIONAL
+        'puesto_funcional.regex' => 'El puesto funcional solo debe contener letras.',
+        'puesto_funcional.min' => 'El puesto funcional debe tener al menos 3 caracteres.',
+        'puesto_funcional.max' => 'El puesto funcional no debe superar 100 caracteres.',
 
         // FECHA
         'fecha_nombramiento.required' => 'Debe ingresar la fecha de nombramiento.',
@@ -545,6 +555,15 @@ $request->validate([
     $request->merge([
         'estado_empleado' => 'activo',
     ]);
+//AUTOMATIZA EL PUESTO FUNCIONAL, NI SI SE LLENA EL CAMPO PUESTO ADMINISTRATIVO,   
+// Y NO EL FUNCIONAL,  SE ASIGNA EL VALOR DEL CAMPO PUESTO ADMIN AL CAMPO PUESTO FUNCIONAL
+    if (empty($request->puesto_funcional)) {
+
+    $request->merge([
+        'puesto_funcional' => $request->puesto
+    ]);
+
+}
 
     $data = $request->all();
     $data['usuario_crea'] = auth()->user()->name ?? 'Sistema';;
@@ -691,6 +710,12 @@ public function update(Request $request, $dni)
         'parentezco_contacto2' => 'nullable|in:Padre,Madre,Hermano(a),Abuelo(a),Tío(a),Primo(a),Esposo(a),Pareja,Hijo(a),Amigo(a),Vecino(a),Otro',
 
         'puesto' => ['required','regex:/^[\pL\s]+$/u','min:3','max:100'],
+        'puesto_funcional' => [
+            'nullable',
+            'regex:/^[\pL\s]+$/u',
+            'min:3',
+            'max:100'
+        ],
         'fecha_nombramiento' => ['required','date','before_or_equal:today'],
         'tipo' => ['required','in:Acuerdo,Contrato'],
         'salario_inicial' => ['required','regex:/^L\.?\s?[0-9]{1,3}(,[0-9]{3})*(\.[0-9]{2})?$/'],
@@ -718,6 +743,14 @@ public function update(Request $request, $dni)
         $request->merge([
             'fecha_fin_contrato' => null,
         ]);
+    }
+
+    if (empty($request->puesto_funcional)) {
+
+        $request->merge([
+            'puesto_funcional' => $request->puesto
+        ]);
+
     }
 
     $data = $request->except([

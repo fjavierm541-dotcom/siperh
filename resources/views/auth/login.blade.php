@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'SIPER | Inicio de sesión')
+@section('title', 'SIPERH | Inicio de sesión')
 
 @section('content')
 

@@ -608,6 +608,24 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
+                                <label>Puesto Funcional</label>
+
+                                <input type="text"
+                                    name="puesto_funcional"
+                                    class="form-control @error('puesto_funcional') is-invalid @enderror"
+                                    placeholder="Ingrese el puesto funcional"
+                                    minlength="3"
+                                    maxlength="100"
+                                    value="{{ old('puesto_funcional', $empleado->puesto_funcional ?? $empleado->puesto) }}">
+
+                                @error('puesto_funcional')
+                                    <div class="invalid-feedback d-block">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-4 mb-3">
                                 <label>Departamento</label>
                                 <select name="departamento_id" class="form-control @error('departamento_id') is-invalid @enderror" required>
                                     <option value="">Seleccione un departamento</option>

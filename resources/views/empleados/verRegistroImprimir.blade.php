@@ -305,7 +305,21 @@
             <td class="label" style="width: 22%;">Puesto de Nombramiento</td>
             <td style="width: 28%;">{{ $empleado->puesto }}</td>
             <td class="label" style="width: 22%;">Fecha de Nombramiento</td>
-            <td style="width: 28%;">{{ $empleado->fecha_nombramiento }}</td>
+            <td style="width: 28%;">{{ \Carbon\Carbon::parse($empleado->fecha_nombramiento)->format('d/m/Y') }}</td>
+        </tr>
+
+        <tr>
+            <td class="label">Puesto Funcional</td>
+
+            <td>
+                {{ $empleado->puesto_funcional ?: $empleado->puesto }}
+            </td>
+
+            <td class="label">Estado</td>
+
+            <td>
+                {{ ucfirst($empleado->estado_empleado ?? 'Activo') }}
+            </td>
         </tr>
 
         <tr>
@@ -318,7 +332,10 @@
         @if($empleado->tipo === 'Contrato')
             <tr>
                 <td class="label">Fecha fin de contrato</td>
-                <td colspan="3">{{ $empleado->fecha_fin_contrato ?? '' }}</td>
+                <td colspan="3">{{ $empleado->fecha_fin_contrato
+                ? \Carbon\Carbon::parse($empleado->fecha_fin_contrato)->format('d/m/Y')
+                : ''
+            }}</td>
             </tr>
         @endif
     </table>

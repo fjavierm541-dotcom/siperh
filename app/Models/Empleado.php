@@ -73,6 +73,7 @@ class Empleado extends Model
         "firma",
         "huella",
         "puesto",
+        "puesto_funcional",
         "fecha_nombramiento",
         "tipo",
         "salario_inicial",

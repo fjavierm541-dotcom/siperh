@@ -25,7 +25,7 @@
         .info {
             margin-bottom: 15px;
         }
-
+ 
         table {
             width: 100%;
             border-collapse: collapse;
@@ -88,7 +88,7 @@
                         {{ $emp->primer_apellido }}
                         {{ $emp->segundo_apellido }}
                     </td>
-                    <td>{{ $emp->puesto }}</td>
+                    <td>{{ $emp->puesto_funcional ?: $emp->puesto }}</td>
                 </tr>
             @empty
                 <tr>

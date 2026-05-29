@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'SIPER | Login')</title>
+    <title>@yield('title', 'SIPERH | Login')</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 

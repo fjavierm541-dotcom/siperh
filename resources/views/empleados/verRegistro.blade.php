@@ -338,9 +338,18 @@
 
     <div class="info-grid">
         <div class="info-item">
-            <div class="info-label">Puesto</div>
-            <div class="info-value">{{ $empleado->puesto ?? '-' }}</div>
-        </div>
+    <div class="info-label">Puesto de Nombramiento</div>
+    <div class="info-value">
+        {{ $empleado->puesto ?? '-' }}
+    </div>
+</div>
+
+<div class="info-item">
+    <div class="info-label">Puesto Funcional</div>
+    <div class="info-value">
+        {{ $empleado->puesto_funcional ?? 'Sin asignación' }}
+    </div>
+</div>
 
         <div class="info-item">
             <div class="info-label">Tipo</div>
