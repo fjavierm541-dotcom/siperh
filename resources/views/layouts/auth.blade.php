@@ -5,6 +5,8 @@
     <title>@yield('title', 'SIPERH | Login')</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('isologosiperh.ico') }}?v=2">
+    <link rel="shortcut icon" href="{{ asset('isologosiperh.ico') }}?v=2"> 
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
