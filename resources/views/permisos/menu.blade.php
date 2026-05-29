@@ -129,7 +129,7 @@
 
             <!-- DÍA NO LABORAL JEFE -->
             <div class="col-md-5">
-                <a href="{{ route('compensatorios.solicitudes.create') }}" class="card-option">
+                <a href="{{ route('compensatorios.solicitudes.mis') }}" class="card-option">
                     <div class="glass-card option-card text-center p-4 h-100">
 
                         <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
