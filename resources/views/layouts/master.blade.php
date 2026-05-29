@@ -4,7 +4,11 @@
     <meta charset="UTF-8">
     <title>@yield('title', 'Sistema RRHH')</title>
     
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <link rel="icon" type="image/x-icon" href="{{ asset('isologosiperh.ico') }}">
+    <link rel="shortcut icon" href="{{ asset('isologosiperh.ico') }}">
+    
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -707,25 +711,6 @@ setInterval(() => {
 
         modalSesion.show()
         modalMostrado = true
-
-    }
-
-    /* KEEP ALIVE */
-
-    if(tiempoInactividad < AVISO){
-
-        fetch("{{ route('session.keepalive') }}", {
-
-            method: "POST",
-
-            headers: {
-                "X-CSRF-TOKEN":
-                    document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-
-        })
 
     }
 

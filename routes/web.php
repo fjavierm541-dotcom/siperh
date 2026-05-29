@@ -328,9 +328,9 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
         ->name('correcciones-saldos.store');
                 
 
-        Route::get('/configuracion', function () {
+        /*Route::get('/configuracion', function () {
             return view('configuracion.inicio');
-        })->name('configuracion.inicio');
+        })->name('configuracion.inicio');*/ 
 
         Route::get('/ajustes', function () {
             return view('ajustes.inicio');
@@ -339,21 +339,21 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
         Route::get('/periodos/faltante', [CorreccionSaldoController::class, 'createPeriodoFaltante'])
     ->name('periodos.faltante.create');
 
-Route::post('/periodos/faltante', [CorreccionSaldoController::class, 'storePeriodoFaltante'])
-    ->name('periodos.faltante.store');
-                
+    Route::post('/periodos/faltante', [CorreccionSaldoController::class, 'storePeriodoFaltante'])
+        ->name('periodos.faltante.store');
+                    
 
-    });
-
-
-
-Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
-    ->name('correcciones-saldos.store');
+        });
 
 
-/* ==========================
-BITÁCORA DEL SISTEMA
-========================== */
+
+    Route::post('/ajustes/correccion-saldos', [CorreccionSaldoController::class, 'store'])
+        ->name('correcciones-saldos.store');
+
+
+    /* ==========================
+    BITÁCORA DEL SISTEMA
+    ========================== */
 
 Route::middleware(['rol:superadmin'])->group(function () {
 
