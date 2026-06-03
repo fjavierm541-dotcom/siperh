@@ -282,10 +282,15 @@ public function aprobar($id)
             break;
 
         case 'varios_dias':
-            $dias = Carbon::parse($permiso->fecha_inicio)
-                ->diffInDays(Carbon::parse($permiso->fecha_fin)) + 1;
-            $horasARestar = $dias * 8;
-            break;
+
+    $dias = $this->contarDiasHabiles(
+        $permiso->fecha_inicio,
+        $permiso->fecha_fin
+    );
+
+    $horasARestar = $dias * 8;
+
+    break;
     }
 
     $horasSolicitadas = $horasARestar;
@@ -632,7 +637,24 @@ private function formatearHoras($horas)
 
 
 
+private function contarDiasHabiles($fechaInicio, $fechaFin)
+{
+    $inicio = Carbon::parse($fechaInicio);
+    $fin = Carbon::parse($fechaFin);
 
+    $dias = 0;
+
+    while ($inicio->lte($fin)) {
+
+        if (!$inicio->isWeekend()) {
+            $dias++;
+        }
+
+        $inicio->addDay();
+    }
+
+    return $dias;
+}
 
 
     /* ==========================

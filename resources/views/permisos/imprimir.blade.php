@@ -380,9 +380,25 @@
 
         $tiempoSolicitado = '—';
 
-        $diasOtorgados = $fechaFin
-            ? ($fechaInicio->diffInDays($fechaFin) + 1) . ' días'
-            : '—';
+        $diasHabiles = 0;
+
+if ($fechaFin) {
+
+    $temp = $fechaInicio->copy();
+
+    while ($temp->lte($fechaFin)) {
+
+        if (!$temp->isWeekend()) {
+            $diasHabiles++;
+        }
+
+        $temp->addDay();
+    }
+}
+
+$diasOtorgados = $fechaFin
+    ? $diasHabiles . ' días'
+    : '—';
     }
 @endphp
 
