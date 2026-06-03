@@ -69,6 +69,16 @@
 
         <div class="p-4">
 
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
             <form method="POST" action="{{ route('permisos.store') }}" enctype="multipart/form-data">
                 @csrf
 
@@ -115,13 +125,34 @@
                     <!-- FECHA INICIO -->
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Fecha inicio</label>
-                        <input type="date" name="fecha_inicio" class="form-control" required>
+
+                        <input type="date"
+                            name="fecha_inicio"
+                            class="form-control"
+                            value="{{ old('fecha_inicio') }}"
+                            required>
+
+                        @error('fecha_inicio')
+                            <small class="text-danger d-block">
+                                {{ $message }}
+                            </small>
+                        @enderror
                     </div>
 
                     <!-- FECHA FIN -->
                     <div class="col-md-6 mb-3" id="campo_fecha_fin" style="display:none;">
                         <label class="form-label">Fecha fin</label>
-                        <input type="date" name="fecha_fin" class="form-control">
+
+                        <input type="date"
+                            name="fecha_fin"
+                            class="form-control"
+                            value="{{ old('fecha_fin') }}">
+
+                        @error('fecha_fin')
+                            <small class="text-danger d-block">
+                                {{ $message }}
+                            </small>
+                        @enderror
                     </div>
 
                     <!-- HORAS -->

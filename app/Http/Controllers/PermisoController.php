@@ -120,6 +120,25 @@ public function create()
         'hora_salida' => 'nullable|date_format:H:i',
         'hora_entrada' => 'nullable|date_format:H:i',
     ]);
+    
+if (
+    $request->modalidad === 'varios_dias' &&
+    !empty($request->fecha_fin)
+) {
+
+    $fechaInicio = Carbon::parse($request->fecha_inicio);
+    $fechaFin = Carbon::parse($request->fecha_fin);
+
+    if ($fechaFin->lt($fechaInicio)) {
+
+        return back()
+            ->withErrors([
+                'fecha_fin' => 'La fecha final no puede ser menor que la fecha inicial.'
+            ])
+            ->withInput();
+    }
+}
+
 
     $usuario = auth()->user();
 
