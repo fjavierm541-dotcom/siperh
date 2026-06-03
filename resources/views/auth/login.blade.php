@@ -16,7 +16,7 @@
 
 @endif
 
-    <img src="/images/logosiperh1.png" class="logo" alt="Logo SIPER">
+    <img src="/images/logosiperh2.png" class="logo" alt="Logo SIPER">
 
     
 
