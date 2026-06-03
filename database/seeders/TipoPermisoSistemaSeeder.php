@@ -58,6 +58,15 @@ class TipoPermisoSistemaSeeder extends Seeder
                 'requiere_documento' => 0,
                 'activo' => 1,
             ],
+
+            [
+                'nombre' => 'Incapacidad',
+                'resta_dias' => 0,
+                'resta_horas' => 0,
+                'requiere_documento' => 1,
+                'activo' => 1,
+            ],
+            
         ];
 
         foreach ($tipos as $tipo) {

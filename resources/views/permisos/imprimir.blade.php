@@ -513,12 +513,17 @@ $diasOtorgados = $fechaFin
 
             <span class="permiso-item">
                 <span class="check-line">{{ $tipo == 'permiso personal' ? 'X' : '' }}</span>
-                PERSONAL
+                PARTICULAR / PERSONAL
             </span>
 
             <span class="permiso-item">
                 <span class="check-line">{{ str_contains($tipo, 'médica') || str_contains($tipo, 'medica') ? 'X' : '' }}</span>
                 CITA MÉDICA
+            </span>
+
+            <span class="permiso-item">
+                <span class="check-line">{{ str_contains($tipo, 'incapacidad') || str_contains($tipo, 'medica') ? 'X' : '' }}</span>
+                INCAPACIDAD
             </span>
 
             <span class="permiso-item">

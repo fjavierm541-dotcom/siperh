@@ -451,3 +451,14 @@ Route::get('/test-504', function () {
 /*contraseña de Nega
 Nega0703*
 */
+
+
+
+/*
+
+INSERT INTO tipos_permiso_sistema
+(nombre, activo, created_at, updated_at)
+VALUES
+('Incapacidad', 1, NOW(), NOW());
+
+*/
