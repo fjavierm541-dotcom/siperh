@@ -15,7 +15,7 @@ use App\Http\Controllers\CorreccionSaldoController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\BitacoraSistemaController;
 use App\Http\Controllers\NotificacionSistemaController;
-
+use App\Http\Controllers\PracticanteController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -127,11 +127,26 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
     Route::patch('/compensatorios/{id}/cancelar', [SolicitudCompensatorioController::class, 'cancelar'])
     ->name('compensatorios.solicitudes.cancelar');
 
-        
 
-    
+
 // GRUPO 2 - SOLO SUPERADMIN Y RRHH
     Route::middleware(['rol:superadmin,rrhh'])->group(function () {
+
+    //
+     //practicantes           
+    Route::resource('practicantes', PracticanteController::class)
+        ->middleware('auth');
+
+                Route::patch(
+            '/practicantes/{practicante}/toggle',
+            [PracticanteController::class, 'toggle']
+        )->name('practicantes.toggle');
+
+        Route::get(
+            '/practicantes/imprimir/{tipo}',
+            [PracticanteController::class, 'imprimir']
+        )->name('practicantes.imprimir');
+            
 
         Route::get('/usuarios', [UsuarioController::class, 'index'])
             ->name('usuarios.index');

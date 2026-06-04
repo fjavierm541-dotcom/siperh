@@ -87,6 +87,11 @@
             👥 Usuarios y roles
         </a>
 
+        <a href="{{ route('practicantes.index') }}"
+        class="{{ request()->routeIs('practicantes.*') ? 'active' : '' }}">
+            🎓 Practicantes
+        </a>
+
         <a href="{{ route('correcciones-saldos.create') }}"
            class="{{ request()->routeIs('correcciones-saldos.*') ? 'active' : '' }}">
             🛠 Corrección de saldos
@@ -108,10 +113,11 @@
 
     @endif
 
+
     <a href="{{ route('configuracion.acerca') }}"
        class="{{ request()->routeIs('configuracion.acerca') ? 'active' : '' }}">
         ℹ️ Acerca de SIPERH
-    </a>
+    </a> x
 
 </div>
 

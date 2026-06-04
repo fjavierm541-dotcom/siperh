@@ -120,6 +120,21 @@
             </div>
 
             <div class="col-md-6">
+                <a href="{{ route('practicantes.index') }}" class="ajustes-link">
+                    <div class="ajustes-card p-4">
+                        <h5 class="fw-bold text-dark">
+                            <span class="ajustes-icon">🎓</span>
+                            Practicantes
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Administra practicantes, las instituciones educativas y asignaciones departamentales.
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-6">
                 <a href="{{ route('correcciones-saldos.create') }}" class="ajustes-link">
                     <div class="ajustes-card p-4">
                         <h5 class="fw-bold text-dark">
