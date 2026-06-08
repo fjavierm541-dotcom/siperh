@@ -27,7 +27,7 @@
         padding: 16px 20px;
     }
 
-    /* =========================
+    /* ========================= 
        ENCABEZADO
     ========================= */
     .header {
@@ -171,9 +171,9 @@
     }
 
     .line-code {
-        width: 55px;
-        text-align: center;
-    }
+    width: 140px;
+    text-align: center;
+}
 
     .line-depto {
         width: 365px;
