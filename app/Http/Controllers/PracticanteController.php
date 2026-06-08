@@ -8,52 +8,95 @@ use App\Models\Empleado;
 use App\Models\DepartamentoMuni;
 use App\Models\BitacoraSistema;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 class PracticanteController extends Controller
 {
     public function index(Request $request)
-    {
-        $usuario = auth()->user();
+{
+    $usuario = auth()->user();
 
-        $query = Practicante::with('departamento');
+    $query = Practicante::with('departamento');
 
-        // Jefes solo ven practicantes de su departamento
-        if ($usuario->rol === 'jefe_departamento') {
+    // Jefes solo ven practicantes de su departamento
+    if ($usuario->rol === 'jefe_departamento') {
 
-            $empleadoUsuario = Empleado::findOrFail(
-                $usuario->empleado_dni
-            );
+        $empleadoUsuario = Empleado::findOrFail(
+            $usuario->empleado_dni
+        );
 
-            $query->where(
-                'departamento_id',
-                $empleadoUsuario->departamento_funcional_id
-            );
-        }
-
-        // Búsqueda
-        if ($request->filled('buscar')) {
-
-            $busqueda = trim($request->buscar);
-
-            $query->where(function ($q) use ($busqueda) {
-
-                $q->where('nombre_completo', 'like', "%{$busqueda}%")
-                    ->orWhere('dni_practicante', 'like', "%{$busqueda}%")
-                    ->orWhere('institucion', 'like', "%{$busqueda}%");
-            });
-        }
-
-        $practicantes = $query
-            ->orderBy('activo', 'desc')
-            ->orderBy('nombre_completo')
-            ->paginate(10)
-            ->withQueryString();
-
-        return view(
-            'practicantes.index',
-            compact('practicantes')
+        $query->where(
+            'departamento_id',
+            $empleadoUsuario->departamento_funcional_id
         );
     }
+
+    // Búsqueda
+    if ($request->filled('buscar')) {
+
+        $busqueda = trim($request->buscar);
+
+        $query->where(function ($q) use ($busqueda) {
+
+            $q->where(
+                    'nombre_completo',
+                    'like',
+                    "%{$busqueda}%"
+                )
+                ->orWhere(
+                    'dni_practicante',
+                    'like',
+                    "%{$busqueda}%"
+                )
+                ->orWhere(
+                    'institucion',
+                    'like',
+                    "%{$busqueda}%"
+                );
+        });
+    }
+
+    $practicantes = $query
+        ->orderBy('activo', 'desc')
+        ->orderBy('nombre_completo')
+        ->paginate(10)
+        ->withQueryString();
+
+    // Instituciones para imprimir
+    $instituciones = Practicante::query()
+
+        ->select('institucion')
+
+        ->whereNotNull('institucion')
+
+        ->where('institucion', '!=', '')
+
+        ->distinct()
+
+        ->orderBy('institucion')
+
+        ->pluck('institucion');
+
+    // Años para imprimir
+    $anios = Practicante::query()
+
+        ->selectRaw('YEAR(fecha_inicio) as anio')
+
+        ->distinct()
+
+        ->orderByDesc('anio')
+
+        ->pluck('anio');
+
+    return view(
+        'practicantes.index',
+        compact(
+            'practicantes',
+            'instituciones',
+            'anios'
+        )
+    );
+}
 
     public function create()
     {
@@ -66,6 +109,11 @@ class PracticanteController extends Controller
             compact('departamentos')
         );
     }
+
+
+
+
+
 public function store(Request $request)
 {
     $request->validate([
@@ -346,7 +394,7 @@ public function edit(Practicante $practicante)
             'practicante',
             'departamentos'
         )
-    );
+    ); 
 } 
 
 public function update(
@@ -456,4 +504,49 @@ public function update(
 }
 
 
+public function imprimirPorInstitucion($institucion)
+{
+    $practicantes = Practicante::with('departamento')
+        ->where('institucion', $institucion)
+        ->orderBy('nombre_completo')
+        ->get();
+
+    $titulo = 'PRACTICANTES - ' . strtoupper($institucion);
+
+    $pdf = Pdf::loadView(
+        'practicantes.listado',
+        compact(
+            'practicantes',
+            'titulo'
+        )
+    );
+
+    return $pdf->stream(
+        'practicantes_' .
+        Str::slug($institucion) .
+        '.pdf'
+    );
+}
+
+public function imprimirPorAnio($anio)
+{
+    $practicantes = Practicante::with('departamento')
+        ->whereYear('fecha_inicio', $anio)
+        ->orderBy('nombre_completo')
+        ->get();
+
+    $titulo = 'PRACTICANTES DEL AÑO ' . $anio;
+
+    $pdf = Pdf::loadView(
+        'practicantes.listado',
+        compact(
+            'practicantes',
+            'titulo'
+        )
+    );
+
+    return $pdf->stream(
+        'practicantes_' . $anio . '.pdf'
+    );
+}
 }

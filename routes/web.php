@@ -188,6 +188,18 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
             '/permisos-practicantes/{id}/rechazar',
             [PermisoPracticanteController::class, 'rechazar']
         )->name('permisos-practicantes.rechazar');
+
+            Route::get(
+        '/practicantes/imprimir/institucion/{institucion}',
+        [PracticanteController::class, 'imprimirPorInstitucion']
+    )->name('practicantes.imprimir.institucion');
+
+    Route::get(
+        '/practicantes/imprimir/anio/{anio}',
+        [PracticanteController::class, 'imprimirPorAnio']
+    )->name('practicantes.imprimir.anio');
+
+
             
 
         Route::get('/usuarios', [UsuarioController::class, 'index'])

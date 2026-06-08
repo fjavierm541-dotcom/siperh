@@ -61,6 +61,24 @@
                 </a>
             </li>
 
+            <li><hr class="dropdown-divider"></li>
+
+            <li>
+                <button class="dropdown-item"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalInstitucion">
+                    Por institución
+                </button>
+            </li>
+
+            <li>
+                <button class="dropdown-item"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalAnio">
+                    Por año
+                </button>
+            </li>
+
         </ul>
 
     </div>
@@ -201,31 +219,31 @@ document.getElementById('buscar')
 
                        <td>
 
-                            <div class="d-flex gap-1">
+                        <div class="d-flex gap-1">
 
-                                <a href="{{ route('practicantes.edit', $practicante) }}"
-                                class="btn btn-sm btn-outline-primary">
+                            <a href="{{ route('practicantes.edit', $practicante) }}"
+                            class="btn btn-sm btn-outline-primary">
 
-                                    Editar
+                                Editar
 
-                                </a>
+                            </a>
 
-                                <button
-                                    type="button"
-                                    class="btn btn-sm {{ $practicante->activo ? 'btn-outline-danger' : 'btn-outline-success' }}"
-                                    onclick="abrirModalEstadoPracticante(
-                                        '{{ route('practicantes.toggle', $practicante) }}',
-                                        '{{ $practicante->nombre_completo }}',
-                                        {{ $practicante->activo ? 'true' : 'false' }}
-                                    )">
+                            <button
+                                type="button"
+                                class="btn btn-sm {{ $practicante->activo ? 'btn-outline-danger' : 'btn-outline-success' }}"
+                                onclick="abrirModalEstadoPracticante(
+                                    '{{ route('practicantes.toggle', $practicante) }}',
+                                    '{{ $practicante->nombre_completo }}',
+                                    {{ $practicante->activo ? 'true' : 'false' }}
+                                )">
 
-                                    {{ $practicante->activo ? 'Inactivar' : 'Activar' }}
+                                {{ $practicante->activo ? 'Inactivar' : 'Activar' }}
 
-                                </button>
+                            </button>
 
-                            </div>
+                        </div>
 
-                        </td>
+                    </td>
 
                     </tr>
 
@@ -331,6 +349,175 @@ document.getElementById('buscar')
     </div>
 
 </div>
+
+<div class="modal fade"
+     id="modalInstitucion"
+     tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <form id="formInstitucion">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Imprimir por institución
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <select id="institucionSeleccionada"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Seleccione una institución
+                        </option>
+
+                        @foreach($instituciones as $institucion)
+
+                            <option value="{{ urlencode($institucion) }}">
+                                {{ $institucion }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Imprimir
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+//modal para año 
+
+<div class="modal fade"
+     id="modalAnio"
+     tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <form id="formAnio">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Imprimir por año
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <select id="anioSeleccionado"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Seleccione un año
+                        </option>
+
+                        @foreach($anios as $anio)
+
+                            <option value="{{ $anio }}">
+                                {{ $anio }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Imprimir
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+document.getElementById('formInstitucion')
+.addEventListener('submit', function(e){
+
+    e.preventDefault();
+
+    let institucion =
+        document.getElementById('institucionSeleccionada').value;
+
+    if(!institucion) return;
+
+    window.open(
+        '/practicantes/imprimir/institucion/' + institucion,
+        '_blank'
+    );
+
+});
+
+document.getElementById('formAnio')
+.addEventListener('submit', function(e){
+
+    e.preventDefault();
+
+    let anio =
+        document.getElementById('anioSeleccionado').value;
+
+    if(!anio) return;
+
+    window.open(
+        '/practicantes/imprimir/anio/' + anio,
+        '_blank'
+    );
+
+});
+
+</script>
+
 
 <script>
 
