@@ -146,7 +146,26 @@
 
         @endif
 
+            <!-- PERMISOS PRACTICANTES ADMIN -->
+<div class="col-md-5">
+    <a href="{{ route('permisos-practicantes.index') }}" class="card-option">
+        <div class="glass-card option-card text-center p-4 h-100">
+
+            <img src="{{ asset('icons/permiso01.png') }}" class="mb-3">
+
+            <h4 class="fw-bold">Permisos de practicantes</h4>
+
+            <p class="text-muted">
+                Gestión de solicitudes de permisos para practicantes y estudiantes en práctica profesional.
+            </p>
+
+        </div>
+    </a>
+</div>
+
     </div>
+
+
 
 </div>
 
