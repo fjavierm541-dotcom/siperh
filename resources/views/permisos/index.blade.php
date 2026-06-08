@@ -148,12 +148,15 @@
                             <th>Empleado</th>
                             <th>Modalidad</th>
                             <th>Tipo</th>
+                            <th>Solicitado el</th>
                             <th>Fecha inicial</th>
                             <th>Fecha final</th>
                             <th>Horas</th>
                             <th>Doc.</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
+                            <th style="white-space: nowrap; min-width: 170px;">
+                                Acciones
+                            </th>
                             <th></th>
                         </tr>
                     </thead>
@@ -175,6 +178,7 @@
                                 </td>
 
                                 <td>{{ $permiso->tipo->nombre ?? '' }}</td>
+                                <td>{{ $permiso->created_at->format('d-m-Y') }}</td>
                                 <td>{{ \Carbon\Carbon::parse($permiso->fecha_inicio)->format('d-m-Y') }}</td>
                                 <td>
                                     {{ $permiso->fecha_fin ? \Carbon\Carbon::parse($permiso->fecha_fin)->format('d-m-Y') : '-' }}
@@ -217,7 +221,7 @@
                                         <span class="text-muted">—</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td style="white-space: nowrap;">
 
     @if($permiso->estado->nombre == 'Pendiente')
 
