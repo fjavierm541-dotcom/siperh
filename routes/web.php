@@ -128,48 +128,32 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
     Route::patch('/compensatorios/{id}/cancelar', [SolicitudCompensatorioController::class, 'cancelar'])
     ->name('compensatorios.solicitudes.cancelar');
 
-    // PERMISOS PRACTICANTES
 
-Route::get(
-    '/permisos-practicantes',
-    [PermisoPracticanteController::class, 'index']
-)->name('permisos-practicantes.index');
-
-Route::get(
+    //Practicantes 
+    Route::get(
     '/permisos-practicantes/mis',
     [PermisoPracticanteController::class, 'misPermisos']
-)->name('permisos-practicantes.mis');
+    )->name('permisos-practicantes.mis');
 
-Route::get(
-    '/permisos-practicantes/create',
-    [PermisoPracticanteController::class, 'create']
-)->name('permisos-practicantes.create');
+    Route::get(
+        '/permisos-practicantes/create',
+        [PermisoPracticanteController::class, 'create']
+    )->name('permisos-practicantes.create');
 
-Route::post(
-    '/permisos-practicantes',
-    [PermisoPracticanteController::class, 'store']
-)->name('permisos-practicantes.store');
+    Route::post(
+        '/permisos-practicantes',
+        [PermisoPracticanteController::class, 'store']
+    )->name('permisos-practicantes.store');
 
-Route::patch(
-    '/permisos-practicantes/{id}/cancelar',
-    [PermisoPracticanteController::class, 'cancelar']
-)->name('permisos-practicantes.cancelar');
+    Route::patch(
+        '/permisos-practicantes/{id}/cancelar',
+        [PermisoPracticanteController::class, 'cancelar']
+    )->name('permisos-practicantes.cancelar');
 
-Route::get(
-    '/permisos-practicantes/{id}/imprimir',
-    [PermisoPracticanteController::class, 'imprimir']
-)->name('permisos-practicantes.imprimir');
-
-Route::patch(
-    '/permisos-practicantes/{id}/aprobar',
-    [PermisoPracticanteController::class, 'aprobar']
-)->name('permisos-practicantes.aprobar');
-
-Route::patch(
-    '/permisos-practicantes/{id}/rechazar',
-    [PermisoPracticanteController::class, 'rechazar']
-)->name('permisos-practicantes.rechazar');
-
+    Route::get(
+        '/permisos-practicantes/{id}/imprimir',
+        [PermisoPracticanteController::class, 'imprimir']
+    )->name('permisos-practicantes.imprimir');
 
 
 // GRUPO 2 - SOLO SUPERADMIN Y RRHH
@@ -189,6 +173,21 @@ Route::patch(
             '/practicantes/imprimir/{tipo}',
             [PracticanteController::class, 'imprimir']
         )->name('practicantes.imprimir');
+
+        Route::get(
+            '/permisos-practicantes',
+            [PermisoPracticanteController::class, 'index']
+        )->name('permisos-practicantes.index');
+
+        Route::patch(
+            '/permisos-practicantes/{id}/aprobar',
+            [PermisoPracticanteController::class, 'aprobar']
+        )->name('permisos-practicantes.aprobar');
+
+        Route::patch(
+            '/permisos-practicantes/{id}/rechazar',
+            [PermisoPracticanteController::class, 'rechazar']
+        )->name('permisos-practicantes.rechazar');
             
 
         Route::get('/usuarios', [UsuarioController::class, 'index'])

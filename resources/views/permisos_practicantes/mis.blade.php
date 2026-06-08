@@ -97,6 +97,7 @@
                         <th>Doc.</th>
                         <th>Estado</th>
                         <th>Acciones</th>
+                        <th></th>
 
                     </tr>
 
@@ -197,6 +198,7 @@
                         <td>
 
                             @if($permiso->estado->nombre == 'Pendiente')
+                            
 
                                 <form method="POST"
                                       action="{{ route('permisos-practicantes.cancelar', $permiso->id) }}">
@@ -213,18 +215,21 @@
 
                                 </form>
 
-                            @else
+                            @endif
 
-                                <a href="{{ route('permisos-practicantes.imprimir', $permiso->id) }}"
+                            
+
+                        </td>
+
+                        <td>
+
+                         <a href="{{ route('permisos-practicantes.imprimir', $permiso->id) }}"
                                    target="_blank"
                                    class="btn btn-sm btn-outline-primary">
 
                                     🖨️
 
                                 </a>
-
-                            @endif
-
                         </td>
 
                     </tr>

@@ -98,10 +98,11 @@
                     </label>
 
                     <input type="text"
-                           name="buscar"
-                           class="form-control"
-                           placeholder="Nombre, DNI o institución..."
-                           value="{{ request('buscar') }}">
+                        id="buscar"
+                        name="buscar"
+                        class="form-control"
+                        placeholder="Nombre, DNI o institución..."
+                        value="{{ request('buscar') }}">
 
                 </div>
 
@@ -116,6 +117,25 @@
             </div>
 
         </form>
+
+        <script>
+
+let temporizador;
+
+document.getElementById('buscar')
+    .addEventListener('keyup', function() {
+
+        clearTimeout(temporizador);
+
+        temporizador = setTimeout(() => {
+
+            this.form.submit();
+
+        }, 500);
+
+    });
+
+</script>
 
         <div class="table-responsive">
 
@@ -179,20 +199,31 @@
 
                         </td>
 
-                        <td>
+                       <td>
 
-                            <button
-                                type="button"
-                                class="btn btn-sm {{ $practicante->activo ? 'btn-outline-danger' : 'btn-outline-success' }}"
-                                onclick="abrirModalEstadoPracticante(
-                                    '{{ route('practicantes.toggle', $practicante) }}',
-                                    '{{ $practicante->nombre_completo }}',
-                                    {{ $practicante->activo ? 'true' : 'false' }}
-                                )">
+                            <div class="d-flex gap-1">
 
-                                {{ $practicante->activo ? 'Inactivar' : 'Activar' }}
+                                <a href="{{ route('practicantes.edit', $practicante) }}"
+                                class="btn btn-sm btn-outline-primary">
 
-                            </button>
+                                    Editar
+
+                                </a>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-sm {{ $practicante->activo ? 'btn-outline-danger' : 'btn-outline-success' }}"
+                                    onclick="abrirModalEstadoPracticante(
+                                        '{{ route('practicantes.toggle', $practicante) }}',
+                                        '{{ $practicante->nombre_completo }}',
+                                        {{ $practicante->activo ? 'true' : 'false' }}
+                                    )">
+
+                                    {{ $practicante->activo ? 'Inactivar' : 'Activar' }}
+
+                                </button>
+
+                            </div>
 
                         </td>
 
@@ -205,7 +236,7 @@
                         <td colspan="7"
                             class="text-center py-4 text-muted">
 
-                            No hay practicantes registrados.
+                            Sin estudiantes practicantes.
 
                         </td>
 

@@ -66,65 +66,148 @@ class PracticanteController extends Controller
             compact('departamentos')
         );
     }
+public function store(Request $request)
+{
+    $request->validate([
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre_completo'   => 'required|string|max:255',
-            'dni_practicante'   => 'nullable|string|max:20',
-            'institucion'       => 'required|string|max:255',
-            'correo'            => 'nullable|email|max:255',
-            'horas_requeridas'  => 'nullable|integer|min:1',
-            'fecha_inicio'      => 'required|date',
-            'fecha_fin'         => 'nullable|date|after_or_equal:fecha_inicio',
-            'departamento_id'   => 'required|exists:departamentos_muni,id',
-        ]);
+        'nombre_completo' => [
+            'required',
+            'string',
+            'min:3',
+            'max:255'
+        ],
 
-        $practicante = Practicante::create([
-            'nombre_completo'  => $request->nombre_completo,
-            'dni_practicante'  => $request->dni_practicante,
-            'institucion'      => $request->institucion,
-            'correo'           => $request->correo,
-            'horas_requeridas' => $request->horas_requeridas,
-            'fecha_inicio'     => $request->fecha_inicio,
-            'fecha_fin'        => $request->fecha_fin,
-            'departamento_id'  => $request->departamento_id,
-            'activo'           => true,
-        ]);
+        'dni_practicante' => [
+            'nullable',
+            'digits:13'
+        ],
 
-        BitacoraSistema::create([
-            'usuario_id'       => auth()->id(),
-            'usuario_nombre'   => auth()->user()->name,
-            'rol_usuario'      => auth()->user()->rol,
-            'empleado_dni'     => auth()->user()->empleado_dni,
+        'institucion' => [
+            'required',
+            'string',
+            'min:3',
+            'max:255'
+        ],
 
-            'accion'           => 'Crear practicante',
-            'modulo'           => 'Practicantes',
+        'correo' => [
+            'nullable',
+            'email',
+            'max:255'
+        ],
 
-            'descripcion'      => 'Se registró un nuevo practicante: '
-                . $practicante->nombre_completo,
+        'horas_requeridas' => [
+            'nullable',
+            'integer',
+            'min:1'
+        ],
 
-            'ip_equipo'        => request()->ip(),
-            'user_agent'       => request()->userAgent(),
+        'fecha_inicio' => [
+            'required',
+            'date'
+        ],
 
-            'metodo'           => request()->method(),
-            'ruta'             => request()->path(),
+        'fecha_fin' => [
+            'nullable',
+            'date',
+            'after_or_equal:fecha_inicio'
+        ],
 
-            'referencia_id'    => $practicante->id,
-            'referencia_tipo'  => 'practicante',
+        'departamento_id' => [
+            'required',
+            'exists:departamentos_muni,id'
+        ],
 
-            'valores_nuevos'   => $practicante->toArray(),
+    ], [
 
-            'estado'           => 'Exitoso',
-        ]);
+        'nombre_completo.required' =>
+            'Debe ingresar el nombre completo.',
 
-        return redirect()
-            ->route('practicantes.index')
-            ->with(
-                'success',
-                'Practicante registrado correctamente.'
-            );
-    }
+        'nombre_completo.min' =>
+            'El nombre debe tener al menos 3 caracteres.',
+
+        'nombre_completo.max' =>
+            'El nombre no puede superar 255 caracteres.',
+
+        'dni_practicante.digits' =>
+            'La identidad debe contener exactamente 13 dígitos.',
+
+        'institucion.required' =>
+            'Debe ingresar la institución.',
+
+        'institucion.min' =>
+            'La institución debe tener al menos 3 caracteres.',
+
+        'correo.email' =>
+            'Debe ingresar un correo electrónico válido.',
+
+        'horas_requeridas.integer' =>
+            'Las horas requeridas deben ser un número entero.',
+
+        'horas_requeridas.min' =>
+            'Las horas requeridas deben ser mayores que cero.',
+
+        'fecha_inicio.required' =>
+            'Debe seleccionar la fecha de inicio.',
+
+        'fecha_fin.after_or_equal' =>
+            'La fecha final no puede ser menor que la fecha inicial.',
+
+        'departamento_id.required' =>
+            'Debe seleccionar un departamento.',
+
+        'departamento_id.exists' =>
+            'El departamento seleccionado no es válido.',
+    ]);
+
+    $practicante = Practicante::create([
+
+        'nombre_completo'  => $request->nombre_completo,
+        'dni_practicante'  => $request->dni_practicante,
+        'institucion'      => $request->institucion,
+        'correo'           => $request->correo,
+        'horas_requeridas' => $request->horas_requeridas,
+        'fecha_inicio'     => $request->fecha_inicio,
+        'fecha_fin'        => $request->fecha_fin,
+        'departamento_id'  => $request->departamento_id,
+        'activo'           => true,
+
+    ]);
+
+    BitacoraSistema::create([
+
+        'usuario_id'       => auth()->id(),
+        'usuario_nombre'   => auth()->user()->name,
+        'rol_usuario'      => auth()->user()->rol,
+        'empleado_dni'     => auth()->user()->empleado_dni,
+
+        'accion'           => 'Crear practicante',
+        'modulo'           => 'Practicantes',
+
+        'descripcion'      =>
+            'Se registró un nuevo practicante: '
+            . $practicante->nombre_completo,
+
+        'ip_equipo'        => request()->ip(),
+        'user_agent'       => request()->userAgent(),
+
+        'metodo'           => request()->method(),
+        'ruta'             => request()->path(),
+
+        'referencia_id'    => $practicante->id,
+        'referencia_tipo'  => 'practicante',
+
+        'valores_nuevos'   => $practicante->toArray(),
+
+        'estado'           => 'Exitoso',
+    ]);
+
+    return redirect()
+        ->route('practicantes.index')
+        ->with(
+            'success',
+            'Practicante registrado correctamente.'
+        );
+}
 
     public function toggle(Practicante $practicante)
     {
@@ -250,4 +333,127 @@ class PracticanteController extends Controller
         strtolower(str_replace(' ', '_', $titulo)) . '.pdf'
     );
 }
+
+public function edit(Practicante $practicante)
+{
+    $departamentos = DepartamentoMuni::where('activo', 1)
+        ->orderBy('nombre')
+        ->get();
+
+    return view(
+        'practicantes.edit',
+        compact(
+            'practicante',
+            'departamentos'
+        )
+    );
+} 
+
+public function update(
+    Request $request,
+    Practicante $practicante
+)
+{
+    $request->validate([
+
+        'nombre_completo' =>
+            'required|string|max:255',
+
+        'dni_practicante' =>
+            'nullable|string|max:20',
+
+        'institucion' =>
+            'required|string|max:255',
+
+        'correo' =>
+            'nullable|email|max:255',
+
+        'horas_requeridas' =>
+            'nullable|integer|min:1',
+
+        'fecha_inicio' =>
+            'required|date',
+
+        'fecha_fin' =>
+            'nullable|date|after_or_equal:fecha_inicio',
+
+        'departamento_id' =>
+            'required|exists:departamentos_muni,id',
+    ]);
+
+    $valoresAnteriores =
+        $practicante->toArray();
+
+    $practicante->update([
+
+        'nombre_completo' =>
+            $request->nombre_completo,
+
+        'dni_practicante' =>
+            $request->dni_practicante,
+
+        'institucion' =>
+            $request->institucion,
+
+        'correo' =>
+            $request->correo,
+
+        'horas_requeridas' =>
+            $request->horas_requeridas,
+
+        'fecha_inicio' =>
+            $request->fecha_inicio,
+
+        'fecha_fin' =>
+            $request->fecha_fin,
+
+        'departamento_id' =>
+            $request->departamento_id,
+    ]);
+
+    BitacoraSistema::create([
+
+        'usuario_id'      => auth()->id(),
+        'usuario_nombre'  => auth()->user()->name,
+        'rol_usuario'     => auth()->user()->rol,
+        'empleado_dni'    => auth()->user()->empleado_dni,
+
+        'accion'          => 'Editar practicante',
+
+        'modulo'          => 'Practicantes',
+
+        'descripcion'     =>
+            'Se modificó el practicante: '
+            . $practicante->nombre_completo,
+
+        'ip_equipo'       => request()->ip(),
+
+        'user_agent'      => request()->userAgent(),
+
+        'metodo'          => request()->method(),
+
+        'ruta'            => request()->path(),
+
+        'referencia_id'   => $practicante->id,
+
+        'referencia_tipo' => 'practicante',
+
+        'valores_anteriores' =>
+            $valoresAnteriores,
+
+        'valores_nuevos' =>
+            $practicante->fresh()->toArray(),
+
+        'estado'          => 'Exitoso',
+    ]);
+
+    return redirect()
+        ->route('practicantes.index')
+        ->with(
+            'success',
+            'Practicante actualizado correctamente.'
+        );
+}
+
+
 }

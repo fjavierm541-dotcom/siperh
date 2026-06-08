@@ -146,22 +146,53 @@
 
         @endif
 
-            <!-- PERMISOS PRACTICANTES ADMIN -->
-<div class="col-md-5">
-    <a href="{{ route('permisos-practicantes.index') }}" class="card-option">
-        <div class="glass-card option-card text-center p-4 h-100">
+                @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
 
-            <img src="{{ asset('icons/permiso01.png') }}" class="mb-3">
+    <!-- PERMISOS PRACTICANTES ADMIN -->
+    <div class="col-md-5">
+        <a href="{{ route('permisos-practicantes.index') }}" class="card-option">
 
-            <h4 class="fw-bold">Permisos de practicantes</h4>
+            <div class="glass-card option-card text-center p-4 h-100">
 
-            <p class="text-muted">
-                Gestión de solicitudes de permisos para practicantes y estudiantes en práctica profesional.
-            </p>
+                <img src="{{ asset('icons/permiso01.png') }}" class="mb-3">
 
-        </div>
-    </a>
-</div>
+                <h4 class="fw-bold">
+                    Permisos de practicantes
+                </h4>
+
+                <p class="text-muted">
+                    Gestión de solicitudes de permisos para practicantes y estudiantes en práctica profesional.
+                </p>
+
+            </div>
+
+        </a>
+    </div>
+
+@elseif(auth()->user()->rol === 'jefe_departamento')
+
+    <!-- PERMISOS PRACTICANTES JEFE -->
+    <div class="col-md-5">
+        <a href="{{ route('permisos-practicantes.mis') }}" class="card-option">
+
+            <div class="glass-card option-card text-center p-4 h-100">
+
+                <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
+
+                <h4 class="fw-bold">
+                    Permisos de practicantes
+                </h4>
+
+                <p class="text-muted">
+                    Registrar solicitudes de permisos para practicantes asignados a tu departamento.
+                </p>
+
+            </div>
+
+        </a>
+    </div>
+
+@endif
 
     </div>
 

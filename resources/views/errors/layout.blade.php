@@ -212,7 +212,7 @@
         </div>
 
         <div class="footer">
-            © 2026 SIPER · Sistema institucional
+            © 2026 SIPERH · Sistema de Personal de Recursos Humanos
         </div>
 
     </div>
