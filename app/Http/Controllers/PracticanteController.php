@@ -506,6 +506,7 @@ public function update(
 
 public function imprimirPorInstitucion($institucion)
 {
+    $institucion = urldecode($institucion);
     $practicantes = Practicante::with('departamento')
         ->where('institucion', $institucion)
         ->orderBy('nombre_completo')
