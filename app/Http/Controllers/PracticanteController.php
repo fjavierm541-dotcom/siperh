@@ -336,38 +336,7 @@ public function store(Request $request)
         ->orderBy('nombre_completo')
         ->get();
 
-    // Bitácora
-    BitacoraSistema::create([
-
-        'usuario_id'      => auth()->id(),
-        'usuario_nombre'  => auth()->user()->name,
-        'rol_usuario'     => auth()->user()->rol,
-        'empleado_dni'    => auth()->user()->empleado_dni,
-
-        'accion' => match($tipo) {
-            'activos'   => 'Imprimir practicantes activos',
-            'inactivos' => 'Imprimir practicantes inactivos',
-            default     => 'Imprimir todos los practicantes'
-        },
-
-        'modulo' => 'Practicantes',
-
-        'descripcion' => match($tipo) {
-            'activos'   => 'Se imprimió el listado de practicantes activos.',
-            'inactivos' => 'Se imprimió el listado de practicantes inactivos.',
-            default     => 'Se imprimió el listado general de practicantes.'
-        },
-
-        'ip_equipo'       => request()->ip(),
-        'user_agent'      => request()->userAgent(),
-
-        'metodo'          => request()->method(),
-        'ruta'            => request()->path(),
-
-        'referencia_tipo' => 'practicante',
-
-        'estado'          => 'Exitoso',
-    ]);
+   
 
     $pdf = Pdf::loadView(
     'practicantes.listado',

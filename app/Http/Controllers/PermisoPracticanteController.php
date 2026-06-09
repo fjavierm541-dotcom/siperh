@@ -9,6 +9,7 @@ use App\Models\EstadoPermisoSistema;
 use App\Models\BitacoraSistema;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Helpers\NotificacionHelper;
 
 class PermisoPracticanteController extends Controller
 {
@@ -310,38 +311,19 @@ public function store(Request $request)
             $rutaDocumento,
     ]);
 
-    BitacoraSistema::create([
 
-        'usuario_id'      => auth()->id(),
-        'usuario_nombre'  => auth()->user()->name,
-        'rol_usuario'     => auth()->user()->rol,
-        'empleado_dni'    => auth()->user()->empleado_dni,
 
-        'accion'          => 'Crear permiso practicante',
-
-        'modulo'          => 'Permisos Practicantes',
-
-        'descripcion'     =>
-            'Se registró una nueva solicitud de permiso para el practicante: '
-            . $practicante->nombre_completo,
-
-        'ip_equipo'       => request()->ip(),
-
-        'user_agent'      => request()->userAgent(),
-
-        'metodo'          => request()->method(),
-
-        'ruta'            => request()->path(),
-
-        'referencia_id'   => $permiso->id,
-
-        'referencia_tipo' => 'permiso_practicante',
-
-        'valores_nuevos'  => $permiso->toArray(),
-
-        'estado'          => 'Exitoso',
-    ]);
-
+NotificacionHelper::crear(
+    null,
+    'rrhh',
+    'Nueva solicitud de permiso de practicante',
+    'Se registró una solicitud para el practicante '
+        . $practicante->nombre_completo,
+    'info',
+    'permisos_practicantes',
+    route('permisos-practicantes.index')
+);
+   
    return redirect()
     ->route(
         auth()->user()->rol === 'jefe_departamento'
@@ -531,6 +513,43 @@ public function aprobar($id)
 
     $permiso->save();
 
+    $this->notificarResultadoPermisoPracticante(
+    $permiso,
+    'aprobado'
+);
+
+    BitacoraSistema::create([
+
+    'usuario_id'      => auth()->id(),
+    'usuario_nombre'  => auth()->user()->name,
+    'rol_usuario'     => auth()->user()->rol,
+    'empleado_dni'    => auth()->user()->empleado_dni,
+
+    'accion'          => 'Aprobar permiso practicante',
+
+    'modulo'          => 'Permisos Practicantes',
+
+    'descripcion'     =>
+        'Se aprobó el permiso del practicante: '
+        . ($permiso->practicante->nombre_completo ?? 'N/D'),
+
+    'ip_equipo'       => request()->ip(),
+
+    'user_agent'      => request()->userAgent(),
+
+    'metodo'          => request()->method(),
+
+    'ruta'            => request()->path(),
+
+    'referencia_id'   => $permiso->id,
+
+    'referencia_tipo' => 'permiso_practicante',
+
+    'valores_nuevos'  => $permiso->fresh()->toArray(),
+
+    'estado'          => 'Exitoso',
+]);
+
     return back()->with(
         'success',
         'Permiso aprobado correctamente.'
@@ -575,10 +594,120 @@ public function rechazar(
 
     $permiso->save();
 
+    $this->notificarResultadoPermisoPracticante(
+    $permiso,
+    'rechazado'
+);
+
+    BitacoraSistema::create([
+
+    'usuario_id'      => auth()->id(),
+    'usuario_nombre'  => auth()->user()->name,
+    'rol_usuario'     => auth()->user()->rol,
+    'empleado_dni'    => auth()->user()->empleado_dni,
+
+    'accion'          => 'Rechazar permiso practicante',
+
+    'modulo'          => 'Permisos Practicantes',
+
+    'descripcion'     =>
+        'Se rechazó el permiso del practicante: '
+        . ($permiso->practicante->nombre_completo ?? 'N/D')
+        . '. Motivo: '
+        . $request->motivo_rechazo,
+
+    'ip_equipo'       => request()->ip(),
+
+    'user_agent'      => request()->userAgent(),
+
+    'metodo'          => request()->method(),
+
+    'ruta'            => request()->path(),
+
+    'referencia_id'   => $permiso->id,
+
+    'referencia_tipo' => 'permiso_practicante',
+
+    'valores_nuevos'  => $permiso->fresh()->toArray(),
+
+    'estado'          => 'Exitoso',
+]);
+
     return back()->with(
         'success',
         'Permiso rechazado correctamente.'
     );
 }
 
+
+private function notificarResultadoPermisoPracticante(
+    PermisoPracticante $permiso,
+    string $estado
+): void
+{
+    $tipo = $estado === 'aprobado'
+        ? 'success'
+        : 'danger';
+
+    $titulo = $estado === 'aprobado'
+        ? 'Permiso de practicante aprobado'
+        : 'Permiso de practicante rechazado';
+
+    $mensaje =
+        'El permiso del practicante '
+        . ($permiso->practicante->nombre_completo ?? 'N/D')
+        . ' fue '
+        . $estado
+        . '.';
+
+    // Superadmin
+    NotificacionHelper::crear(
+        null,
+        'superadmin',
+        $titulo,
+        $mensaje,
+        $tipo,
+        'permisos_practicantes',
+        route('permisos-practicantes.index')
+    );
+
+    // RRHH
+    NotificacionHelper::crear(
+        null,
+        'rrhh',
+        $titulo,
+        $mensaje,
+        $tipo,
+        'permisos_practicantes',
+        route('permisos-practicantes.index')
+    );
+
+    // Jefes de departamento
+   $practicante = $permiso->practicante;
+
+if (
+    $practicante &&
+    $practicante->departamento &&
+    $practicante->departamento->jefe
+) {
+
+    $usuarioJefe = User::where(
+        'empleado_dni',
+        $practicante->departamento->jefe->DNI
+    )->first();
+
+    if ($usuarioJefe) {
+
+        NotificacionHelper::crear(
+            $usuarioJefe->id,
+            null,
+            $titulo,
+            $mensaje,
+            $tipo,
+            'permisos_practicantes',
+            route('permisos-practicantes.mis')
+        );
+    }
+}
+}
 }

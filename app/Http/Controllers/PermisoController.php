@@ -402,6 +402,40 @@ if ($horasSolicitadas > $totalDisponibleHoras) {
 
     $this->notificarResultadoPermiso($permiso, 'aprobado');
 
+    BitacoraSistema::create([
+
+    'usuario_id'      => auth()->id(),
+    'usuario_nombre'  => auth()->user()->name,
+    'rol_usuario'     => auth()->user()->rol,
+    'empleado_dni'    => auth()->user()->empleado_dni,
+
+    'accion'          => 'Aprobar permiso empleado',
+
+    'modulo'          => 'Permisos',
+
+    'descripcion'     =>
+        'Se aprobó el permiso ID '
+        . $permiso->id
+        . ' para el empleado '
+        . $permiso->dni_empleado,
+
+    'ip_equipo'       => request()->ip(),
+
+    'user_agent'      => request()->userAgent(),
+
+    'metodo'          => request()->method(),
+
+    'ruta'            => request()->path(),
+
+    'referencia_id'   => $permiso->id,
+
+    'referencia_tipo' => 'permiso_empleado',
+
+    'valores_nuevos'  => $permiso->fresh()->toArray(),
+
+    'estado'          => 'Exitoso',
+]);
+
     return redirect()->route('permisos.index')
         ->with('success', 'Permiso aprobado correctamente.');
 }
@@ -700,6 +734,42 @@ private function contarDiasHabiles($fechaInicio, $fechaFin)
     $permiso->motivo_rechazo = $request->motivo_rechazo;
     $permiso->save(); 
     $this->notificarResultadoPermiso($permiso, 'rechazado');
+
+    BitacoraSistema::create([
+
+    'usuario_id'      => auth()->id(),
+    'usuario_nombre'  => auth()->user()->name,
+    'rol_usuario'     => auth()->user()->rol,
+    'empleado_dni'    => auth()->user()->empleado_dni,
+
+    'accion'          => 'Rechazar permiso empleado',
+
+    'modulo'          => 'Permisos',
+
+    'descripcion'     =>
+        'Se rechazó el permiso ID '
+        . $permiso->id
+        . ' para el empleado '
+        . $permiso->dni_empleado
+        . '. Motivo: '
+        . $request->motivo_rechazo,
+
+    'ip_equipo'       => request()->ip(),
+
+    'user_agent'      => request()->userAgent(),
+
+    'metodo'          => request()->method(),
+
+    'ruta'            => request()->path(),
+
+    'referencia_id'   => $permiso->id,
+
+    'referencia_tipo' => 'permiso_empleado',
+
+    'valores_nuevos'  => $permiso->fresh()->toArray(),
+
+    'estado'          => 'Exitoso',
+]);
 
     MovimientoPermisoSistema::create([
         'dni_empleado' => $permiso->dni_empleado,
