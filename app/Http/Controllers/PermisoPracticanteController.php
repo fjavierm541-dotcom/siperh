@@ -53,6 +53,12 @@ public function create()
     );
 }
 
+
+
+
+
+
+
 public function index(Request $request)
 {
     $permisos = PermisoPracticante::with([
@@ -383,10 +389,64 @@ public function misPermisos(Request $request)
         );
     }
 
-    $permisos = $query
-        ->latest()
-        ->paginate(15)
-        ->withQueryString();
+$permisos = $query
+
+    ->when(
+        $request->filled('buscar'),
+        function ($query) use ($request) {
+
+            $buscar = trim($request->buscar);
+
+            $query->whereHas(
+                'practicante',
+                function ($p) use ($buscar) {
+
+                    $p->where(
+                        'nombre_completo',
+                        'LIKE',
+                        "%{$buscar}%"
+                    )
+                    ->orWhere(
+                        'dni_practicante',
+                        'LIKE',
+                        "%{$buscar}%"
+                    );
+                }
+            );
+        }
+    )
+
+    ->when(
+        $request->filled('fecha_desde'),
+        function ($query) use ($request) {
+
+            $query->whereDate(
+                'fecha_inicio',
+                '>=',
+                $request->fecha_desde
+            );
+        }
+    )
+
+    ->when(
+        $request->filled('fecha_hasta'),
+        function ($query) use ($request) {
+
+            $query->whereDate(
+                'fecha_inicio',
+                '<=',
+                $request->fecha_hasta
+            );
+        }
+    )
+
+    ->latest()
+
+    ->paginate(15)
+
+    ->withQueryString();
+
+
 
     return view(
         'permisos_practicantes.mis',

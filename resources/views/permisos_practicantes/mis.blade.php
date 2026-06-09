@@ -9,6 +9,7 @@
         background: linear-gradient(135deg, #1f3a56, #2d4f73);
         min-height: 100vh;
     }
+    
 
     .glass-card {
         background: rgba(255, 255, 255, 0.92);
@@ -79,6 +80,70 @@
                 {{ session('success') }}
             </div>
         @endif
+
+        <form method="GET"
+      id="formBusqueda"
+      class="mb-4">
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+
+            <label class="form-label">
+                Buscar
+            </label>
+
+            <input type="text"
+       id="buscar"
+       name="buscar"
+       class="form-control"
+       placeholder="Practicante, DNI o tipo..."
+       value="{{ request('buscar') }}">
+
+        </div>
+
+        <div class="col-md-2">
+
+            <label class="form-label">
+                Desde
+            </label>
+
+            <input type="date"
+                   name="fecha_desde"
+                   class="form-control"
+                   value="{{ request('fecha_desde') }}">
+
+        </div>
+
+        <div class="col-md-2">
+
+            <label class="form-label">
+                Hasta
+            </label>
+
+            <input type="date"
+                   name="fecha_hasta"
+                   class="form-control"
+                   value="{{ request('fecha_hasta') }}">
+
+        </div>
+
+        
+
+        <div class="col-md-1 d-flex align-items-end">
+
+            <a href="{{ route('permisos-practicantes.mis') }}"
+               class="btn btn-outline-secondary w-100">
+
+                Limpiar
+
+            </a>
+
+        </div>
+
+    </div>
+
+</form>
 
         <div class="table-responsive">
 
@@ -167,33 +232,53 @@
 
                         <td>
 
-                            @if($permiso->estado->nombre == 'Pendiente')
+    @if($permiso->estado->nombre == 'Pendiente')
 
-                                <span class="badge bg-warning text-dark">
-                                    Pendiente
-                                </span>
+        <span class="badge bg-warning text-dark">
+            Pendiente
+        </span>
 
-                            @elseif($permiso->estado->nombre == 'Aprobado')
+    @elseif($permiso->estado->nombre == 'Aprobado')
 
-                                <span class="badge bg-success">
-                                    Aprobado
-                                </span>
+        <span class="badge bg-success">
+            Aprobado
+        </span>
 
-                            @elseif($permiso->estado->nombre == 'Rechazado')
+    @elseif($permiso->estado->nombre == 'Rechazado')
 
-                                <span class="badge bg-danger">
-                                    Rechazado
-                                </span>
+        <div>
 
-                            @elseif($permiso->estado->nombre == 'Cancelado')
+            <span class="badge bg-danger">
+                Rechazado
+            </span>
 
-                                <span class="badge bg-secondary">
-                                    Cancelado
-                                </span>
+            @if(!empty($permiso->motivo_rechazo))
 
-                            @endif
+                <div class="mt-1">
 
-                        </td>
+                    <a href="#"
+                       class="text-secondary text-decoration-underline small"
+                       onclick="verMotivoRechazo(`{{ e($permiso->motivo_rechazo) }}`); return false;">
+
+                        Ver motivo
+
+                    </a>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    @elseif($permiso->estado->nombre == 'Cancelado')
+
+        <span class="badge bg-secondary">
+            Cancelado
+        </span>
+
+    @endif
+
+</td>
 
                         <td>
 
@@ -261,8 +346,109 @@
     </div>
 
 </div>
-```
+
 
 </div>
+
+<!-- MODAL MOTIVO RECHAZO -->
+
+<div class="modal fade"
+     id="modalMotivoRechazo"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header bg-danger text-white">
+
+                <h5 class="modal-title">
+
+                    Motivo del rechazo
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p id="textoMotivoRechazo"
+                   class="mb-0"
+                   style="
+                        white-space: pre-wrap;
+                        word-break: break-word;
+                        overflow-wrap: break-word;
+                   ">
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+function verMotivoRechazo(motivo)
+{
+    document.getElementById(
+        'textoMotivoRechazo'
+    ).textContent = motivo;
+
+    new bootstrap.Modal(
+        document.getElementById(
+            'modalMotivoRechazo'
+        )
+    ).show();
+}
+
+</script>
+
+<script>
+
+let temporizador;
+
+document.getElementById('buscar')
+    .addEventListener('input', function() {
+
+        clearTimeout(temporizador);
+
+        temporizador = setTimeout(function() {
+
+            document.getElementById('formBusqueda')
+                .submit();
+
+        }, 400);
+
+    });
+
+</script>
+
+<script>
+
+document.querySelector('[name="fecha_desde"]')
+    .addEventListener('change', function() {
+
+        document.getElementById('formBusqueda')
+            .submit();
+
+    });
+
+document.querySelector('[name="fecha_hasta"]')
+    .addEventListener('change', function() {
+
+        document.getElementById('formBusqueda')
+            .submit();
+
+    });
+
+</script>
 
 @endsection
