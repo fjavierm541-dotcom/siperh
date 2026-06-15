@@ -169,6 +169,7 @@ document.getElementById('buscar')
                         <th>Departamento</th>
                         <th>Estado</th>
                         <th width="120">Acciones</th>
+                        <th width="60"></th>
                     </tr>
 
                 </thead>
@@ -245,6 +246,20 @@ document.getElementById('buscar')
 
                     </td>
 
+                    <td class="text-center">
+
+                            <a href="{{ route('practicantes.reporte', $practicante) }}"
+                            target="_blank"
+                            class="btn btn-sm btn-outline-secondary"
+                            title="Imprimir">
+
+                                🖨️
+
+                            </a>
+
+                        </td>
+                    
+
                     </tr>
 
                 @empty
@@ -257,8 +272,11 @@ document.getElementById('buscar')
                             Sin estudiantes practicantes.
 
                         </td>
+                        
 
+                        
                     </tr>
+                    
 
                 @endforelse
 

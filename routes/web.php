@@ -155,6 +155,8 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
         [PermisoPracticanteController::class, 'imprimir']
     )->name('permisos-practicantes.imprimir');
 
+    
+
 
 // GRUPO 2 - SOLO SUPERADMIN Y RRHH
     Route::middleware(['rol:superadmin,rrhh'])->group(function () {
@@ -198,6 +200,11 @@ Route::middleware(['auth', 'forzar.password', 'no.cache'])->group(function () {
         '/practicantes/imprimir/anio/{anio}',
         [PracticanteController::class, 'imprimirPorAnio']
     )->name('practicantes.imprimir.anio');
+
+    Route::get(
+    '/practicantes/{practicante}/reporte',
+    [PracticanteController::class, 'reporte']
+)->name('practicantes.reporte');
 
 
             

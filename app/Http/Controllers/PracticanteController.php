@@ -9,6 +9,7 @@ use App\Models\DepartamentoMuni;
 use App\Models\BitacoraSistema;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class PracticanteController extends Controller
 {
@@ -517,6 +518,24 @@ public function imprimirPorAnio($anio)
 
     return $pdf->stream(
         'practicantes_' . $anio . '.pdf'
+    );
+}
+
+public function reporte(Practicante $practicante)
+{
+    $fechaGeneracion = Carbon::now()
+        ->format('d-m-Y H:i');
+
+    $pdf = Pdf::loadView(
+        'practicantes.reporte',
+        compact(
+            'practicante',
+            'fechaGeneracion'
+        )
+    );
+
+    return $pdf->stream(
+        'practicante_'.$practicante->id.'.pdf'
     );
 }
 }
