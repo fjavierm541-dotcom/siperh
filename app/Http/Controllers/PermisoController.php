@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\BitacoraHelper;
 use App\Helpers\NotificacionHelper;
+use App\Models\BitacoraSistema;
 
 class PermisoController extends Controller
 {

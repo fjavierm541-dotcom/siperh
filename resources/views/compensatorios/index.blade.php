@@ -145,7 +145,8 @@
                         <th>Empleados incluidos</th>
                         <th>Estado</th>
                         <th class="text-end">Acciones</th>
-                        <th></th>
+                        <th>Documento</th>
+                        <th>Imprimir</th>
                     </tr>
                 </thead>
 
@@ -192,30 +193,46 @@
                                 </a>
                             </td>
 
-                            <td>
+                            <td class="text-center">
 
-    @if($sol->documento_path)
+@if($sol->documento_path)
 
-        <a href="{{ asset('storage/' . $sol->documento_path) }}"
-           target="_blank"
-           class="btn btn-outline-primary btn-sm"
-           title="Ver documento">
+    <a href="{{ asset('storage/' . $sol->documento_path) }}"
+       target="_blank"
+       title="Ver documento">
 
-            🖨️
+        👁️
 
-        </a>
+    </a>
 
-    @else
+@else
 
-        <span class="text-muted">—</span>
+    <span class="text-muted">
 
-    @endif
+        —
+
+    </span>
+
+@endif
 
 </td>
+
+<td class="text-center">
+
+<a href="{{ route('compensatorios.solicitudes.imprimir', $sol->id) }}"
+   target="_blank"
+   title="Imprimir solicitud">
+
+    🖨️
+
+</a>
+
+</td>
+
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center text-muted">
+                            <td colspan="8" class="text-center text-muted">
                                 No hay solicitudes registradas.
                             </td>
                         </tr>
