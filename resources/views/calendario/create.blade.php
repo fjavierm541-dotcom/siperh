@@ -16,7 +16,22 @@
 
     <div class="glass-card p-4">
 
-        <h4 class="mb-4">Nuevo feriado</h4>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h4 class="mb-0">
+        Nuevo feriado
+    </h4>
+
+    <button class="btn btn-outline-primary btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#modalAyuda">
+
+    <i class="fas fa-circle-question"></i>
+    Ayuda
+
+</button>
+
+</div>
 
         <form method="POST" action="{{ route('calendario.store') }}">
         @csrf
@@ -83,8 +98,15 @@
                     <label>Tipo de afectación</label>
 
                     <select name="tipo_afectacion" class="form-control" required>
-                        <option value="no_laborable">No laborable: no labora ningún empleado pero, se descuenta los días.</option>
-                        <option value="descuento">Parcialmente laborable: algunos departamentos sí trabajan y no se les decuentan días.</option>
+
+                        <option value="no_laborable">
+                            Informativo (no afecta días)
+                        </option>
+
+                        <option value="descuento">
+                            Laborable con excepciones
+                        </option>
+
                     </select>
                 </div>
 
@@ -94,7 +116,7 @@
 
         <div class="mb-3">
     <label class="form-label">
-        <strong>Departamentos que SÍ trabajan (excepción)</strong>
+        <strong>Departamentos que sí laborarán</strong>
     </label>
 
     <div class="border rounded p-3" style="max-height: 250px; overflow-y: auto; background: #f9f9f9;">
@@ -117,9 +139,7 @@
 
     </div>
 
-    <small class="text-muted">
-        Solo selecciona los departamentos que <strong>sí trabajarán</strong> en estos días.
-    </small>
+
 </div>
 
 
@@ -131,7 +151,7 @@
             <textarea name="descripcion"
                       class="form-control"
                       rows="3"
-                      placeholder="Describe el motivo del día inhábil..."
+                      placeholder="Descripción o motivo del feriado..."
                       required></textarea>
 
         </div>
@@ -157,7 +177,6 @@
 
 </div>
 
-@endsection
 
 
 <script>
@@ -181,3 +200,178 @@ document.addEventListener('DOMContentLoaded', function(){
 
 });
 </script>
+
+<!-- Modal Ayuda -->
+<!-- MODAL AYUDA -->
+<div class="modal fade" id="modalAyuda" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Ayuda del calendario institucional
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <h6><strong>Tipos de afectación</strong></h6>
+
+                <p>
+                    <strong>Informativo (no afecta días)</strong>
+                    <br>
+                    Solo muestra información en el calendario institucional.
+                    No descuenta días y no genera días compensatorios.
+                </p>
+
+                <p>
+                    <strong>Laborable con excepciones</strong>
+                    <br>
+                    Los departamentos seleccionados trabajarán y recibirán un día compensatorio.
+                    Los departamentos no seleccionados descansarán y se les descontará un día.
+                </p>
+
+                <hr>
+
+                <h6><strong>Casos más comunes</strong></h6>
+
+                <br>
+
+                <p>
+                    <strong>1. Informativo</strong>
+                    <br>
+
+                    <strong>Tipo de afectación requerido:</strong>
+                    Informativo (no afecta días).
+
+                    <br>
+
+                    <strong>Resultado:</strong>
+                    El feriado únicamente aparecerá en el calendario institucional.
+                    No se descontarán días ni se generarán compensatorios.
+                </p>
+
+                <hr>
+
+                <p>
+                    <strong>2. Descuento total</strong>
+                    <br>
+
+                    <strong>Tipo de afectación requerido:</strong>
+                    Laborable con excepciones.
+
+                    <br>
+
+                    <strong>Configuración:</strong>
+                    No seleccionar ningún departamento.
+
+                    <br>
+
+                    <strong>Resultado:</strong>
+                    Todos los empleados descansarán y se les descontará un día.
+                </p>
+
+                <hr>
+
+                <p>
+                    <strong>3. Descuento parcial y compensatorio parcial</strong>
+                    <br>
+
+                    <strong>Tipo de afectación requerido:</strong>
+                    Laborable con excepciones.
+
+                    <br>
+
+                    <strong>Configuración:</strong>
+                    Seleccionar únicamente los departamentos que trabajarán.
+
+                    <br>
+
+                    <strong>Resultado:</strong>
+
+                    <br>
+
+                    • Los departamentos seleccionados trabajarán y recibirán un día compensatorio.
+
+                    <br>
+
+                    • Los departamentos no seleccionados descansarán y se les descontará un día.
+                </p>
+
+                <hr>
+
+                <p>
+                    <strong>4. Compensatorio total</strong>
+                    <br>
+
+                    <strong>Tipo de afectación requerido:</strong>
+                    Laborable con excepciones.
+
+                    <br>
+
+                    <strong>Configuración:</strong>
+                    Seleccionar todos los departamentos.
+
+                    <br>
+
+                    <strong>Resultado:</strong>
+                    Todos los empleados trabajarán y recibirán un día compensatorio.
+                </p>
+
+                <hr>
+
+                <h6><strong>Información adicional</strong></h6>
+
+                <p>
+                    Para una explicación más detallada del módulo de calendario,
+                    consulte los documentos disponibles en:
+                </p>
+
+                <p>
+                    <strong>
+                        Panel de Ajustes → Manuales de uso
+                    </strong>
+                </p>
+
+                <p>
+                    Documento de apoyo:
+                </p>
+
+                <ul>
+
+                    <li>
+                        Manual de Usuario para Administradores.
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn-modal"
+                        data-bs-dismiss="modal">
+
+                    Entendido
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@endsection

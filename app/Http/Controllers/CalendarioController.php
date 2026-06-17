@@ -16,7 +16,7 @@ class CalendarioController extends Controller
     {
         return view('calendario.index');
     }
-
+ 
     public function create()
     {
         $departamentos = DB::table('departamentos_muni')->get();
@@ -284,10 +284,17 @@ public function dia(Request $request)
 
 public function destroy($id)
 {
+    // Eliminar excepciones asociadas
+    DB::table('calendario_excepciones')
+        ->where('calendario_dia_id', $id)
+        ->delete();
+
+    // Eliminar feriado
     CalendarioDia::destroy($id);
 
-    return redirect()->route('calendario.index')
-        ->with('success','Feriado eliminado correctamente');
+    return redirect()
+        ->route('calendario.index')
+        ->with('success', 'Feriado eliminado correctamente');
 }
 
 

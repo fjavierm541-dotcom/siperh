@@ -95,6 +95,7 @@
 
 <!-- MODAL DETALLE DÍA -->
 
+<!-- MODAL DETALLE DÍA -->
 <div class="modal fade" id="modalDetalle">
 
     <div class="modal-dialog">
@@ -103,15 +104,34 @@
 
             <div class="modal-header">
 
-                <h5 class="modal-title">Eventos del día</h5>
+                <h5 class="modal-title">
+                    Eventos del día
+                </h5>
 
-                <button class="btn-close" data-bs-dismiss="modal"></button>
+                <button class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
 
             </div>
 
-            <div class="modal-body" id="contenidoDetalle">
+            <div class="modal-body"
+                 id="contenidoDetalle">
 
                 Cargando...
+
+            </div>
+
+            <div class="modal-footer">
+
+                
+
+                <button type="button"
+        class="btn btn-outline-danger d-none"
+        id="btnEliminarFeriado">
+
+    Eliminar feriado
+
+</button>
 
             </div>
 
@@ -122,7 +142,78 @@
 </div>
 
 
+<!-- MODAL ELIMINAR -->
+<div class="modal fade"
+     id="modalEliminarFeriado"
+     tabindex="-1"
+     aria-hidden="true">
 
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    Eliminar feriado
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p>
+
+                    ¿Está seguro de eliminar este feriado?
+
+                </p>
+
+                <p>
+
+                    Esta acción no podrá deshacerse.
+
+                </p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn-modal"
+                        data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <form method="POST"
+      id="formEliminarFeriado">
+
+                    @csrf
+                    @method('DELETE')
+
+                    <button class="btn btn-outline-danger">
+
+                        Eliminar
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <!-- MODAL MENSAJE -->
@@ -200,6 +291,7 @@
 <script>
 
 let calendar;
+let feriadoSeleccionado = null;
 
 // 🔹 FECHA ACTUAL FIJA (NO CAMBIA)
 document.addEventListener('DOMContentLoaded', function () {
@@ -242,12 +334,17 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
 
                 let html = '';
+                const btnEliminar = document.getElementById('btnEliminarFeriado');
 
                 if(data.length === 0){
 
-                    html = "<p class='text-center text-muted'>No hay feriados</p>";
+    html = "<p class='text-center text-muted'>No hay feriados</p>";
 
-                }else{
+    feriadoSeleccionado = null;
+
+    btnEliminar.classList.add('d-none');
+
+}else{
 
                     data.forEach(d => {
 
@@ -263,7 +360,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 document.getElementById('contenidoDetalle').innerHTML = html;
 
-                new bootstrap.Modal(document.getElementById('modalDetalle')).show();
+if (data.length > 0) {
+    feriadoSeleccionado = data[0].id;
+    btnEliminar.classList.remove('d-none');
+}
+
+
+new bootstrap.Modal(document.getElementById('modalDetalle')).show();
 
             });
 
@@ -283,6 +386,31 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     calendar.render();
+
+   document.getElementById('btnEliminarFeriado').addEventListener('click', function () {
+
+   if (!feriadoSeleccionado) {
+
+    alert('En este día no hay un feriado registrado.');
+
+    return;
+
+}
+
+    document.getElementById('formEliminarFeriado').action =
+        '/calendario/' + feriadoSeleccionado;
+
+    // Cerrar modal de detalle
+    bootstrap.Modal.getInstance(
+        document.getElementById('modalDetalle')
+    ).hide();
+
+    // Abrir modal de confirmación
+    new bootstrap.Modal(
+        document.getElementById('modalEliminarFeriado')
+    ).show();
+
+});
 
 });
 
