@@ -113,11 +113,15 @@
 
     @endif
 
+    <a href="{{ route('manuales.index') }}"
+    class="{{ request()->routeIs('manuales.*') ? 'active' : '' }}">
+    📚 Manuales
+    </a>
 
     <a href="{{ route('configuracion.acerca') }}"
        class="{{ request()->routeIs('configuracion.acerca') ? 'active' : '' }}">
         ℹ️ Acerca de SIPERH
-    </a> x
+    </a>
 
 </div>
 

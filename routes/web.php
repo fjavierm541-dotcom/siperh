@@ -447,6 +447,12 @@ Route::middleware(['rol:superadmin'])->group(function () {
         return view('ajustes.acerca');
     })->name('configuracion.acerca');
 
+    //manuales 
+    Route::get('/ajustes/manuales', function () {
+        return view('manuales.index');
+        })->name('manuales.index');
+
+
          //notificaciones
 
     Route::get('/notificaciones', [NotificacionSistemaController::class, 'index'])
