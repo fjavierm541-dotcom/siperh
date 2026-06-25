@@ -98,7 +98,7 @@
 
                         <img src="{{ asset('icons/permiso02.webp') }}" class="mb-3">
 
-                        <h4 class="fw-bold">Permisos en día no laboral</h4>
+                        <h4 class="fw-bold">Autorización de Jornada Especial</h4>
 
                         <p class="text-muted">
                             Revisión y gestión de solicitudes para trabajar en días inhábiles.
@@ -134,7 +134,7 @@
 
                         <img src="{{ asset('icons/permisos.png') }}" class="mb-3">
 
-                        <h4 class="fw-bold">Permisos en día no laboral</h4>
+                        <h4 class="fw-bold">Autorización de Jornada Especial</h4>
 
                         <p class="text-muted">
                             Registrar solicitudes por trabajo realizado en días inhábiles.
