@@ -91,6 +91,22 @@
             border-bottom: 1px solid #ddd;
         }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .observaciones{
+        width: 260px;
+        max-width: 260px;
+        min-width: 260px;
+
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
         .text-left { text-align: left; }
         .text-center { text-align: center; }
 
@@ -151,6 +167,8 @@
     .page-number::after {
         content: "Página " counter(page);
     }
+    
+
 }
 @media print {
     .print-footer {
@@ -163,7 +181,7 @@
         color: #555;
     }
 }
-        }
+        
     </style>
 </head>
 
@@ -203,6 +221,17 @@
                 @endfor
             </select>
 
+            <select name="estado">
+                <option value="">Todos los estados</option>
+
+                @foreach($estados as $item)
+                    <option value="{{ $item->id }}"
+                        {{ $estado == $item->id ? 'selected' : '' }}>
+                        {{ $item->nombre }}
+                    </option>
+                @endforeach
+            </select>
+
             <button class="btn btn-primary">Filtrar</button>
         </div>
 
@@ -238,6 +267,7 @@
                 <th>Fin</th>
                 <th>Horas</th>
                 <th>Estado</th>
+                <th class="observaciones">Observaciones</th>
             </tr>
         </thead>
 
@@ -264,6 +294,10 @@
                 </td>
 
                 <td class="text-center">{{ $permiso->estado->nombre ?? '' }}</td>
+
+                <td class="observaciones">
+                    {{ $permiso->motivo_rechazo ?: '-' }}
+                </td>
             </tr>
         @empty
             <tr>
@@ -282,4 +316,4 @@
 
 
 </body>
-</html>
+</html> 

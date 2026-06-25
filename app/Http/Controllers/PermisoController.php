@@ -258,14 +258,26 @@ public function imprimirMes(Request $request)
 {
     $mes = $request->get('mes', now()->format('m'));
     $anio = $request->get('anio', now()->format('Y'));
+    $estado = $request->get('estado');
+
+    $estados = EstadoPermisoSistema::where('nombre', '!=', 'Vencido')->get();
 
     $permisos = PermisoSistema::with(['empleado', 'tipo', 'estado'])
         ->whereMonth('fecha_inicio', $mes)
         ->whereYear('fecha_inicio', $anio)
+        ->when($estado, function ($query) use ($estado) {
+            $query->where('estado_permiso_id', $estado);
+        })
         ->orderBy('fecha_inicio', 'asc')
         ->get();
 
-    return view('permisos.imprimir-mes', compact('permisos', 'mes', 'anio'));
+    return view('permisos.imprimir-mes', compact(
+        'permisos',
+        'mes',
+        'anio',
+        'estado',
+        'estados'
+    ));
 }
 
 
