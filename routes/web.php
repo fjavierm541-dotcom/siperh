@@ -543,4 +543,9 @@ INSERT INTO tipos_permiso_sistema
 VALUES
 ('Incapacidad', 1, NOW(), NOW());
 
+composer require setasign/fpdi
+composer require setasign/fpdf
+composer require setasign/fpdi-pdf-parser
+
+
 */

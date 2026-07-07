@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PermisoSistema;
 use Illuminate\Validation\Rule;
 use App\Helpers\BitacoraHelper;
+use setasign\Fpdi\Fpdi;
 
 class EmpleadoController extends Controller
 {
@@ -1029,7 +1030,15 @@ public function verRegistro($dni)
 
 public function verRegistroImprimir($dni)
 {
-    $empleado = Empleado::where('DNI', $dni)->firstOrFail();
+    $empleado = Empleado::with('documentos')
+        ->where('DNI', $dni)
+        ->firstOrFail();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Generar el PDF del registro del empleado
+    |--------------------------------------------------------------------------
+    */
 
     $pdf = Pdf::loadView(
         'empleados.verRegistroImprimir',
@@ -1038,13 +1047,157 @@ public function verRegistroImprimir($dni)
 
     $pdf->setPaper('letter');
 
-    return $pdf->stream(
-        'registro-empleado-'.$empleado->DNI.'.pdf'
+    $tempPdf = storage_path(
+        'app/temp_registro_' .
+        $empleado->DNI . '_' .
+        uniqid() .
+        '.pdf'
+    );
+
+    file_put_contents(
+        $tempPdf,
+        $pdf->output()
+    );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Crear el PDF final
+    |--------------------------------------------------------------------------
+    */
+
+    $fpdi = new Fpdi();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Agregar el registro del empleado
+    |--------------------------------------------------------------------------
+    */
+
+    $totalPaginas = $fpdi->setSourceFile($tempPdf);
+
+    for ($i = 1; $i <= $totalPaginas; $i++) {
+
+        $template = $fpdi->importPage($i);
+
+        $size = $fpdi->getTemplateSize($template);
+
+        $fpdi->AddPage(
+            $size['orientation'],
+            [$size['width'], $size['height']]
+        );
+
+        $fpdi->useTemplate($template);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ordenar documentos
+    |--------------------------------------------------------------------------
+    */
+
+    $documentos = $empleado->documentos
+        ->sortBy(function ($doc) {
+
+            return match (mb_strtolower(trim($doc->tipo_documento))) {
+
+                'copia dni'            => 1,
+                'copia rtn'            => 2,
+                'acuerdo',
+                'contrato',
+                'acuerdo / contrato'   => 3,
+                'nota traslado',
+                'nota de traslado'     => 4,
+
+                default                => 99,
+            };
+
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Agregar documentos al PDF
+    |--------------------------------------------------------------------------
+    */
+
+    foreach ($documentos as $documento) {
+
+        $ruta = storage_path(
+            'app/public/' . $documento->ruta_archivo
+        );
+
+        if (!file_exists($ruta)) {
+            continue;
+        }
+
+        $extension = strtolower(pathinfo($ruta, PATHINFO_EXTENSION));
+
+        // Solo anexar PDFs
+        if ($extension !== 'pdf') {
+            continue;
+        }
+
+        try {
+
+            $paginasDocumento = $fpdi->setSourceFile($ruta);
+
+            for ($pagina = 1; $pagina <= $paginasDocumento; $pagina++) {
+
+                $template = $fpdi->importPage($pagina);
+
+                $size = $fpdi->getTemplateSize($template);
+
+                $fpdi->AddPage(
+                    $size['orientation'],
+                    [$size['width'], $size['height']]
+                );
+
+                $fpdi->useTemplate($template);
+
+            }
+
+        } catch (\Throwable $e) {
+
+            // Si un documento está dañado, continuar con el siguiente.
+            continue;
+
+        }
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Eliminar archivo temporal
+    |--------------------------------------------------------------------------
+    */
+
+    if (file_exists($tempPdf)) {
+        unlink($tempPdf);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mostrar PDF en el navegador
+    |--------------------------------------------------------------------------
+    */
+
+    return response(
+        $fpdi->Output(
+            'S',
+            'registro-empleado-' . $empleado->DNI . '.pdf'
+        ),
+        200,
+        [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' =>
+                'inline; filename="registro-empleado-' .
+                $empleado->DNI .
+                '.pdf"',
+        ]
     );
 }
 
 
-
+ 
 
 
     /**

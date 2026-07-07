@@ -9,7 +9,7 @@
         size: letter;
         margin: 10mm;
     }
-
+  
     body {
         font-family: Arial, sans-serif;
         font-size: 9.5px;
