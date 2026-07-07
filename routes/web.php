@@ -547,5 +547,7 @@ composer require setasign/fpdi
 composer require setasign/fpdf
 composer require setasign/fpdi-pdf-parser
 
+composer install --no-dev --optimize-autoloader
+
 
 */
