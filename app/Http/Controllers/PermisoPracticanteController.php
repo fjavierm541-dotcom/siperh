@@ -10,6 +10,7 @@ use App\Models\BitacoraSistema;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Helpers\NotificacionHelper;
+use App\Models\User;
 
 class PermisoPracticanteController extends Controller
 {

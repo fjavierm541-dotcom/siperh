@@ -401,6 +401,16 @@ input, select, textarea {
                 </a>
             </li>
 
+            @if(auth()->user()->rol === 'jefe_departamento')
+    <li>
+        <a class="dropdown-item"
+           href="{{ asset('manuales/Manual_de_usuario_jefes.pdf') }}"
+           target="_blank">
+            Descargar manual de usuario
+        </a>
+    </li>
+@endif
+
             @if(in_array(auth()->user()->rol, ['superadmin', 'rrhh']))
 
                 <li><hr class="dropdown-divider"></li>
