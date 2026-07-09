@@ -2,7 +2,7 @@
 
 @section('title','Departamento')
 
-@section('content')
+@section('content') 
 
 <div class="glass-card overflow-hidden">
 
@@ -111,6 +111,7 @@
                         <th>DNI</th>
                         <th>Nombre</th>
                         <th>Puesto Actual</th>
+                        <th>Días disponibles</th>
                         <th width="140">Acción</th>
                     </tr>
                 </thead>
@@ -131,6 +132,11 @@
                             </td>
 
                             <td>{{ $emp->puesto_funcional ?: $emp->puesto }}</td>
+                            <td>
+                                {{ $emp->dias_disponibles }} días
+                                y
+                                {{ $emp->horas_disponibles }} horas
+                            </td>
 
                             <td>
                                 <button type="button"
@@ -148,7 +154,7 @@
                     @empty
 
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">
+                            <td colspan="5" class="text-center text-muted py-4">
                                 Este departamento aún no tiene empleados asignados.
                             </td>
                         </tr>

@@ -66,6 +66,31 @@ public function show($id)
     $departamento = DepartamentoMuni::with('empleadosFuncionales')
         ->findOrFail($id);
 
+    foreach ($departamento->empleadosFuncionales as $emp) {
+
+        // Vacaciones disponibles
+        $diasVacaciones = \App\Models\PeriodoVacacionesSistema::where('dni_empleado', $emp->DNI)
+            ->whereIn('estado', ['activo', 'extendido'])
+            ->selectRaw('SUM(dias_otorgados - dias_usados) as total')
+            ->value('total') ?? 0;
+
+        // Compensatorios disponibles
+        $diasCompensatorios = DB::table('compensatorios_sistema')
+            ->where('dni_empleado', $emp->DNI)
+            ->where('estado', 'activo')
+            ->sum('dias_disponibles');
+
+        // Horas disponibles
+        $horasDisponibles = DB::table('horas_acumuladas_sistema')
+            ->where('dni_empleado', $emp->DNI)
+            ->where('estado', 'activo')
+            ->selectRaw('SUM(horas_otorgadas - horas_usadas) as total')
+            ->value('total') ?? 0;
+
+        $emp->dias_disponibles = (int)$diasVacaciones + (int)$diasCompensatorios;
+        $emp->horas_disponibles = (int)$horasDisponibles;
+    }
+
     return view('departamentos.show', compact('departamento'));
 }
 
@@ -380,6 +405,35 @@ public function miDepartamento()
     ])
     ->where('jefe_dni', $empleado->DNI)
     ->firstOrFail();
+
+    // ============================
+    // Calcular días disponibles
+    // ============================
+
+    foreach ($departamento->empleadosFuncionales as $emp) {
+
+        // Vacaciones disponibles
+        $diasVacaciones = \App\Models\PeriodoVacacionesSistema::where('dni_empleado', $emp->DNI)
+            ->whereIn('estado', ['activo', 'extendido'])
+            ->selectRaw('SUM(dias_otorgados - dias_usados) as total')
+            ->value('total') ?? 0;
+
+        // Compensatorios disponibles
+        $diasCompensatorios = DB::table('compensatorios_sistema')
+            ->where('dni_empleado', $emp->DNI)
+            ->where('estado', 'activo')
+            ->sum('dias_disponibles');
+
+        // Horas disponibles
+        $horasDisponibles = DB::table('horas_acumuladas_sistema')
+            ->where('dni_empleado', $emp->DNI)
+            ->where('estado', 'activo')
+            ->selectRaw('SUM(horas_otorgadas - horas_usadas) as total')
+            ->value('total') ?? 0;
+
+        $emp->dias_disponibles = (int)$diasVacaciones + (int)$diasCompensatorios;
+        $emp->horas_disponibles = (int)$horasDisponibles;
+    }
 
     return view('departamentos.show_jefe', compact('departamento'));
 }

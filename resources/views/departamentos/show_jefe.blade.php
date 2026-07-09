@@ -5,7 +5,7 @@
 @section('content')
 
 <div class="glass-card overflow-hidden">
-
+ 
     <!-- HEADER -->
     <div class="px-4 py-3 text-white" style="background:#27496d;">
 
@@ -23,11 +23,7 @@
 
             <div class="d-flex flex-wrap gap-2">
 
-                <a href="{{ route('departamentos.imprimirEmpleados', $departamento->id) }}"
-                   target="_blank"
-                   class="btn btn-primary-custom btn-sm">
-                    Imprimir empleados
-                </a>
+                
 
                 <a href="{{ route('paginas.inicio') }}"
                    class="btn btn-secondary btn-sm">
@@ -89,6 +85,7 @@
                         <th>DNI</th>
                         <th>Nombre</th>
                         <th>Puesto</th>
+                        <th>Días disponibles</th>
                     </tr>
                 </thead>
 
@@ -108,13 +105,19 @@
                             </td>
 
                             <td>{{ $emp->puesto }}</td>
+                            <td>
+                                {{ $emp->dias_disponibles }} días
+                                y
+                                {{ $emp->horas_disponibles }} horas
+                            </td>
+                            
 
                         </tr>
 
                     @empty
 
                         <tr>
-                            <td colspan="3" class="text-center text-muted py-4">
+                            <td colspan="4" class="text-center text-muted py-4">
                                 Este departamento aún no tiene empleados asignados.
                             </td>
                         </tr>
