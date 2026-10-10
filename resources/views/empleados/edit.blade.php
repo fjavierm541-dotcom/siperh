@@ -123,12 +123,11 @@
                             <div class="col-md-3 mb-3">
                                 <label>Segundo Nombre</label>
                                 <input type="text"
-                                       minlength="3"
-                                       maxlength="20"
-                                       name="segundo_nombre"
-                                       placeholder="Ingrese el segundo nombre"
-                                       value="{{ old('segundo_nombre', $empleado->segundo_nombre) }}"
-                                       class="form-control @error('segundo_nombre') is-invalid @enderror">
+                                    maxlength="50"
+                                    name="segundo_nombre"
+                                    placeholder="Ingrese el segundo nombre"
+                                    value="{{ old('segundo_nombre', $empleado->segundo_nombre) }}"
+                                    class="form-control @error('segundo_nombre') is-invalid @enderror">
                                 @error('segundo_nombre')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
@@ -138,7 +137,7 @@
                                 <label>Primer Apellido *</label>
                                 <input type="text"
                                        minlength="3"
-                                       maxlength="20"
+                                       maxlength="50"
                                        required
                                        name="primer_apellido"
                                        placeholder="Ingrese el primer apellido"
@@ -152,12 +151,11 @@
                             <div class="col-md-3 mb-3">
                                 <label>Segundo Apellido</label>
                                 <input type="text"
-                                       minlength="3"
-                                       maxlength="20"
-                                       name="segundo_apellido"
-                                       placeholder="Ingrese el segundo apellido"
-                                       value="{{ old('segundo_apellido', $empleado->segundo_apellido) }}"
-                                       class="form-control @error('segundo_apellido') is-invalid @enderror">
+                                    maxlength="50"
+                                    name="segundo_apellido"
+                                    placeholder="Ingrese el segundo apellido"
+                                    value="{{ old('segundo_apellido', $empleado->segundo_apellido) }}"
+                                    class="form-control @error('segundo_apellido') is-invalid @enderror">
                                 @error('segundo_apellido')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
@@ -542,10 +540,10 @@
                                 </div>
 
                                 <div class="col-md-3">
-                                    <label>Parentezco</label>
+                                    <label>Parentesco</label>
                                     <input type="text"
                                            name="parentezco_beneficiario{{ $i }}"
-                                           placeholder="Escriba el parentezco"
+                                           placeholder="Escriba el parentesco"
                                            minlength="3"
                                            maxlength="20"
                                            value="{{ old('parentezco_beneficiario'.$i, $empleado->{'parentezco_beneficiario'.$i}) }}"

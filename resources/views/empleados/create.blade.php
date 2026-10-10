@@ -59,7 +59,7 @@
        inputmode="numeric"
        pattern="[0-9]{1,4}"
        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-       placeholder="00000"
+       placeholder="0000"
        required
        value="{{ old('codigo') }}"
        class="form-control @error('codigo') is-invalid @enderror">
@@ -93,7 +93,7 @@
        maxlength="16"
        pattern="^\d{4}-\d{4}-\d{6}$"
        inputmode="numeric"
-       placeholder="0000-00000-00000"
+       placeholder="0000-0000-000000"
        required
        value="{{ old('RTN') }}"
        class="form-control @error('RTN') is-invalid @enderror">
@@ -133,7 +133,7 @@
 
 <div class="col-md-3 mb-3">
 <label>Segundo Nombre</label>
-<input type="text" minlength="3" maxlength="20"  
+<input type="text" maxlength="50"  
        name="segundo_nombre"
         placeholder="Ingrese el segundo nombre"
        value="{{ old('segundo_nombre') }}"
@@ -145,7 +145,7 @@
 
 <div class="col-md-3 mb-3">
 <label>Primer Apellido *</label>
-<input type="text" minlength="3" maxlength="20" required 
+<input type="text" minlength="3" maxlength="50" required 
        name="primer_apellido"
        value="{{ old('primer_apellido') }}"
        placeholder="Ingrese el primer apellido"
@@ -157,7 +157,7 @@
 
 <div class="col-md-3 mb-3">
 <label>Segundo Apellido</label>
-<input type="text" minlength="3" maxlength="20"  
+<input type="text" maxlength="50"  
        name="segundo_apellido"
         placeholder="Ingrese el segundo apellido"
        value="{{ old('segundo_apellido') }}"
@@ -679,10 +679,10 @@ En caso de emergencia se autoriza llamar a las personas en el siguiente orden:
 
     {{-- Parentezco --}}
     <div class="col-md-3">
-        <label>Parentezco</label>
+        <label>Parentesco</label>
         <input type="text"
                name="parentezco_beneficiario{{ $i }}"
-               placeholder="escriba el parentezco"
+               placeholder="escriba el parentesco"
                minlength="3"
                maxlength="20"
                value="{{ old('parentezco_beneficiario'.$i) }}"
